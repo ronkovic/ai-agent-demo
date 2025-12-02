@@ -73,14 +73,6 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
           </div>
         </div>
 
-        {/* Desktop Header - thin bar with user menu */}
-        <div className="hidden md:flex h-10 items-center justify-end border-b px-4">
-          <div className="flex items-center gap-2">
-            <ThemeToggle />
-            <UserMenu />
-          </div>
-        </div>
-
         <main className="flex-1 overflow-hidden">{children}</main>
       </div>
     </div>
