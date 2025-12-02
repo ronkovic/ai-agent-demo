@@ -7,8 +7,8 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from pydantic import BaseModel, ConfigDict
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from ..deps import get_agent_repo, get_current_user_id, get_db
 from ...db import AgentRepository
+from ..deps import get_agent_repo, get_current_user_id, get_db
 
 router = APIRouter()
 

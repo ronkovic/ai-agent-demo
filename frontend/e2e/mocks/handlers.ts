@@ -30,8 +30,6 @@ const mockAgents = [
   },
 ];
 
-const mockConversations: Record<string, unknown[]> = {};
-
 // API base URL
 const API_BASE = "http://localhost:8000";
 

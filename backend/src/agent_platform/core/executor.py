@@ -94,7 +94,7 @@ class ToolExecutor:
             logger.info(f"Tool {tool_name} completed: success={result.success}")
             return result
 
-        except asyncio.TimeoutError:
+        except TimeoutError:
             logger.error(f"Tool {tool_name} timed out after {effective_timeout}s")
             return ToolResult(
                 success=False,

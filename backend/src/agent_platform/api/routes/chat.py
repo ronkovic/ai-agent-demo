@@ -2,7 +2,6 @@
 
 import json
 from datetime import datetime
-from typing import Any
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, status
@@ -10,15 +9,15 @@ from pydantic import BaseModel, ConfigDict
 from sqlalchemy.ext.asyncio import AsyncSession
 from sse_starlette.sse import EventSourceResponse
 
+from ...core.chat import ChatService
+from ...db import AgentRepository, ConversationRepository, MessageRepository
+from ...llm import get_llm_provider
 from ..deps import (
     get_conversation_repo,
     get_current_user_id,
     get_db,
     get_message_repo,
 )
-from ...core.chat import ChatEvent, ChatService
-from ...db import AgentRepository, Conversation, ConversationRepository, MessageRepository
-from ...llm import get_llm_provider
 
 router = APIRouter()
 
@@ -208,7 +207,7 @@ async def chat_stream_with_tools(
     - start: 会話開始 {"conversation_id": "..."}
     - content: テキストコンテンツ（文字列）
     - tool_call: ツール呼び出し {"id": "...", "name": "...", "arguments": {...}}
-    - tool_result: ツール実行結果 {"tool_call_id": "...", "success": bool, "output": ..., "error": ...}
+    - tool_result: ツール実行結果 {"tool_call_id": "...", "success": bool, ...}
     - done: 完了 {}
     - error: エラー {"message": "..."}
     """
@@ -224,12 +223,14 @@ async def chat_stream_with_tools(
             user_message=request.message,
             conversation_id=request.conversation_id,
         )
-    except Exception as e:
+    except Exception as err:
         # Handle initialization errors
+        error_message = str(err)
+
         async def error_generator():
             yield {
                 "event": "error",
-                "data": json.dumps({"message": str(e)}),
+                "data": json.dumps({"message": error_message}),
             }
         return EventSourceResponse(error_generator())
 

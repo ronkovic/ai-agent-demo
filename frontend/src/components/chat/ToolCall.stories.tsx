@@ -130,15 +130,6 @@ export const UnknownTool: Story = {
 };
 
 // ToolCallBadge Stories
-const BadgeMeta: Meta<typeof ToolCallBadge> = {
-  title: "Chat/ToolCallBadge",
-  component: ToolCallBadge,
-  parameters: {
-    layout: "centered",
-  },
-  tags: ["autodocs"],
-};
-
 export const BadgeDefault: StoryObj<typeof ToolCallBadge> = {
   render: () => (
     <ToolCallBadge

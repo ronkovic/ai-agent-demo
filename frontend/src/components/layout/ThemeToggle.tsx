@@ -1,7 +1,7 @@
 "use client";
 
 import { useTheme } from "next-themes";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Sun, Moon, Monitor } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 
@@ -11,14 +11,21 @@ type ThemeType = (typeof THEME_ORDER)[number];
 export function ThemeToggle() {
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
+  const mountedRef = useRef(false);
 
   // Avoid hydration mismatch
   useEffect(() => {
-    setMounted(true);
-    // Initialize localStorage if not set
-    const storedTheme = localStorage.getItem("theme");
-    if (!storedTheme) {
-      localStorage.setItem("theme", "system");
+    if (!mountedRef.current) {
+      mountedRef.current = true;
+      // Use requestAnimationFrame to defer state update
+      requestAnimationFrame(() => {
+        setMounted(true);
+      });
+      // Initialize localStorage if not set
+      const storedTheme = localStorage.getItem("theme");
+      if (!storedTheme) {
+        localStorage.setItem("theme", "system");
+      }
     }
   }, []);
 

@@ -5,7 +5,6 @@
 
 import logging
 from typing import TYPE_CHECKING, Any
-from uuid import UUID
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -13,8 +12,8 @@ from ..core.chat import ChatService
 from ..core.executor import ToolExecutor
 from ..db import ConversationRepository, MessageRepository
 from ..llm import get_llm_provider
-from .task_store import TaskStore, get_task_store
-from .types import A2ATaskContext, A2ATaskStatus, A2A_SYSTEM_USER_ID
+from .task_store import get_task_store
+from .types import A2A_SYSTEM_USER_ID, A2ATaskContext, A2ATaskStatus
 
 if TYPE_CHECKING:
     from ..db import Agent

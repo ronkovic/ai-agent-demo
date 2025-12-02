@@ -122,8 +122,6 @@ test.describe("Chat Interaction", () => {
     const sendButton = page.getByRole("button", { name: /send|送信/i });
 
     if (await sendButton.isVisible()) {
-      // Button might be disabled or have a disabled style
-      const isDisabled = await sendButton.isDisabled().catch(() => false);
       // Just check the button exists, specific disabled behavior may vary
       await expect(sendButton).toBeVisible();
     }

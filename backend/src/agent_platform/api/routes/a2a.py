@@ -5,7 +5,7 @@ from typing import Any
 from uuid import UUID, uuid4
 
 from fastapi import APIRouter, Depends, HTTPException
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from ...a2a.card import generate_agent_card
@@ -24,17 +24,23 @@ router = APIRouter()
 class AgentCard(BaseModel):
     """A2A Agent Card."""
 
+    model_config = ConfigDict(populate_by_name=True)
+
     name: str
     description: str
     url: str
     version: str = "1.0.0"
-    protocolVersion: str = "0.3.0"
+    protocol_version: str = Field("0.3.0", alias="protocolVersion")
     capabilities: dict[str, Any] = Field(
         default_factory=lambda: {"streaming": True, "pushNotifications": False}
     )
     skills: list[dict[str, Any]] = Field(default_factory=list)
-    defaultInputModes: list[str] = Field(default_factory=lambda: ["text/plain"])
-    defaultOutputModes: list[str] = Field(default_factory=lambda: ["text/plain"])
+    default_input_modes: list[str] = Field(
+        default_factory=lambda: ["text/plain"], alias="defaultInputModes"
+    )
+    default_output_modes: list[str] = Field(
+        default_factory=lambda: ["text/plain"], alias="defaultOutputModes"
+    )
     provider: dict[str, str] | None = None
 
 

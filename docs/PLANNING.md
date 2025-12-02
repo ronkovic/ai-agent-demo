@@ -279,6 +279,7 @@ CREATE TABLE agent_cards (
   - Backend: ruff lint + pytest
   - Frontend: eslint + typecheck + vitest
   - E2E: Playwright tests
+  - CI lint修正 (ruff I001/F401/N815/F821, eslint setState-in-effect)
 - [x] ドキュメント・CLAUDE.md更新
   - CLAUDE.md 包括的更新 (アーキテクチャ、コマンド、ガイドライン)
   - README.md 作成 (ルート、backend、frontend)
