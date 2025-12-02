@@ -109,7 +109,7 @@ async def get_a2a_enabled_agent(
     Raises:
         HTTPException: If agent not found or A2A not enabled.
     """
-    agent = await agent_repo.get_by_id(db, agent_id)
+    agent = await agent_repo.get(db, agent_id)
 
     if not agent:
         raise HTTPException(status_code=404, detail="Agent not found")

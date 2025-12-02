@@ -276,10 +276,11 @@ CREATE TABLE agent_cards (
   - Taskfile.yml タスク追加 (storybook:serve, test:e2e)
 - [x] CI/CD設定
   - GitHub Actions CI (.github/workflows/ci.yml)
-  - Backend: ruff lint + pytest
+  - Backend: ruff lint + pytest (PostgreSQLサービス付き)
   - Frontend: eslint + typecheck + vitest
   - E2E: Playwright tests
   - CI lint修正 (ruff I001/F401/N815/F821, eslint setState-in-effect)
+  - mainブランチプロテクション設定 (required status checks)
 - [x] ドキュメント・CLAUDE.md更新
   - CLAUDE.md 包括的更新 (アーキテクチャ、コマンド、ガイドライン)
   - README.md 作成 (ルート、backend、frontend)
