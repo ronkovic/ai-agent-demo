@@ -232,15 +232,14 @@ CREATE TABLE agent_cards (
 - [x] チャットAPI実装 (SSEストリーミング)
 - [x] テスト追加 (pytest-asyncio)
 
-### Phase 3: フロントエンドUI
+### Phase 3: フロントエンドUI ✅
 
-**指示書:** `docs/PHASE3_FRONTEND_INSTRUCTIONS.md` (Gemini 3.0 pro向け)
-
-- [ ] 基本UIコンポーネント作成 + Storybook登録
-- [ ] チャットUIコンポーネント + Storybook
-- [ ] エージェント管理UI + Storybook
-- [ ] ページ統合・ルーティング
-- [ ] 認証フロー実装
+- [x] 基本UIコンポーネント作成 + Storybook登録 (Header, Sidebar, AppLayout)
+- [x] チャットUIコンポーネント + Storybook (ChatMessage, ChatInput, ChatContainer)
+- [x] エージェント管理UI + Storybook (AgentCard, AgentForm)
+- [x] カスタムフック (useAgents, useChat with SSE)
+- [x] ページ統合・ルーティング (5ページ実装)
+- [ ] 認証フロー実装 (Phase 5でSupabase Auth統合予定)
 
 ### Phase 4: ツール機能
 
