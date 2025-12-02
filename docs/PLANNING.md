@@ -2,7 +2,16 @@
 
 ## 概要
 
-マルチユーザー対応のAIエージェントプラットフォーム。ユーザーは複数のAIエージェントを作成し、Google A2Aプロトコルで連携可能。
+マルチユーザー対応のPersonal AI Agent SaaSプラットフォーム。
+
+- **AIエージェント**: 単体で動作するAIアシスタント（タスク自動化、コード生成等）
+- **Personal AI Agent**: 複数のAIエージェントを組み合わせて動作するオーケストレーター
+  - ユーザーは複数のPersonal AI Agentを作成可能
+  - 自身のエージェント＋公開エージェントと連携
+  - n8n/Make/Zapier風のノードベースのビジュアルワークフローで連携を可視化
+  - 複数のトリガー（チャット、Webhook、スケジュール、API）で実行
+- **LLM APIキー**: ユーザーが自身のAPIキーを設定（サービス提供者のトークン不使用）
+- **APIアクセス**: 独自発行のAPIキーで外部からエージェント実行可能
 
 ## 技術スタック
 
@@ -16,9 +25,12 @@
 | Agent連携 | Google A2A Protocol (a2a-sdk) |
 | API連携 | OpenAPI 3.1 (自動生成 + TypeScript型生成) |
 | UI開発 | Storybook 8 (コンポーネントカタログ) |
+| Workflow Editor | React Flow |
+| Scheduler | Celery Beat (Redis) |
+| Secret管理 | Supabase Vault |
 | 開発環境 | Docker Compose |
 
-## MVP要件
+## MVP要件 (Phase 1-6 完了)
 
 - [x] 会話型アシスタント
 - [x] タスク自動化（ツール呼び出し）
@@ -27,12 +39,23 @@
 - [x] ユーザーごとに複数エージェント作成
 - [x] A2Aでエージェント間連携
 
-## MVP外
+## Personal AI Agent SaaS要件 (Phase 7以降)
+
+- [ ] Personal AI Agent CRUD
+- [ ] ユーザーLLM APIキー管理 (Supabase Vault)
+- [ ] ユーザーAPIキー発行・認証
+- [ ] エージェント公開/非公開設定
+- [ ] 公開エージェント検索・連携
+- [ ] ビジュアルワークフローエディタ (React Flow)
+- [ ] ワークフローエンジン (DAG実行)
+- [ ] トリガー: チャット、Webhook、スケジュール (Celery Beat)、API
+- [ ] Rate Limiting (APIキー単位)
+
+## 将来拡張
 
 - RAG/ナレッジベース
-- エージェントの公開/非公開設定
-- 公開エージェントの共有
 - MCPサーバー統合
+- ワークフローテンプレート共有
 
 ---
 
@@ -69,8 +92,13 @@ ai-agent-demo/
 │   │       ├── db/
 │   │       │   ├── models.py        # SQLAlchemyモデル
 │   │       │   └── repository.py    # データアクセス
-│   │       └── auth/
-│   │           └── supabase.py      # Supabase認証
+│   │       ├── auth/
+│   │       │   └── supabase.py      # Supabase認証
+│   │       ├── services/            # [Phase 7+]
+│   │       │   ├── vault_service.py # Supabase Vault統合
+│   │       │   └── workflow_engine.py # ワークフロー実行エンジン
+│   │       └── tasks/               # [Phase 9]
+│   │           └── celery_config.py # Celery Beat設定
 │   └── tests/
 │
 ├── frontend/
@@ -88,6 +116,17 @@ ai-agent-demo/
 │   │   │   │   └── [id]/
 │   │   │   │       ├── page.tsx    # チャット画面
 │   │   │   │       └── settings/page.tsx
+│   │   │   ├── personal-agents/    # [Phase 7]
+│   │   │   │   ├── page.tsx        # Personal Agent一覧
+│   │   │   │   ├── new/page.tsx    # 新規作成
+│   │   │   │   └── [id]/
+│   │   │   │       ├── page.tsx    # チャット画面
+│   │   │   │       ├── edit/page.tsx
+│   │   │   │       └── workflow/page.tsx  # [Phase 8]
+│   │   │   ├── settings/           # [Phase 7]
+│   │   │   │   ├── page.tsx        # 設定一覧
+│   │   │   │   ├── llm-keys/page.tsx  # LLM APIキー管理
+│   │   │   │   └── api-keys/page.tsx  # APIキー管理
 │   │   │   ├── auth/
 │   │   │   │   └── callback/route.ts
 │   │   │   └── api/                # BFF
@@ -97,6 +136,19 @@ ai-agent-demo/
 │   │   │   │   ├── ChatMessage.stories.tsx  # Storybook
 │   │   │   │   └── ChatInput.tsx
 │   │   │   ├── agent/
+│   │   │   ├── personal-agent/     # [Phase 7]
+│   │   │   │   └── PersonalAgentChat.tsx
+│   │   │   ├── workflow/           # [Phase 8]
+│   │   │   │   ├── WorkflowEditor.tsx  # React Flow
+│   │   │   │   ├── NodePalette.tsx
+│   │   │   │   └── nodes/          # カスタムノード
+│   │   │   │       ├── TriggerNode.tsx
+│   │   │   │       ├── AgentNode.tsx
+│   │   │   │       ├── ConditionNode.tsx
+│   │   │   │       └── OutputNode.tsx
+│   │   │   ├── settings/           # [Phase 7]
+│   │   │   │   ├── LLMKeyManager.tsx
+│   │   │   │   └── ApiKeyManager.tsx
 │   │   │   └── ui/                 # shadcn/ui
 │   │   ├── lib/
 │   │   │   ├── supabase.ts
@@ -168,6 +220,96 @@ CREATE TABLE agent_cards (
     card_json JSONB NOT NULL,           -- A2A Agent Card
     endpoint_url VARCHAR(500),
     updated_at TIMESTAMP DEFAULT NOW()
+);
+
+-- ========================================
+-- Personal AI Agent SaaS 追加テーブル
+-- ========================================
+
+-- personal_agents: パーソナルAIエージェント（オーケストレーター）
+CREATE TABLE personal_agents (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID NOT NULL REFERENCES auth.users(id),
+    name VARCHAR(255) NOT NULL,
+    description TEXT,
+    system_prompt TEXT NOT NULL,
+    is_public BOOLEAN DEFAULT false,
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW()
+);
+
+-- workflows: ワークフロー定義
+CREATE TABLE workflows (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    personal_agent_id UUID NOT NULL REFERENCES personal_agents(id) ON DELETE CASCADE,
+    name VARCHAR(255) NOT NULL,
+    description TEXT,
+    nodes JSONB DEFAULT '[]',           -- React Flow nodes
+    edges JSONB DEFAULT '[]',           -- React Flow edges
+    is_active BOOLEAN DEFAULT true,
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW()
+);
+
+-- workflow_executions: ワークフロー実行履歴
+CREATE TABLE workflow_executions (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    workflow_id UUID NOT NULL REFERENCES workflows(id) ON DELETE CASCADE,
+    trigger_type VARCHAR(50) NOT NULL,  -- 'chat', 'webhook', 'schedule', 'api'
+    trigger_data JSONB DEFAULT '{}',
+    status VARCHAR(20) DEFAULT 'pending', -- 'pending', 'running', 'completed', 'failed'
+    result JSONB,
+    error TEXT,
+    started_at TIMESTAMP,
+    completed_at TIMESTAMP,
+    created_at TIMESTAMP DEFAULT NOW()
+);
+
+-- schedule_triggers: スケジュールトリガー
+CREATE TABLE schedule_triggers (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    workflow_id UUID NOT NULL REFERENCES workflows(id) ON DELETE CASCADE,
+    cron_expression VARCHAR(100) NOT NULL,
+    timezone VARCHAR(50) DEFAULT 'UTC',
+    is_active BOOLEAN DEFAULT true,
+    last_run_at TIMESTAMP,
+    next_run_at TIMESTAMP,
+    created_at TIMESTAMP DEFAULT NOW()
+);
+
+-- webhook_triggers: Webhookトリガー
+CREATE TABLE webhook_triggers (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    workflow_id UUID NOT NULL REFERENCES workflows(id) ON DELETE CASCADE,
+    webhook_path VARCHAR(255) NOT NULL UNIQUE,
+    secret VARCHAR(255),                -- HMAC署名検証用
+    is_active BOOLEAN DEFAULT true,
+    created_at TIMESTAMP DEFAULT NOW()
+);
+
+-- user_llm_configs: ユーザーLLM APIキー設定
+CREATE TABLE user_llm_configs (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID NOT NULL REFERENCES auth.users(id),
+    provider VARCHAR(50) NOT NULL,      -- 'openai', 'anthropic', 'google', 'bedrock'
+    vault_secret_id VARCHAR(255) NOT NULL, -- Supabase Vault secret ID
+    is_default BOOLEAN DEFAULT false,
+    created_at TIMESTAMP DEFAULT NOW(),
+    UNIQUE(user_id, provider)
+);
+
+-- user_api_keys: ユーザーAPIキー
+CREATE TABLE user_api_keys (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID NOT NULL REFERENCES auth.users(id),
+    name VARCHAR(255) NOT NULL,
+    key_hash VARCHAR(255) NOT NULL,     -- SHA-256 hash
+    key_prefix VARCHAR(8) NOT NULL,     -- 表示用プレフィックス
+    scopes JSONB DEFAULT '[]',          -- ['agents:read', 'agents:execute']
+    rate_limit INTEGER DEFAULT 1000,    -- requests per hour
+    expires_at TIMESTAMP,
+    last_used_at TIMESTAMP,
+    created_at TIMESTAMP DEFAULT NOW()
 );
 ```
 
@@ -299,6 +441,79 @@ CREATE TABLE agent_cards (
   - CLAUDE.md 包括的更新 (アーキテクチャ、コマンド、ガイドライン)
   - README.md 作成 (ルート、backend、frontend)
 
+### Phase 7: Personal Agent基盤
+
+- [ ] データベースモデル追加
+  - `PersonalAgent` - オーケストレーターエージェント
+  - `UserLLMConfig` - ユーザーLLM APIキー設定
+  - `UserApiKey` - API認証キー
+- [ ] Supabase Vault統合サービス (`services/vault_service.py`)
+- [ ] Personal Agent CRUD API (`api/routes/personal_agents.py`)
+  - GET/POST/PUT/DELETE `/api/personal-agents`
+- [ ] User LLM Config API (`api/routes/user_settings.py`)
+  - GET/POST/DELETE `/api/user/llm-configs`
+- [ ] User API Key管理 API
+  - GET/POST/DELETE `/api/user/api-keys`
+  - SHA-256ハッシュ保存、生成時のみ表示
+- [ ] フロントエンド: Personal Agent一覧・作成・編集
+  - `app/personal-agents/` ページ群
+- [ ] フロントエンド: Settings UI
+  - `app/settings/llm-keys/` - LLM APIキー管理
+  - `app/settings/api-keys/` - APIキー管理
+- [ ] Personal Agent チャット機能
+
+### Phase 8: ワークフローエンジン
+
+- [ ] Workflow データベースモデル
+  - `Workflow` - ワークフロー定義
+  - `WorkflowExecution` - 実行履歴
+- [ ] React Flow エディタ基盤
+  - `components/workflow/WorkflowEditor.tsx`
+  - `components/workflow/nodes/` - カスタムノード群
+- [ ] ノードタイプ実装
+  - `TriggerNode` - トリガー（チャット、Webhook、スケジュール、API）
+  - `AgentNode` - AIエージェント実行
+  - `OutputNode` - 結果出力
+- [ ] ワークフローエンジン (`services/workflow_engine.py`)
+  - DAG構築・トポロジカルソート
+  - ノード順次実行
+  - コンテキスト伝播
+- [ ] ノードタイプ追加
+  - `ConditionNode` - 条件分岐
+  - `TransformNode` - データ変換
+  - `ToolNode` - 外部ツール呼び出し
+- [ ] ワークフロー実行履歴UI
+
+### Phase 9: トリガー実装
+
+- [ ] Celery + Redis 設定
+  - `tasks/celery_config.py`
+  - Docker Compose に Redis 追加
+- [ ] Schedule Trigger (Celery Beat)
+  - `ScheduleTrigger` モデル
+  - `tasks/schedule_tasks.py`
+  - cron式パーサー
+- [ ] Webhook Trigger
+  - `WebhookTrigger` モデル
+  - `api/routes/webhooks.py`
+  - HMAC署名検証
+- [ ] API Trigger (APIキー認証)
+  - `api/dependencies.py` に `verify_api_key`
+  - POST `/api/v1/execute/{agent_id}`
+  - Rate Limiting実装
+- [ ] トリガー管理UI
+
+### Phase 10: 公開エージェント
+
+- [ ] エージェント公開機能
+  - `agents` テーブルに `is_public` 追加
+  - 公開設定UI
+- [ ] 公開エージェント検索・一覧
+  - GET `/api/agents/public`
+  - 検索・フィルタリング
+- [ ] 公開エージェントをワークフローで使用
+  - AgentNode で公開エージェント選択
+
 ---
 
 ## 開発コマンド
@@ -419,10 +634,87 @@ Supabaseダッシュボードから値を取得:
 
 ---
 
+## Personal AI Agent アーキテクチャ
+
+### ワークフロー実行フロー
+
+```text
+┌─────────────────────────────────────────────────────────────────────┐
+│                        Trigger Layer                                 │
+├─────────────┬─────────────┬─────────────┬─────────────────────────────┤
+│   Chat UI   │   Webhook   │  Schedule   │        API Call            │
+│  (Browser)  │ (External)  │(Celery Beat)│   (API Key Auth)           │
+└──────┬──────┴──────┬──────┴──────┬──────┴──────────┬─────────────────┘
+       │             │             │                  │
+       └─────────────┴─────────────┴──────────────────┘
+                              │
+                              ▼
+              ┌───────────────────────────────────┐
+              │       Workflow Engine              │
+              │   (DAG Traversal + Execution)     │
+              └───────────────┬───────────────────┘
+                              │
+       ┌──────────────────────┼──────────────────────┐
+       │                      │                      │
+       ▼                      ▼                      ▼
+┌─────────────┐      ┌─────────────┐      ┌─────────────┐
+│ Agent Node  │      │ Tool Node   │      │ Condition   │
+│ (Own/Public)│      │ (HTTP, etc) │      │   Node      │
+└──────┬──────┘      └──────┬──────┘      └──────┬──────┘
+       │                    │                    │
+       ▼                    │                    │
+┌─────────────┐             │                    │
+│  LiteLLM    │◄────────────┴────────────────────┘
+│ (User Keys) │
+│ via Vault   │
+└─────────────┘
+```
+
+### ノードタイプ
+
+| タイプ | 説明 | 設定項目 |
+|--------|------|----------|
+| Trigger | ワークフロー開始点 | triggerType, webhookPath, cronExpression |
+| Agent | AIエージェント実行 | agentId, agentType (own/public), inputMapping |
+| Tool | 外部ツール呼び出し | toolType (http, db, etc), config |
+| Condition | 条件分岐 | conditions (field, operator, value) |
+| Transform | データ変換 | template, jmespath |
+| Output | 結果出力 | format, target |
+
+### セキュリティ
+
+| 項目 | 対策 |
+|------|------|
+| LLM APIキー | Supabase Vault で暗号化保存、サーバーサイドでのみ復号 |
+| User APIキー | SHA-256ハッシュ保存、生成時のみ表示 |
+| Rate Limiting | APIキー単位でリクエスト数制限 |
+| Webhook | HMAC-SHA256署名検証 |
+| マルチテナンシー | 全クエリに user_id フィルター必須 |
+
+---
+
+## 追加環境変数 (Phase 7以降)
+
+```bash
+# .env (Backend追加分)
+
+# Supabase Vault (Service Role required for Vault access)
+SUPABASE_SERVICE_ROLE_KEY=eyJ...
+
+# Celery (Phase 9)
+CELERY_BROKER_URL=redis://localhost:6379/0
+CELERY_RESULT_BACKEND=redis://localhost:6379/0
+```
+
+---
+
 ## 参考リンク
 
 - [Google A2A Protocol](https://github.com/google-a2a/A2A)
 - [A2A Python SDK](https://github.com/a2aproject/a2a-python)
 - [Supabase Auth](https://supabase.com/auth)
+- [Supabase Vault](https://supabase.com/docs/guides/database/vault)
 - [LiteLLM](https://github.com/BerriAI/litellm)
+- [React Flow](https://reactflow.dev/)
+- [Celery](https://docs.celeryq.dev/)
 - [Storybook](https://storybook.js.org/)
