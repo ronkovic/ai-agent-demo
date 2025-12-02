@@ -118,6 +118,14 @@ export type AgentResponse = {
      * A2A Enabled
      */
     a2a_enabled: boolean;
+    /**
+     * Created At
+     */
+    created_at: string;
+    /**
+     * Updated At
+     */
+    updated_at: string;
 };
 
 /**
@@ -157,11 +165,15 @@ export type AgentUpdate = {
 };
 
 /**
- * ChatMessage
+ * ChatMessageResponse
  *
  * チャットメッセージ.
  */
-export type ChatMessage = {
+export type ChatMessageResponse = {
+    /**
+     * Id
+     */
+    id: string;
     /**
      * Role
      */
@@ -170,6 +182,10 @@ export type ChatMessage = {
      * Content
      */
     content: string;
+    /**
+     * Created At
+     */
+    created_at: string;
 };
 
 /**
@@ -202,13 +218,67 @@ export type ChatResponse = {
      * Conversation Id
      */
     conversation_id: string;
-    message: ChatMessage;
+    message: ChatMessageResponse;
+};
+
+/**
+ * ConversationResponse
+ *
+ * 会話レスポンス.
+ */
+export type ConversationResponse = {
     /**
-     * Tool Calls
+     * Id
      */
-    tool_calls?: Array<{
-        [key: string]: unknown;
-    }> | null;
+    id: string;
+    /**
+     * Agent Id
+     */
+    agent_id: string;
+    /**
+     * User Id
+     */
+    user_id: string;
+    /**
+     * Title
+     */
+    title: string | null;
+    /**
+     * Created At
+     */
+    created_at: string;
+};
+
+/**
+ * ConversationWithMessagesResponse
+ *
+ * 会話とメッセージのレスポンス.
+ */
+export type ConversationWithMessagesResponse = {
+    /**
+     * Id
+     */
+    id: string;
+    /**
+     * Agent Id
+     */
+    agent_id: string;
+    /**
+     * User Id
+     */
+    user_id: string;
+    /**
+     * Title
+     */
+    title: string | null;
+    /**
+     * Created At
+     */
+    created_at: string;
+    /**
+     * Messages
+     */
+    messages: Array<ChatMessageResponse>;
 };
 
 /**
@@ -317,7 +387,7 @@ export type CreateAgentApiAgentsPostResponses = {
     /**
      * Successful Response
      */
-    200: AgentResponse;
+    201: AgentResponse;
 };
 
 export type CreateAgentApiAgentsPostResponse = CreateAgentApiAgentsPostResponses[keyof CreateAgentApiAgentsPostResponses];
@@ -345,13 +415,9 @@ export type DeleteAgentApiAgentsAgentIdDeleteError = DeleteAgentApiAgentsAgentId
 
 export type DeleteAgentApiAgentsAgentIdDeleteResponses = {
     /**
-     * Response Delete Agent Api Agents  Agent Id  Delete
-     *
      * Successful Response
      */
-    200: {
-        [key: string]: string;
-    };
+    204: void;
 };
 
 export type DeleteAgentApiAgentsAgentIdDeleteResponse = DeleteAgentApiAgentsAgentIdDeleteResponses[keyof DeleteAgentApiAgentsAgentIdDeleteResponses];
@@ -464,6 +530,102 @@ export type ChatStreamApiChatStreamPostResponses = {
     200: unknown;
 };
 
+export type ListConversationsApiChatConversationsGetData = {
+    body?: never;
+    path?: never;
+    query: {
+        /**
+         * Agent Id
+         */
+        agent_id: string;
+    };
+    url: '/api/chat/conversations';
+};
+
+export type ListConversationsApiChatConversationsGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ListConversationsApiChatConversationsGetError = ListConversationsApiChatConversationsGetErrors[keyof ListConversationsApiChatConversationsGetErrors];
+
+export type ListConversationsApiChatConversationsGetResponses = {
+    /**
+     * Response List Conversations Api Chat Conversations Get
+     *
+     * Successful Response
+     */
+    200: Array<ConversationResponse>;
+};
+
+export type ListConversationsApiChatConversationsGetResponse = ListConversationsApiChatConversationsGetResponses[keyof ListConversationsApiChatConversationsGetResponses];
+
+export type CreateConversationApiChatConversationsPostData = {
+    body?: never;
+    path?: never;
+    query: {
+        /**
+         * Agent Id
+         */
+        agent_id: string;
+        /**
+         * Title
+         */
+        title?: string | null;
+    };
+    url: '/api/chat/conversations';
+};
+
+export type CreateConversationApiChatConversationsPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type CreateConversationApiChatConversationsPostError = CreateConversationApiChatConversationsPostErrors[keyof CreateConversationApiChatConversationsPostErrors];
+
+export type CreateConversationApiChatConversationsPostResponses = {
+    /**
+     * Successful Response
+     */
+    201: ConversationResponse;
+};
+
+export type CreateConversationApiChatConversationsPostResponse = CreateConversationApiChatConversationsPostResponses[keyof CreateConversationApiChatConversationsPostResponses];
+
+export type DeleteConversationApiChatConversationsConversationIdDeleteData = {
+    body?: never;
+    path: {
+        /**
+         * Conversation Id
+         */
+        conversation_id: string;
+    };
+    query?: never;
+    url: '/api/chat/conversations/{conversation_id}';
+};
+
+export type DeleteConversationApiChatConversationsConversationIdDeleteErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type DeleteConversationApiChatConversationsConversationIdDeleteError = DeleteConversationApiChatConversationsConversationIdDeleteErrors[keyof DeleteConversationApiChatConversationsConversationIdDeleteErrors];
+
+export type DeleteConversationApiChatConversationsConversationIdDeleteResponses = {
+    /**
+     * Successful Response
+     */
+    204: void;
+};
+
+export type DeleteConversationApiChatConversationsConversationIdDeleteResponse = DeleteConversationApiChatConversationsConversationIdDeleteResponses[keyof DeleteConversationApiChatConversationsConversationIdDeleteResponses];
+
 export type GetConversationApiChatConversationsConversationIdGetData = {
     body?: never;
     path: {
@@ -487,50 +649,12 @@ export type GetConversationApiChatConversationsConversationIdGetError = GetConve
 
 export type GetConversationApiChatConversationsConversationIdGetResponses = {
     /**
-     * Response Get Conversation Api Chat Conversations  Conversation Id  Get
-     *
      * Successful Response
      */
-    200: {
-        [key: string]: unknown;
-    };
+    200: ConversationWithMessagesResponse;
 };
 
 export type GetConversationApiChatConversationsConversationIdGetResponse = GetConversationApiChatConversationsConversationIdGetResponses[keyof GetConversationApiChatConversationsConversationIdGetResponses];
-
-export type ListConversationsApiChatConversationsGetData = {
-    body?: never;
-    path?: never;
-    query?: {
-        /**
-         * Agent Id
-         */
-        agent_id?: string | null;
-    };
-    url: '/api/chat/conversations';
-};
-
-export type ListConversationsApiChatConversationsGetErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type ListConversationsApiChatConversationsGetError = ListConversationsApiChatConversationsGetErrors[keyof ListConversationsApiChatConversationsGetErrors];
-
-export type ListConversationsApiChatConversationsGetResponses = {
-    /**
-     * Response List Conversations Api Chat Conversations Get
-     *
-     * Successful Response
-     */
-    200: Array<{
-        [key: string]: unknown;
-    }>;
-};
-
-export type ListConversationsApiChatConversationsGetResponse = ListConversationsApiChatConversationsGetResponses[keyof ListConversationsApiChatConversationsGetResponses];
 
 export type GetAgentCardA2aAgentsAgentIdWellKnownAgentJsonGetData = {
     body?: never;
@@ -659,6 +783,26 @@ export type CancelTaskA2aAgentsAgentIdTasksTaskIdCancelPostResponses = {
 };
 
 export type CancelTaskA2aAgentsAgentIdTasksTaskIdCancelPostResponse = CancelTaskA2aAgentsAgentIdTasksTaskIdCancelPostResponses[keyof CancelTaskA2aAgentsAgentIdTasksTaskIdCancelPostResponses];
+
+export type RootGetData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/';
+};
+
+export type RootGetResponses = {
+    /**
+     * Response Root  Get
+     *
+     * Successful Response
+     */
+    200: {
+        [key: string]: string;
+    };
+};
+
+export type RootGetResponse = RootGetResponses[keyof RootGetResponses];
 
 export type HealthCheckHealthGetData = {
     body?: never;

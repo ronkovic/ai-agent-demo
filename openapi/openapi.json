@@ -49,7 +49,7 @@
           "required": true
         },
         "responses": {
-          "200": {
+          "201": {
             "description": "Successful Response",
             "content": {
               "application/json": {
@@ -187,19 +187,8 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "string"
-                  },
-                  "title": "Response Delete Agent Api Agents  Agent Id  Delete"
-                }
-              }
-            }
+          "204": {
+            "description": "Successful Response"
           },
           "422": {
             "description": "Validation Error",
@@ -296,6 +285,112 @@
         }
       }
     },
+    "/api/chat/conversations": {
+      "get": {
+        "tags": [
+          "chat"
+        ],
+        "summary": "List Conversations",
+        "description": "会話一覧取得.",
+        "operationId": "list_conversations_api_chat_conversations_get",
+        "parameters": [
+          {
+            "name": "agent_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Agent Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ConversationResponse"
+                  },
+                  "title": "Response List Conversations Api Chat Conversations Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "chat"
+        ],
+        "summary": "Create Conversation",
+        "description": "会話作成.",
+        "operationId": "create_conversation_api_chat_conversations_post",
+        "parameters": [
+          {
+            "name": "agent_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Agent Id"
+            }
+          },
+          {
+            "name": "title",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Title"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConversationResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/chat/conversations/{conversation_id}": {
       "get": {
         "tags": [
@@ -322,9 +417,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": true,
-                  "title": "Response Get Conversation Api Chat Conversations  Conversation Id  Get"
+                  "$ref": "#/components/schemas/ConversationWithMessagesResponse"
                 }
               }
             }
@@ -340,50 +433,29 @@
             }
           }
         }
-      }
-    },
-    "/api/chat/conversations": {
-      "get": {
+      },
+      "delete": {
         "tags": [
           "chat"
         ],
-        "summary": "List Conversations",
-        "description": "会話一覧取得.",
-        "operationId": "list_conversations_api_chat_conversations_get",
+        "summary": "Delete Conversation",
+        "description": "会話削除.",
+        "operationId": "delete_conversation_api_chat_conversations__conversation_id__delete",
         "parameters": [
           {
-            "name": "agent_id",
-            "in": "query",
-            "required": false,
+            "name": "conversation_id",
+            "in": "path",
+            "required": true,
             "schema": {
-              "anyOf": [
-                {
-                  "type": "string",
-                  "format": "uuid"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "Agent Id"
+              "type": "string",
+              "format": "uuid",
+              "title": "Conversation Id"
             }
           }
         ],
         "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "additionalProperties": true
-                  },
-                  "title": "Response List Conversations Api Chat Conversations Get"
-                }
-              }
-            }
+          "204": {
+            "description": "Successful Response"
           },
           "422": {
             "description": "Validation Error",
@@ -602,6 +674,29 @@
         }
       }
     },
+    "/": {
+      "get": {
+        "summary": "Root",
+        "description": "ルートエンドポイント.",
+        "operationId": "root__get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "type": "object",
+                  "title": "Response Root  Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/health": {
       "get": {
         "summary": "Health Check",
@@ -777,6 +872,16 @@
           "a2a_enabled": {
             "type": "boolean",
             "title": "A2A Enabled"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Updated At"
           }
         },
         "type": "object",
@@ -789,7 +894,9 @@
           "llm_provider",
           "llm_model",
           "tools",
-          "a2a_enabled"
+          "a2a_enabled",
+          "created_at",
+          "updated_at"
         ],
         "title": "AgentResponse",
         "description": "エージェントレスポンス."
@@ -881,8 +988,13 @@
         "title": "AgentUpdate",
         "description": "エージェント更新リクエスト."
       },
-      "ChatMessage": {
+      "ChatMessageResponse": {
         "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
           "role": {
             "type": "string",
             "title": "Role"
@@ -890,14 +1002,21 @@
           "content": {
             "type": "string",
             "title": "Content"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
           }
         },
         "type": "object",
         "required": [
+          "id",
           "role",
-          "content"
+          "content",
+          "created_at"
         ],
-        "title": "ChatMessage",
+        "title": "ChatMessageResponse",
         "description": "チャットメッセージ."
       },
       "ChatRequest": {
@@ -940,22 +1059,7 @@
             "title": "Conversation Id"
           },
           "message": {
-            "$ref": "#/components/schemas/ChatMessage"
-          },
-          "tool_calls": {
-            "anyOf": [
-              {
-                "items": {
-                  "additionalProperties": true,
-                  "type": "object"
-                },
-                "type": "array"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Tool Calls"
+            "$ref": "#/components/schemas/ChatMessageResponse"
           }
         },
         "type": "object",
@@ -965,6 +1069,104 @@
         ],
         "title": "ChatResponse",
         "description": "チャットレスポンス."
+      },
+      "ConversationResponse": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "agent_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Agent Id"
+          },
+          "user_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "User Id"
+          },
+          "title": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "agent_id",
+          "user_id",
+          "title",
+          "created_at"
+        ],
+        "title": "ConversationResponse",
+        "description": "会話レスポンス."
+      },
+      "ConversationWithMessagesResponse": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "agent_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Agent Id"
+          },
+          "user_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "User Id"
+          },
+          "title": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "messages": {
+            "items": {
+              "$ref": "#/components/schemas/ChatMessageResponse"
+            },
+            "type": "array",
+            "title": "Messages"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "agent_id",
+          "user_id",
+          "title",
+          "created_at",
+          "messages"
+        ],
+        "title": "ConversationWithMessagesResponse",
+        "description": "会話とメッセージのレスポンス."
       },
       "HTTPValidationError": {
         "properties": {

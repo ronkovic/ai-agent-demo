@@ -223,13 +223,14 @@ CREATE TABLE agent_cards (
 - [x] Claude Code hooks設定 (git commit前にPLANNING.md更新リマインダー)
 - [x] MCP Kiri/Serena オンボーディング (コード検索・IDE支援)
 
-### Phase 2: エージェント基本機能
+### Phase 2: エージェント基本機能 ✅
 
-- [ ] DBモデル・マイグレーション作成
-- [ ] エージェントCRUD API実装
-- [ ] OpenAPIからフロントエンドクライアント生成
-- [ ] LLM統合 (LiteLLM)
-- [ ] チャットAPI実装 (SSEストリーミング)
+- [x] DBモデル・マイグレーション作成 (SQLAlchemy + Alembic)
+- [x] エージェントCRUD API実装
+- [x] OpenAPIからフロントエンドクライアント生成
+- [x] LLM統合 (LiteLLM)
+- [x] チャットAPI実装 (SSEストリーミング)
+- [x] テスト追加 (pytest-asyncio)
 
 ### Phase 3: フロントエンドUI
 

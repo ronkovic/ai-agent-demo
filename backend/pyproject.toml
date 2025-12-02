@@ -15,6 +15,7 @@ dependencies = [
     "sqlalchemy>=2.0.0",
     "asyncpg>=0.30.0",
     "alembic>=1.14.0",
+    "greenlet>=3.0.0",
     # LLM
     "litellm>=1.50.0",
     # Auth
@@ -27,6 +28,8 @@ dependencies = [
     "pydantic-settings>=2.6.0",
     "httpx>=0.28.0",
     "python-multipart>=0.0.17",
+    # SSE
+    "sse-starlette>=2.0.0",
 ]
 
 [project.optional-dependencies]
@@ -58,4 +61,5 @@ strict = true
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
 testpaths = ["tests"]
