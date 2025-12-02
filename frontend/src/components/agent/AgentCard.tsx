@@ -23,6 +23,7 @@ export function AgentCard({
 
   return (
     <div
+      data-testid="agent-card"
       className={cn(
         "group relative flex flex-col justify-between rounded-lg border bg-white p-6 shadow-sm transition-all hover:shadow-md dark:border-gray-800 dark:bg-gray-950",
         className

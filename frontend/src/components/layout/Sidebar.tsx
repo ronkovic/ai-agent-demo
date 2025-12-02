@@ -19,7 +19,7 @@ export function Sidebar({
   className,
 }: SidebarProps) {
   return (
-    <div
+    <aside
       className={cn(
         "flex h-full w-64 flex-col border-r bg-gray-50/50 dark:bg-gray-900/50",
         className
@@ -68,6 +68,6 @@ export function Sidebar({
       <div className="border-t p-4">
         {/* User profile or settings could go here */}
       </div>
-    </div>
+    </aside>
   );
 }

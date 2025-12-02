@@ -283,6 +283,7 @@ CREATE TABLE agent_cards (
   - mainブランチプロテクション設定 (required status checks)
   - jsdom依存追加 (vitest unit tests用)
   - SQLite/PostgreSQL互換対応 (GUID, PortableJSON TypeDecorators)
+  - E2Eテスト対応: アクセシビリティ改善 (title, aside, data-testid, aria-label, htmlFor)
 - [x] ドキュメント・CLAUDE.md更新
   - CLAUDE.md 包括的更新 (アーキテクチャ、コマンド、ガイドライン)
   - README.md 作成 (ルート、backend、frontend)

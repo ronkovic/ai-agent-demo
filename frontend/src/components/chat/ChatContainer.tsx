@@ -42,7 +42,7 @@ export function ChatContainer({
 
   return (
     <div className={cn("flex h-full flex-col", className)}>
-      <div className="flex-1 overflow-y-auto p-4">
+      <div className="flex-1 overflow-y-auto p-4" data-testid="chat-messages">
         <div className="mx-auto max-w-3xl space-y-4">
           {messages.length === 0 ? (
             <div className="flex h-full flex-col items-center justify-center text-center text-gray-500">
