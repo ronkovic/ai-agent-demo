@@ -1,5 +1,7 @@
 # AI Agent Demo Project - 実装プラン
 
+> Last reviewed: 2025-12-03
+
 ## 概要
 
 マルチユーザー対応のPersonal AI Agent SaaSプラットフォーム。

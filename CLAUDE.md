@@ -220,3 +220,20 @@ The project has MCP servers configured in `.mcp.json`:
 cd frontend
 npm run test:e2e:headed  # Watch tests run in browser
 ```
+
+## Maintenance Reminders
+
+### Copyright Year Update (著作権年更新)
+When making updates in a new calendar year, update the copyright year in the following files:
+
+**Current format**: `Copyright (c) 2024-2025`
+- `2024` = First published year (固定)
+- `2025` = Last updated year (更新時に変更)
+
+**Files to update**:
+1. `LICENSE` - Line 5 and lines 253-255
+2. `COPYRIGHT` - Line 5 and source file header templates
+3. `README.md` - License section
+4. `docs/PLANNING.md` - License section
+
+**Example**: In 2026, change `2024-2025` → `2024-2026`
