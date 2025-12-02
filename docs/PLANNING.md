@@ -220,6 +220,7 @@ CREATE TABLE agent_cards (
 - [x] Taskfile.yml タスクランナー追加
 - [x] vitest ユニットテスト設定 (Frontend)
 - [x] pytest テスト設定 (Backend)
+- [x] Claude Code hooks設定 (git commit前にPLANNING.md更新リマインダー)
 
 ### Phase 2: エージェント基本機能
 

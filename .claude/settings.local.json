@@ -7,5 +7,23 @@
     "chrome-devtools",
     "next-devtools",
     "aws-mcp"
-  ]
+  ],
+  "permissions": {
+    "allow": [
+      "Bash(npx create-next-app@latest:*)"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "input=$(cat); if echo \"$input\" | grep -q '\"command\".*git commit'; then if ! git diff --cached --name-only | grep -q 'docs/PLANNING.md'; then echo '⚠️ コミット前に docs/PLANNING.md を確認・更新してください。PLANNING.mdをステージングに追加してから再度コミットを実行してください。' >&2; exit 2; fi; fi; exit 0"
+          }
+        ]
+      }
+    ]
+  }
 }
