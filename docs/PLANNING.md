@@ -364,6 +364,35 @@ docker-compose logs -f backend   # ログ確認
 
 ---
 
+## CI/CD 注意事項
+
+### コミット前チェック
+
+- `docs/PLANNING.md` がステージングされていないとコミットがブロックされる（pre-commit hook）
+- 内容変更がなくても `git add docs/PLANNING.md` が必要
+
+### E2Eテスト (Playwright)
+
+| 項目 | 注意点 |
+|------|--------|
+| APIモック | `page.route()` を使用（`frontend/e2e/fixtures.ts`）。MSWはNext.jsのrewritesをモックできない |
+| セレクタ | `button` vs `link` を正確に。複数マッチする場合は具体的な名前を指定 |
+| アクセシビリティ | `data-testid`, `aria-label`, `htmlFor`+`id`, セマンティック要素（`<aside>`, `<header>`）が必須 |
+
+### バックエンドテスト (pytest)
+
+- CIではSQLite使用（PostgreSQL不要）
+- UUID/JSON型は `GUID`, `PortableJSON` TypeDecoratorで互換性確保
+- 参照: `backend/src/agent_platform/db/types.py`
+
+### Lint
+
+- Backend: `uv run ruff check` - I001(import順), F401(未使用import), N815(変数名) など
+- Frontend: `npm run lint` - react-hooks/rules-of-hooks, exhaustive-deps など
+- 警告は許容、エラーはブロック
+
+---
+
 ## 参考リンク
 
 - [Google A2A Protocol](https://github.com/google-a2a/A2A)
