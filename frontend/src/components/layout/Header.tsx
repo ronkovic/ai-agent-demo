@@ -1,6 +1,7 @@
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { ThemeToggle } from "@/components/layout/ThemeToggle";
+import { UserMenu } from "@/components/layout/UserMenu";
 import { cn } from "@/lib/utils";
 
 interface HeaderProps {
@@ -9,6 +10,7 @@ interface HeaderProps {
   onBack?: () => void;
   className?: string;
   showThemeToggle?: boolean;
+  showUserMenu?: boolean;
 }
 
 export function Header({
@@ -17,11 +19,12 @@ export function Header({
   onBack,
   className,
   showThemeToggle = true,
+  showUserMenu = true,
 }: HeaderProps) {
   return (
     <header
       className={cn(
-        "flex h-14 items-center justify-between border-b bg-white px-4 dark:bg-gray-950",
+        "hidden md:flex h-14 items-center justify-between border-b bg-white px-4 dark:bg-gray-950",
         className
       )}
     >
@@ -43,7 +46,10 @@ export function Header({
           </h1>
         )}
       </div>
-      {showThemeToggle && <ThemeToggle />}
+      <div className="flex items-center gap-2">
+        {showThemeToggle && <ThemeToggle />}
+        {showUserMenu && <UserMenu />}
+      </div>
     </header>
   );
 }

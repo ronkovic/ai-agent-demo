@@ -8,6 +8,8 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from agent_platform.api.routes import a2a, agents, chat
 from agent_platform.core.config import settings
+from agent_platform.db.models import Base
+from agent_platform.db.session import engine
 from agent_platform.tools import register_default_tools
 
 logger = logging.getLogger(__name__)
@@ -17,6 +19,11 @@ logger = logging.getLogger(__name__)
 async def lifespan(app: FastAPI):
     """Application lifespan events."""
     # Startup
+    logger.info("Creating database tables...")
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
+    logger.info("Database tables created successfully")
+
     logger.info("Registering default tools...")
     register_default_tools()
     logger.info("Tools registered successfully")

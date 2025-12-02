@@ -151,14 +151,12 @@ When the backend is running, visit:
 └─────────────────────────────────────────────────────────────┘
 ```
 
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
 ## License
 
-MIT License - see [LICENSE](LICENSE) for details.
+**Proprietary License** - Copyright (c) 2024-2025 Kazuki Takahashi (高橋 一樹). All Rights Reserved.
+
+This software is proprietary and confidential. Unauthorized copying, modification, distribution, or use of this software is strictly prohibited without prior written permission from the copyright holder.
+
+For commercial licensing inquiries, please contact: ron.kovic.0704@gmail.com
+
+See [LICENSE](LICENSE) for full terms and conditions.

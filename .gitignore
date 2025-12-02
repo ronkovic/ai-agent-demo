@@ -50,3 +50,14 @@ npm-debug.log*
 
 # MCP local files
 .kiri/
+.mcp.json
+
+# Claude Code local settings
+.claude/
+
+# SQLite databases
+*.db
+
+# Playwright test outputs
+playwright-report/
+test-results/

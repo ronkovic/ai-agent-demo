@@ -33,8 +33,8 @@ test.describe("Home Page", () => {
   });
 
   test("should support theme toggle", async ({ page }) => {
-    // Look for theme toggle button
-    const themeToggle = page.getByRole("button", { name: /theme|テーマ/i });
+    // Look for theme toggle button (use first() because there may be mobile and desktop toggles)
+    const themeToggle = page.getByRole("button", { name: /theme|テーマ/i }).first();
 
     if (await themeToggle.isVisible()) {
       await themeToggle.click();

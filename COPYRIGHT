@@ -1,0 +1,82 @@
+================================================================================
+AI Agent Platform - Personal AI Agent SaaS
+================================================================================
+
+Copyright (c) 2024-2025 Kazuki Takahashi (高橋 一樹)
+All Rights Reserved.
+
+Email: ron.kovic.0704@gmail.com
+Repository: https://github.com/ronkovic/ai-agent-demo
+
+================================================================================
+SOURCE FILE HEADER TEMPLATE / ソースファイルヘッダーテンプレート
+================================================================================
+
+For Python files (.py):
+--------------------------------------------------------------------------------
+# Copyright (c) 2024-2025 Kazuki Takahashi. All Rights Reserved.
+# This software is proprietary and confidential.
+# Unauthorized copying, modification, or distribution is strictly prohibited.
+# See LICENSE file for details.
+--------------------------------------------------------------------------------
+
+For TypeScript/JavaScript files (.ts, .tsx, .js, .jsx):
+--------------------------------------------------------------------------------
+/**
+ * Copyright (c) 2024-2025 Kazuki Takahashi. All Rights Reserved.
+ * This software is proprietary and confidential.
+ * Unauthorized copying, modification, or distribution is strictly prohibited.
+ * See LICENSE file for details.
+ */
+--------------------------------------------------------------------------------
+
+For HTML/Markdown files:
+--------------------------------------------------------------------------------
+<!--
+  Copyright (c) 2024-2025 Kazuki Takahashi. All Rights Reserved.
+  This software is proprietary and confidential.
+  Unauthorized copying, modification, or distribution is strictly prohibited.
+  See LICENSE file for details.
+-->
+--------------------------------------------------------------------------------
+
+================================================================================
+VERSION HISTORY / バージョン履歴
+================================================================================
+
+Version   Date          Description
+--------------------------------------------------------------------------------
+1.0.0     2024-XX-XX    Initial release / 初期リリース
+1.1.0     2025-12-03    Personal AI Agent SaaS architecture added
+                        パーソナルAIエージェントSaaSアーキテクチャ追加
+
+================================================================================
+LEGAL REGISTRATION / 法的登録情報
+================================================================================
+
+This work is registered and protected under:
+本作品は以下により登録・保護されています：
+
+- Japanese Copyright Law (著作権法)
+- Berne Convention for the Protection of Literary and Artistic Works
+  (文学的及び美術的著作物の保護に関するベルヌ条約)
+- WIPO Copyright Treaty (WIPO著作権条約)
+
+Evidence of creation and ownership:
+創作および所有の証拠：
+
+- Git commit history (Gitコミット履歴)
+- GitHub repository timestamps (GitHubリポジトリのタイムスタンプ)
+- Development documentation (開発ドキュメント)
+
+================================================================================
+CONTACT FOR LICENSING / ライセンスに関するお問い合わせ
+================================================================================
+
+For commercial licensing inquiries:
+商用ライセンスに関するお問い合わせ：
+
+Kazuki Takahashi (高橋 一樹)
+Email: ron.kovic.0704@gmail.com
+
+================================================================================

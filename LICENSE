@@ -1,0 +1,270 @@
+PROPRIETARY SOFTWARE LICENSE AGREEMENT
+プロプライエタリソフトウェアライセンス契約
+
+================================================================================
+Copyright (c) 2024-2025 Kazuki Takahashi
+All Rights Reserved.
+
+Contact: ron.kovic.0704@gmail.com
+Repository: https://github.com/ronkovic/ai-agent-demo
+Initial Publication Date: 2024
+Last Updated: December 3, 2025
+================================================================================
+
+IMPORTANT - READ CAREFULLY: This Proprietary Software License Agreement
+("Agreement") is a legal agreement between you (either an individual or a
+single entity) and Kazuki Takahashi ("Licensor", "Copyright Holder") for the
+software product identified above, which includes computer software and may
+include associated media, printed materials, and "online" or electronic
+documentation ("Software").
+
+重要 - よくお読みください: 本プロプライエタリソフトウェアライセンス契約
+（以下「本契約」）は、お客様（個人または法人）と高橋一樹（以下「ライセンサー」
+「著作権者」）との間の、上記で特定されるソフトウェア製品に関する法的契約です。
+
+================================================================================
+1. GRANT OF LICENSE / ライセンスの付与
+================================================================================
+
+1.1 This Software is proprietary and confidential. No license, right, or
+    interest in any trademark, trade name, or service mark of the Licensor is
+    granted under this Agreement.
+
+    本ソフトウェアは専有かつ機密です。本契約に基づき、ライセンサーの商標、
+    商号、またはサービスマークに関するライセンス、権利、または利益は一切
+    付与されません。
+
+1.2 Subject to the terms of this Agreement, Licensor grants you a limited,
+    non-exclusive, non-transferable, revocable license to:
+    - View the source code for personal, educational purposes only
+    - Fork the repository for personal, non-commercial experimentation only
+
+    本契約の条件に従い、ライセンサーはお客様に以下の限定的、非独占的、
+    譲渡不可、取消可能なライセンスを付与します：
+    - 個人的、教育目的でのみソースコードを閲覧すること
+    - 個人的、非商用の実験目的でのみリポジトリをフォークすること
+
+================================================================================
+2. RESTRICTIONS / 制限事項
+================================================================================
+
+2.1 You may NOT, without prior written permission from the Licensor:
+
+    ライセンサーからの事前の書面による許可なく、以下の行為を行うことは
+    できません：
+
+    a) Use the Software for any commercial purpose
+       商用目的でソフトウェアを使用すること
+
+    b) Copy, reproduce, or duplicate the Software or any portion thereof
+       ソフトウェアまたはその一部を複製、再生、または複写すること
+
+    c) Modify, adapt, translate, reverse engineer, decompile, disassemble,
+       or create derivative works based on the Software
+       ソフトウェアを改変、翻案、翻訳、リバースエンジニアリング、逆コンパイル、
+       逆アセンブル、またはソフトウェアに基づく派生物を作成すること
+
+    d) Distribute, sublicense, lease, rent, loan, or otherwise transfer the
+       Software to any third party
+       ソフトウェアを第三者に配布、サブライセンス、リース、レンタル、貸与、
+       またはその他の方法で譲渡すること
+
+    e) Remove or alter any proprietary notices, labels, or marks on the Software
+       ソフトウェア上の所有権表示、ラベル、またはマークを削除または変更すること
+
+    f) Use the Software to provide services to third parties (SaaS, PaaS, etc.)
+       ソフトウェアを使用して第三者にサービスを提供すること（SaaS、PaaS等）
+
+    g) Incorporate the Software into another product for distribution
+       配布目的で他の製品にソフトウェアを組み込むこと
+
+    h) Use any part of the Software's code, architecture, or design in other
+       projects without explicit written permission
+       明示的な書面による許可なく、ソフトウェアのコード、アーキテクチャ、
+       またはデザインの一部を他のプロジェクトで使用すること
+
+================================================================================
+3. COMMERCIAL LICENSING / 商用ライセンス
+================================================================================
+
+3.1 For commercial use, including but not limited to:
+    - Operating a business using this Software
+    - Integrating the Software into commercial products
+    - Using the Software to provide paid services
+    - Internal business use within a company
+
+    以下を含むがこれに限定されない商用利用の場合：
+    - 本ソフトウェアを使用したビジネスの運営
+    - 商用製品へのソフトウェアの統合
+    - 有料サービスを提供するためのソフトウェアの使用
+    - 企業内での内部ビジネス使用
+
+3.2 You MUST obtain a separate Commercial License Agreement from the Licensor.
+    Contact: ron.kovic.0704@gmail.com
+
+    ライセンサーから別途商用ライセンス契約を取得する必要があります。
+    連絡先: ron.kovic.0704@gmail.com
+
+================================================================================
+4. INTELLECTUAL PROPERTY / 知的財産権
+================================================================================
+
+4.1 The Software and all copies thereof are proprietary to Licensor and title
+    thereto remains in Licensor. The Software is copyrighted and is protected
+    by Japanese copyright laws and international treaty provisions.
+
+    本ソフトウェアおよびそのすべてのコピーはライセンサーの専有物であり、
+    その権原はライセンサーに帰属します。本ソフトウェアは著作権により保護
+    されており、日本の著作権法および国際条約の規定により保護されています。
+
+4.2 Licensor reserves all rights not expressly granted herein, including
+    without limitation all patent rights, copyrights, trademarks, trade
+    secrets, and other intellectual property rights.
+
+    ライセンサーは、本契約で明示的に付与されていないすべての権利
+    （特許権、著作権、商標権、営業秘密、およびその他の知的財産権を含むが
+    これに限定されない）を留保します。
+
+================================================================================
+5. CONFIDENTIALITY / 機密保持
+================================================================================
+
+5.1 The Software contains trade secrets and proprietary information that
+    belongs to Licensor. You agree to maintain the confidentiality of the
+    Software and not to disclose the Software or any information derived
+    therefrom to any third party.
+
+    本ソフトウェアには、ライセンサーに帰属する営業秘密および専有情報が
+    含まれています。お客様は、ソフトウェアの機密性を維持し、ソフトウェア
+    またはそこから派生した情報を第三者に開示しないことに同意します。
+
+================================================================================
+6. WARRANTY DISCLAIMER / 保証の免責
+================================================================================
+
+6.1 THE SOFTWARE IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+    FITNESS FOR A PARTICULAR PURPOSE, AND NONINFRINGEMENT. IN NO EVENT SHALL
+    THE LICENSOR BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY.
+
+    本ソフトウェアは、明示または黙示を問わず、商品性、特定目的への適合性、
+    および非侵害の保証を含むがこれに限定されない、いかなる種類の保証もなく
+    「現状のまま」提供されます。いかなる場合も、ライセンサーは請求、損害、
+    またはその他の責任について責任を負いません。
+
+================================================================================
+7. LIMITATION OF LIABILITY / 責任の制限
+================================================================================
+
+7.1 IN NO EVENT SHALL LICENSOR BE LIABLE FOR ANY SPECIAL, INCIDENTAL, INDIRECT,
+    OR CONSEQUENTIAL DAMAGES WHATSOEVER ARISING OUT OF OR IN CONNECTION WITH
+    YOUR USE OF OR INABILITY TO USE THE SOFTWARE.
+
+    いかなる場合も、ライセンサーは、お客様による本ソフトウェアの使用または
+    使用不能に起因または関連して生じる特別損害、付随的損害、間接損害、
+    または結果的損害について責任を負いません。
+
+================================================================================
+8. TERMINATION / 契約終了
+================================================================================
+
+8.1 This Agreement is effective until terminated. This Agreement will terminate
+    automatically without notice from Licensor if you fail to comply with any
+    provision of this Agreement.
+
+    本契約は終了するまで有効です。お客様が本契約のいずれかの条項に違反した
+    場合、本契約はライセンサーからの通知なく自動的に終了します。
+
+8.2 Upon termination, you must destroy all copies of the Software in your
+    possession.
+
+    終了時には、お客様が所有するソフトウェアのすべてのコピーを破棄する
+    必要があります。
+
+================================================================================
+9. INDEMNIFICATION / 補償
+================================================================================
+
+9.1 You agree to indemnify, defend, and hold harmless Licensor from and against
+    any and all claims, damages, losses, costs, and expenses (including
+    reasonable attorneys' fees) arising from your use of the Software or your
+    violation of this Agreement.
+
+    お客様は、本ソフトウェアの使用または本契約への違反に起因するすべての
+    請求、損害、損失、費用、および経費（合理的な弁護士費用を含む）から
+    ライセンサーを補償し、防御し、免責することに同意します。
+
+================================================================================
+10. GOVERNING LAW AND JURISDICTION / 準拠法および管轄
+================================================================================
+
+10.1 This Agreement shall be governed by and construed in accordance with the
+     laws of Japan, without regard to its conflict of laws principles.
+
+     本契約は、法の抵触に関する原則にかかわらず、日本法に準拠し、
+     日本法に従って解釈されます。
+
+10.2 Any dispute arising out of or relating to this Agreement shall be subject
+     to the exclusive jurisdiction of the Tokyo District Court, Japan.
+
+     本契約に起因または関連するすべての紛争は、日本の東京地方裁判所の
+     専属管轄に服するものとします。
+
+================================================================================
+11. ENTIRE AGREEMENT / 完全合意
+================================================================================
+
+11.1 This Agreement constitutes the entire agreement between you and Licensor
+     concerning the Software and supersedes all prior or contemporaneous
+     communications regarding the Software.
+
+     本契約は、本ソフトウェアに関するお客様とライセンサー間の完全な合意を
+     構成し、本ソフトウェアに関するすべての以前または同時期の通信に
+     優先します。
+
+================================================================================
+12. SEVERABILITY / 可分性
+================================================================================
+
+12.1 If any provision of this Agreement is held to be unenforceable, such
+     provision shall be reformed only to the extent necessary to make it
+     enforceable, and the remaining provisions shall remain in full force
+     and effect.
+
+     本契約のいずれかの条項が執行不能と判断された場合、当該条項は
+     執行可能にするために必要な範囲でのみ修正され、残りの条項は
+     完全に有効であり続けます。
+
+================================================================================
+ACKNOWLEDGMENT / 承認
+================================================================================
+
+BY USING, COPYING, OR DISTRIBUTING THE SOFTWARE, YOU ACKNOWLEDGE THAT YOU HAVE
+READ THIS AGREEMENT, UNDERSTAND IT, AND AGREE TO BE BOUND BY ITS TERMS AND
+CONDITIONS.
+
+本ソフトウェアを使用、複製、または配布することにより、お客様は本契約を読み、
+理解し、その条件に拘束されることに同意したことを承認します。
+
+================================================================================
+COPYRIGHT NOTICE / 著作権表示
+================================================================================
+
+AI Agent Platform - Personal AI Agent SaaS
+Copyright (c) 2024-2025 Kazuki Takahashi (高橋 一樹)
+Email: ron.kovic.0704@gmail.com
+All Rights Reserved.
+
+First Published: 2024
+Current Version Date: December 3, 2025
+
+This software and its documentation are protected by copyright law and
+international treaties. Unauthorized reproduction or distribution of this
+software, or any portion of it, may result in severe civil and criminal
+penalties, and will be prosecuted to the maximum extent possible under law.
+
+本ソフトウェアおよびその文書は、著作権法および国際条約により保護されています。
+本ソフトウェアまたはその一部の無断複製または配布は、厳しい民事および刑事罰の
+対象となる可能性があり、法律で認められる最大限の範囲で訴追されます。
+
+================================================================================

@@ -14,6 +14,7 @@ from sqlalchemy.ext.asyncio import (
     create_async_engine,
 )
 
+from agent_platform.api.deps import get_current_user_id
 from agent_platform.db.models import Base
 from agent_platform.db.session import get_db
 from agent_platform.main import app
@@ -75,13 +76,19 @@ async def db_session(db_engine: AsyncEngine) -> AsyncGenerator[AsyncSession, Non
 
 
 @pytest_asyncio.fixture
-async def client(db_session: AsyncSession) -> AsyncGenerator[AsyncClient, None]:
-    """Create async test client with database session override."""
+async def client(
+    db_session: AsyncSession, test_user_id: UUID
+) -> AsyncGenerator[AsyncClient, None]:
+    """Create async test client with database session and auth override."""
 
     async def override_get_db():
         yield db_session
 
+    async def override_get_current_user_id():
+        return test_user_id
+
     app.dependency_overrides[get_db] = override_get_db
+    app.dependency_overrides[get_current_user_id] = override_get_current_user_id
 
     transport = ASGITransport(app=app)
     async with AsyncClient(transport=transport, base_url="http://test") as ac:
