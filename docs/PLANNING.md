@@ -718,3 +718,12 @@ CELERY_RESULT_BACKEND=redis://localhost:6379/0
 - [React Flow](https://reactflow.dev/)
 - [Celery](https://docs.celeryq.dev/)
 - [Storybook](https://storybook.js.org/)
+
+---
+
+## ライセンス
+
+**Proprietary License** - Copyright (c) 2024-2025 Kazuki Takahashi. All Rights Reserved.
+
+商用利用には別途ライセンス契約が必要です。
+連絡先: ron.kovic.0704@gmail.com
