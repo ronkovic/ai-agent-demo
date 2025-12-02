@@ -1,36 +1,183 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Frontend - AI Agent Platform
 
-## Getting Started
+Next.js 15 frontend for the AI Agent Platform.
 
-First, run the development server:
+## Architecture
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+```
+src/
+├── app/                    # App Router pages
+│   ├── page.tsx            # Home page
+│   ├── agents/
+│   │   ├── page.tsx        # Agent list
+│   │   ├── new/page.tsx    # Create agent
+│   │   └── [id]/
+│   │       ├── page.tsx    # Agent chat
+│   │       └── settings/   # Agent settings
+│   └── layout.tsx          # Root layout
+├── components/
+│   ├── ui/                 # shadcn/ui components
+│   ├── layout/             # Layout components
+│   ├── chat/               # Chat components
+│   └── agents/             # Agent components
+├── hooks/                  # Custom React hooks
+│   ├── use-agents.ts       # Agent data hook
+│   └── use-chat.ts         # Chat functionality
+├── lib/
+│   ├── api/                # API client (generated)
+│   └── utils.ts            # Utility functions
+└── types/                  # TypeScript types
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Setup
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+# Install dependencies
+npm install
+# or
+task setup:frontend
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Environment Variables
 
-## Learn More
+Create `.env.local` file:
 
-To learn more about Next.js, take a look at the following resources:
+```env
+NEXT_PUBLIC_API_URL=http://localhost:8000
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Development
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```bash
+# Start development server
+npm run dev
+# or
+task dev:frontend
+```
 
-## Deploy on Vercel
+Frontend will be available at http://localhost:3000
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Scripts
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+| Script | Description |
+|--------|-------------|
+| `npm run dev` | Start development server |
+| `npm run build` | Build for production |
+| `npm run start` | Start production server |
+| `npm run lint` | Run ESLint |
+| `npm run type-check` | TypeScript type checking |
+| `npm test` | Run unit tests (Vitest) |
+| `npm run test:e2e` | Run E2E tests (Playwright) |
+| `npm run storybook` | Start Storybook |
+| `npm run build-storybook` | Build Storybook |
+| `npm run generate-api` | Generate API client |
+
+## Component Library
+
+UI components are built with:
+- **Radix UI**: Accessible primitives
+- **shadcn/ui**: Pre-styled components
+- **Tailwind CSS**: Utility-first styling
+
+### Adding New Components
+
+```bash
+# Add shadcn/ui component
+npx shadcn-ui@latest add button
+```
+
+## State Management
+
+- **Server State**: React Query (via OpenAPI client)
+- **Client State**: React hooks + Context
+- **Form State**: React Hook Form + Zod
+
+## API Client
+
+API client is auto-generated from OpenAPI schema:
+
+```bash
+# Generate client
+task openapi
+```
+
+Generated files are in `src/lib/api/generated/`.
+
+## Testing
+
+### Unit Tests (Vitest)
+
+```bash
+# Run tests
+npm test
+
+# Watch mode
+npm run test:watch
+
+# Coverage
+npm run test:coverage
+```
+
+### E2E Tests (Playwright)
+
+```bash
+# Run E2E tests
+npm run test:e2e
+
+# With UI
+npm run test:e2e:ui
+
+# Headed mode
+npm run test:e2e:headed
+```
+
+E2E tests use MSW for API mocking.
+
+## Storybook
+
+Component documentation and visual testing:
+
+```bash
+# Start Storybook
+npm run storybook
+
+# Build static Storybook
+npm run build-storybook
+```
+
+Stories are in `stories/` directory.
+
+## Code Style
+
+- **Linter**: ESLint with Next.js config
+- **Formatter**: Prettier
+- **Type Checking**: TypeScript strict mode
+
+```bash
+# Lint
+npm run lint
+
+# Format
+npx prettier --write "src/**/*.{ts,tsx}"
+
+# Type check
+npm run type-check
+```
+
+## Pages
+
+| Route | Description |
+|-------|-------------|
+| `/` | Home page |
+| `/agents` | Agent list |
+| `/agents/new` | Create new agent |
+| `/agents/[id]` | Agent chat interface |
+| `/agents/[id]/settings` | Agent settings |
+
+## Theme
+
+Dark/Light theme support via `next-themes`:
+
+- Theme toggle in header
+- System preference detection
+- Persistent preference in localStorage

@@ -62,6 +62,12 @@ tasks:
     cmds:
       - npm run build-storybook
 
+  storybook:serve:
+    desc: ビルド済みStorybookを配信
+    dir: "{{.FRONTEND_DIR}}"
+    cmds:
+      - npx serve storybook-static -p 6006
+
   # ===================
   # OpenAPI
   # ===================
@@ -126,6 +132,24 @@ tasks:
     dir: "{{.FRONTEND_DIR}}"
     cmds:
       - npm test
+
+  test:e2e:
+    desc: E2Eテストを実行
+    dir: "{{.FRONTEND_DIR}}"
+    cmds:
+      - npm run test:e2e
+
+  test:e2e:ui:
+    desc: E2Eテストを UI モードで実行
+    dir: "{{.FRONTEND_DIR}}"
+    cmds:
+      - npm run test:e2e:ui
+
+  test:all:
+    desc: 全テスト (unit + e2e) を実行
+    cmds:
+      - task: test
+      - task: test:e2e
 
   # ===================
   # リント・フォーマット

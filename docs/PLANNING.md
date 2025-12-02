@@ -264,11 +264,19 @@ CREATE TABLE agent_cards (
 - [x] A2A APIルート (api/routes/a2a.py)
 - [x] テスト追加 (test_a2a.py: 33テスト)
 
-### Phase 6: 統合・テスト
+### Phase 6: 統合・テスト ✅
 
-- [ ] E2Eテスト
-- [ ] Storybookビルド・デプロイ設定
-- [ ] ドキュメント・CLAUDE.md更新
+- [x] E2Eテスト (Playwright + MSW)
+  - playwright.config.ts設定
+  - MSWハンドラー (e2e/mocks/)
+  - E2Eテストケース (home, agents, chat)
+- [x] Storybookビルド・デプロイ設定
+  - GitHub Actions ワークフロー (.github/workflows/storybook.yml)
+  - GitHub Pages デプロイ
+  - Taskfile.yml タスク追加 (storybook:serve, test:e2e)
+- [x] ドキュメント・CLAUDE.md更新
+  - CLAUDE.md 包括的更新 (アーキテクチャ、コマンド、ガイドライン)
+  - README.md 作成 (ルート、backend、frontend)
 
 ---
 
