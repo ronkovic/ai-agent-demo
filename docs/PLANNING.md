@@ -213,7 +213,7 @@ CREATE TABLE agent_cards (
 - [x] バックエンドプロジェクト初期化 (`uv init`)
 - [x] フロントエンドプロジェクト初期化 (`npx create-next-app`)
 - [x] Docker Compose設定 (PostgreSQL, Backend, Frontend)
-- [ ] Supabase設定 (Auth + DB)
+- [x] Supabase設定 (Auth + DB) - モック認証実装完了、Supabase接続は環境変数で切り替え可能
 - [x] 基本的なAPI構造作成
 - [x] OpenAPI自動生成設定 (FastAPI → openapi.json → TypeScript型)
 - [x] Storybook導入・設定
@@ -240,7 +240,14 @@ CREATE TABLE agent_cards (
 - [x] カスタムフック (useAgents, useChat with SSE)
 - [x] ページ統合・ルーティング (5ページ実装)
 - [x] テーマ切り替え (ThemeToggle: システム/ライト/ダーク)
-- [ ] 認証フロー実装 (Phase 5でSupabase Auth統合予定)
+- [x] 認証フロー実装
+  - Backend JWT認証 (auth/jwt.py, deps.py)
+  - Frontend Supabaseクライアント (@supabase/ssr)
+  - AuthContext & useAuth フック
+  - 認証ページ (login, signup, callback)
+  - 保護ルート & UserMenu
+  - モック認証対応 (Supabase未設定時も開発可能)
+  - E2E認証テスト追加
 
 ### Phase 4: ツール機能 ✅
 

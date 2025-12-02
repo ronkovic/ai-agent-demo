@@ -2,6 +2,11 @@
 
 from uuid import UUID
 
+from fastapi import Depends, HTTPException
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
+
+from ..auth.jwt import AuthError, extract_user_id, verify_supabase_token
+from ..core.config import settings
 from ..db import AgentRepository, ConversationRepository, MessageRepository
 from ..db.session import get_db
 
@@ -13,6 +18,10 @@ __all__ = [
     "get_message_repo",
     "get_current_user_id",
 ]
+
+# HTTP Bearer token security scheme
+# auto_error=False allows us to handle missing tokens ourselves
+security = HTTPBearer(auto_error=False)
 
 
 def get_agent_repo() -> AgentRepository:
@@ -30,11 +39,41 @@ def get_message_repo() -> MessageRepository:
     return MessageRepository()
 
 
-async def get_current_user_id() -> UUID:
-    """Get current user ID.
+async def get_current_user_id(
+    credentials: HTTPAuthorizationCredentials | None = Depends(security),
+) -> UUID:
+    """Get current user ID from JWT token.
 
-    NOTE: This is a placeholder for development.
-    In production, this should verify Supabase JWT and extract user_id.
+    In debug mode without credentials, returns a development user ID.
+    In production, verifies the Supabase JWT and extracts the user ID.
+
+    Args:
+        credentials: The HTTP Bearer credentials from the request.
+
+    Returns:
+        The authenticated user's ID.
+
+    Raises:
+        HTTPException: If authentication fails.
     """
-    # Development user ID
-    return UUID("00000000-0000-0000-0000-000000000001")
+    # Debug mode: allow requests without authentication
+    if settings.debug and credentials is None:
+        return UUID("00000000-0000-0000-0000-000000000001")
+
+    # Production mode: require authentication
+    if credentials is None:
+        raise HTTPException(
+            status_code=401,
+            detail="Not authenticated",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
+    try:
+        payload = verify_supabase_token(credentials.credentials)
+        return extract_user_id(payload)
+    except AuthError as e:
+        raise HTTPException(
+            status_code=e.status_code,
+            detail=e.message,
+            headers={"WWW-Authenticate": "Bearer"},
+        )

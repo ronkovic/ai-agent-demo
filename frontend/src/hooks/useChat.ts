@@ -1,4 +1,8 @@
-import { useState, useCallback } from "react";
+"use client";
+
+import { useCallback, useState } from "react";
+
+import { useAuth } from "@/contexts/AuthContext";
 
 // ツール関連の型定義
 export interface ToolCall {
@@ -33,6 +37,19 @@ export function useChat(agentId: string, initialConversationId?: string) {
   const [conversationId, setConversationId] = useState<string | null>(
     initialConversationId || null
   );
+  const { getAccessToken } = useAuth();
+
+  // 認証ヘッダーを取得
+  const getAuthHeaders = useCallback(async () => {
+    const token = await getAccessToken();
+    const headers: Record<string, string> = {
+      "Content-Type": "application/json",
+    };
+    if (token) {
+      headers["Authorization"] = `Bearer ${token}`;
+    }
+    return headers;
+  }, [getAccessToken]);
 
   // ツール対応のSSEストリーミング
   const sendMessageWithTools = useCallback(
@@ -47,9 +64,10 @@ export function useChat(agentId: string, initialConversationId?: string) {
       setIsLoading(true);
 
       try {
+        const headers = await getAuthHeaders();
         const response = await fetch("/api/chat/stream/tools", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers,
           body: JSON.stringify({
             agent_id: agentId,
             conversation_id: conversationId,
@@ -57,7 +75,12 @@ export function useChat(agentId: string, initialConversationId?: string) {
           }),
         });
 
-        if (!response.ok) throw new Error("Failed to send message");
+        if (!response.ok) {
+          if (response.status === 401) {
+            throw new Error("Please sign in to chat");
+          }
+          throw new Error("Failed to send message");
+        }
 
         setIsLoading(false);
         setIsStreaming(true);
@@ -98,7 +121,10 @@ export function useChat(agentId: string, initialConversationId?: string) {
           {
             id: Date.now().toString(),
             role: "assistant",
-            content: "An error occurred. Please try again.",
+            content:
+              error instanceof Error
+                ? error.message
+                : "An error occurred. Please try again.",
             timestamp: new Date().toLocaleTimeString(),
           },
         ]);
@@ -107,7 +133,7 @@ export function useChat(agentId: string, initialConversationId?: string) {
         setIsStreaming(false);
       }
     },
-    [agentId, conversationId]
+    [agentId, conversationId, getAuthHeaders]
   );
 
   // SSEデータの処理
@@ -211,9 +237,10 @@ export function useChat(agentId: string, initialConversationId?: string) {
       setIsLoading(true);
 
       try {
+        const headers = await getAuthHeaders();
         const response = await fetch("/api/chat/stream", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers,
           body: JSON.stringify({
             agent_id: agentId,
             conversation_id: conversationId,
@@ -221,7 +248,12 @@ export function useChat(agentId: string, initialConversationId?: string) {
           }),
         });
 
-        if (!response.ok) throw new Error("Failed to send message");
+        if (!response.ok) {
+          if (response.status === 401) {
+            throw new Error("Please sign in to chat");
+          }
+          throw new Error("Failed to send message");
+        }
 
         setIsLoading(false);
         setIsStreaming(true);
@@ -288,12 +320,24 @@ export function useChat(agentId: string, initialConversationId?: string) {
         }
       } catch (error) {
         console.error("Chat error:", error);
+        setMessages((prev) => [
+          ...prev,
+          {
+            id: Date.now().toString(),
+            role: "assistant",
+            content:
+              error instanceof Error
+                ? error.message
+                : "An error occurred. Please try again.",
+            timestamp: new Date().toLocaleTimeString(),
+          },
+        ]);
       } finally {
         setIsLoading(false);
         setIsStreaming(false);
       }
     },
-    [agentId, conversationId]
+    [agentId, conversationId, getAuthHeaders]
   );
 
   // メッセージをクリア
