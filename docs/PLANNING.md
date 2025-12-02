@@ -208,74 +208,98 @@ CREATE TABLE agent_cards (
 
 ## 実装フェーズ
 
-### Phase 1: プロジェクト基盤 (Step 1-7)
+### Phase 1: プロジェクト基盤 ✅
 
-1. バックエンドプロジェクト初期化 (`uv init`)
-2. フロントエンドプロジェクト初期化 (`npx create-next-app`)
-3. Docker Compose設定 (PostgreSQL, Backend, Frontend)
-4. Supabase設定 (Auth + DB)
-5. 基本的なAPI構造作成
-6. OpenAPI自動生成設定 (FastAPI → openapi.json → TypeScript型)
-7. Storybook導入・設定
+- [x] バックエンドプロジェクト初期化 (`uv init`)
+- [x] フロントエンドプロジェクト初期化 (`npx create-next-app`)
+- [x] Docker Compose設定 (PostgreSQL, Backend, Frontend)
+- [ ] Supabase設定 (Auth + DB)
+- [x] 基本的なAPI構造作成
+- [x] OpenAPI自動生成設定 (FastAPI → openapi.json → TypeScript型)
+- [x] Storybook導入・設定
+- [x] Taskfile.yml タスクランナー追加
+- [x] vitest ユニットテスト設定 (Frontend)
+- [x] pytest テスト設定 (Backend)
 
-### Phase 2: エージェント基本機能 (Step 8-12)
+### Phase 2: エージェント基本機能
 
-8. DBモデル・マイグレーション作成
-9. エージェントCRUD API実装
-10. OpenAPIからフロントエンドクライアント生成
-11. LLM統合 (LiteLLM)
-12. チャットAPI実装 (SSEストリーミング)
+- [ ] DBモデル・マイグレーション作成
+- [ ] エージェントCRUD API実装
+- [ ] OpenAPIからフロントエンドクライアント生成
+- [ ] LLM統合 (LiteLLM)
+- [ ] チャットAPI実装 (SSEストリーミング)
 
-### Phase 3: フロントエンドUI (Step 13-17)
+### Phase 3: フロントエンドUI
 
-13. 基本UIコンポーネント作成 + Storybook登録
-14. チャットUIコンポーネント + Storybook
-15. エージェント管理UI + Storybook
-16. ページ統合・ルーティング
-17. 認証フロー実装
+- [ ] 基本UIコンポーネント作成 + Storybook登録
+- [ ] チャットUIコンポーネント + Storybook
+- [ ] エージェント管理UI + Storybook
+- [ ] ページ統合・ルーティング
+- [ ] 認証フロー実装
 
-### Phase 4: ツール機能 (Step 18-21)
+### Phase 4: ツール機能
 
-18. ツールレジストリ設計・実装
-19. コード実行ツール実装
-20. Web検索ツール実装
-21. ツール実行UI + Storybook
+- [ ] ツールレジストリ設計・実装
+- [ ] コード実行ツール実装
+- [ ] Web検索ツール実装
+- [ ] ツール実行UI + Storybook
 
-### Phase 5: A2A統合 (Step 22-25)
+### Phase 5: A2A統合
 
-22. A2A SDKセットアップ
-23. Agent Card生成・公開
-24. A2Aサーバー実装 (タスク受信)
-25. A2Aクライアント実装 (他エージェント呼び出し)
+- [ ] A2A SDKセットアップ
+- [ ] Agent Card生成・公開
+- [ ] A2Aサーバー実装 (タスク受信)
+- [ ] A2Aクライアント実装 (他エージェント呼び出し)
 
-### Phase 6: 統合・テスト (Step 26-28)
+### Phase 6: 統合・テスト
 
-26. E2Eテスト
-27. Storybookビルド・デプロイ設定
-28. ドキュメント・CLAUDE.md更新
+- [ ] E2Eテスト
+- [ ] Storybookビルド・デプロイ設定
+- [ ] ドキュメント・CLAUDE.md更新
 
 ---
 
 ## 開発コマンド
 
+### Taskfile (推奨)
+
+```bash
+task setup          # 開発環境セットアップ (backend + frontend)
+task dev            # 開発サーバー起動 (backend + frontend 並列)
+task dev:backend    # バックエンド開発サーバーのみ
+task dev:frontend   # フロントエンド開発サーバーのみ
+
+task storybook      # Storybook起動 (port 6006)
+task openapi        # OpenAPIスキーマとクライアント生成
+
+task test           # 全テスト実行
+task test:backend   # バックエンドテスト (pytest)
+task test:frontend  # フロントエンドテスト (vitest)
+
+task lint           # 全リント実行
+task format         # 全フォーマット実行
+
+task docker:up      # Dockerコンテナ起動
+task docker:down    # Dockerコンテナ停止
+task docker:logs    # Dockerログ表示
+```
+
+### 個別コマンド
+
 ```bash
 # Backend
 cd backend
-uv sync                          # 依存関係インストール
+uv sync --all-extras             # 依存関係インストール (dev含む)
 uv run fastapi dev src/agent_platform/main.py  # 開発サーバー
 uv run pytest                    # テスト
-
-# OpenAPI生成
-uv run python -c "from agent_platform.main import app; import json; print(json.dumps(app.openapi()))" > ../openapi/openapi.json
 
 # Frontend
 cd frontend
 npm install                      # 依存関係インストール
 npm run dev                      # 開発サーバー (port 3000)
-npm run build                    # ビルド
-npm run generate-api             # OpenAPIからTypeScriptクライアント生成
+npm run test                     # ユニットテスト
 npm run storybook                # Storybook起動 (port 6006)
-npm run build-storybook          # Storybookビルド
+npm run generate-api             # OpenAPIからTypeScriptクライアント生成
 
 # Docker
 docker-compose up -d             # 全サービス起動
