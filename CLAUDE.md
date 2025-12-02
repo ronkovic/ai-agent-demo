@@ -134,8 +134,38 @@ The project has MCP servers configured in `.mcp.json`:
 ### Testing
 - Backend: pytest with fixtures in `conftest.py`
 - Frontend: Vitest for unit tests, Playwright for E2E
-- Use MSW for API mocking in E2E tests
+- E2E tests use Playwright `page.route()` for API mocking (not MSW - see CI Notes below)
 - Test files should be named `*.test.ts` or `*.spec.ts`
+
+## CI Notes (重要)
+
+### コミット前チェック
+- **PLANNING.md必須**: コミット時に `docs/PLANNING.md` がステージングされていないとフックでブロックされる
+- 変更がなくても `git add docs/PLANNING.md` してからコミット
+
+### E2Eテスト (Playwright)
+- **APIモック**: `page.route()` を使用（`frontend/e2e/fixtures.ts`）
+  - MSWはブラウザレベルのモックだが、Next.jsのrewritesはサーバーサイドでプロキシするため、MSWでは捕捉できない
+  - CIではバックエンドが起動しないため、Playwrightのネイティブモックが必須
+- **セレクタ**: 実際のUI要素に合わせる
+  - `getByRole('button', ...)` vs `getByRole('link', ...)` を正確に
+  - 複数マッチする場合は具体的な名前を指定（例: `/エージェントを保存/i`）
+- **アクセシビリティ属性必須**:
+  - `data-testid` - テスト識別用
+  - `aria-label` - アクセシビリティ
+  - `htmlFor` + `id` - ラベルとinputの関連付け
+  - セマンティック要素 (`<aside>`, `<header>`, `<nav>`)
+
+### バックエンドテスト (pytest)
+- **SQLite互換**: CIではSQLiteを使用（PostgreSQL不要）
+  - `GUID` TypeDecorator - UUID型の互換性
+  - `PortableJSON` TypeDecorator - JSON型の互換性
+  - `backend/src/agent_platform/db/types.py` 参照
+
+### Lint
+- Backend: `uv run ruff check --fix`
+- Frontend: `npm run lint`
+- 警告は許容、エラーはブロック
 
 ## API Endpoints
 
