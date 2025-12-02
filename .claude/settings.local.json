@@ -1,4 +1,14 @@
 {
+  "permissions": {
+    "allow": [
+      "Bash(npx create-next-app@latest:*)",
+      "mcp__filesystem__read_text_file",
+      "mcp__filesystem__list_directory",
+      "mcp__filesystem__directory_tree",
+      "mcp__serena__write_memory",
+      "mcp__serena__list_memories"
+    ]
+  },
   "enabledMcpjsonServers": [
     "filesystem",
     "context7",
@@ -8,11 +18,6 @@
     "next-devtools",
     "aws-mcp"
   ],
-  "permissions": {
-    "allow": [
-      "Bash(npx create-next-app@latest:*)"
-    ]
-  },
   "hooks": {
     "PreToolUse": [
       {

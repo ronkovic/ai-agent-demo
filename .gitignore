@@ -47,3 +47,6 @@ npm-debug.log*
 
 # Build artifacts
 *.tgz
+
+# MCP local files
+.kiri/

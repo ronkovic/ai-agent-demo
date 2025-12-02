@@ -221,6 +221,7 @@ CREATE TABLE agent_cards (
 - [x] vitest ユニットテスト設定 (Frontend)
 - [x] pytest テスト設定 (Backend)
 - [x] Claude Code hooks設定 (git commit前にPLANNING.md更新リマインダー)
+- [x] MCP Kiri/Serena オンボーディング (コード検索・IDE支援)
 
 ### Phase 2: エージェント基本機能
 
