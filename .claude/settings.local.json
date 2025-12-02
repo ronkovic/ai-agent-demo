@@ -1,0 +1,11 @@
+{
+  "enabledMcpjsonServers": [
+    "filesystem",
+    "context7",
+    "kiri",
+    "serena",
+    "chrome-devtools",
+    "next-devtools",
+    "aws-mcp"
+  ]
+}
