@@ -294,6 +294,7 @@ CREATE TABLE agent_cards (
   - 起動時DBテーブル自動作成 (main.py lifespan)
   - E2Eテスト対応: アクセシビリティ改善 (title, aside, data-testid, aria-label, htmlFor)
   - E2Eテストセレクタ修正 (button vs link, 具体的なボタン名セレクタ)
+  - Lint警告修正: useWatch使用 (React Compiler互換), useCallback依存関係修正
 - [x] ドキュメント・CLAUDE.md更新
   - CLAUDE.md 包括的更新 (アーキテクチャ、コマンド、ガイドライン)
   - README.md 作成 (ルート、backend、frontend)

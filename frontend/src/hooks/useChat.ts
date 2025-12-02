@@ -92,6 +92,91 @@ export function useChat(agentId: string, initialConversationId?: string) {
         // 実行中のツール呼び出しを追跡
         const pendingToolCalls = new Map<string, Message>();
 
+        // SSEデータの処理（この関数内でのみ使用）
+        const processSSEData = (data: Record<string, unknown>) => {
+          // Start event - conversation_id
+          if (data.conversation_id && !conversationId) {
+            setConversationId(data.conversation_id as string);
+          }
+
+          // Content event
+          if (data.content !== undefined) {
+            const contentStr = data.content as string;
+            setMessages((prev) => {
+              // Check if last message is assistant without tool calls
+              const lastMsg = prev[prev.length - 1];
+              if (lastMsg?.role === "assistant" && !lastMsg.toolCalls) {
+                // Append to existing message
+                return prev.map((msg, idx) =>
+                  idx === prev.length - 1
+                    ? { ...msg, content: msg.content + contentStr }
+                    : msg
+                );
+              } else {
+                // Create new assistant message
+                return [
+                  ...prev,
+                  {
+                    id: Date.now().toString(),
+                    role: "assistant",
+                    content: contentStr,
+                    timestamp: new Date().toLocaleTimeString(),
+                  },
+                ];
+              }
+            });
+          }
+
+          // Tool call event
+          if (data.id && data.name && data.arguments) {
+            const toolCall: ToolCall = {
+              id: data.id as string,
+              name: data.name as string,
+              arguments: data.arguments as Record<string, unknown>,
+            };
+
+            const toolMessage: Message = {
+              id: `tool-${toolCall.id}`,
+              role: "assistant",
+              content: `Calling ${toolCall.name}...`,
+              timestamp: new Date().toLocaleTimeString(),
+              toolCalls: [toolCall],
+              isToolExecuting: true,
+            };
+
+            pendingToolCalls.set(toolCall.id, toolMessage);
+            setMessages((prev) => [...prev, toolMessage]);
+          }
+
+          // Tool result event
+          if (data.tool_call_id !== undefined) {
+            const result: ToolResult = {
+              toolCallId: data.tool_call_id as string,
+              success: data.success as boolean,
+              output: data.output,
+              error: data.error as string | undefined,
+            };
+
+            setMessages((prev) =>
+              prev.map((msg) => {
+                if (msg.toolCalls?.some((tc) => tc.id === result.toolCallId)) {
+                  return {
+                    ...msg,
+                    isToolExecuting: false,
+                    toolResult: result,
+                    content: result.success
+                      ? `${msg.toolCalls[0].name} completed`
+                      : `${msg.toolCalls[0].name} failed`,
+                  };
+                }
+                return msg;
+              })
+            );
+
+            pendingToolCalls.delete(result.toolCallId);
+          }
+        };
+
         if (!reader) return;
 
         while (true) {
@@ -106,7 +191,7 @@ export function useChat(agentId: string, initialConversationId?: string) {
             if (line.startsWith("data:")) {
               try {
                 const data = JSON.parse(line.slice(5).trim());
-                handleSSEData(data, pendingToolCalls);
+                processSSEData(data);
               } catch {
                 // Parse error, might be partial data
               }
@@ -135,94 +220,6 @@ export function useChat(agentId: string, initialConversationId?: string) {
     },
     [agentId, conversationId, getAuthHeaders]
   );
-
-  // SSEデータの処理
-  const handleSSEData = (
-    data: Record<string, unknown>,
-    pendingToolCalls: Map<string, Message>
-  ) => {
-    // Start event - conversation_id
-    if (data.conversation_id && !conversationId) {
-      setConversationId(data.conversation_id as string);
-    }
-
-    // Content event
-    if (data.content !== undefined) {
-      const contentStr = data.content as string;
-      setMessages((prev) => {
-        // Check if last message is assistant without tool calls
-        const lastMsg = prev[prev.length - 1];
-        if (lastMsg?.role === "assistant" && !lastMsg.toolCalls) {
-          // Append to existing message
-          return prev.map((msg, idx) =>
-            idx === prev.length - 1
-              ? { ...msg, content: msg.content + contentStr }
-              : msg
-          );
-        } else {
-          // Create new assistant message
-          return [
-            ...prev,
-            {
-              id: Date.now().toString(),
-              role: "assistant",
-              content: contentStr,
-              timestamp: new Date().toLocaleTimeString(),
-            },
-          ];
-        }
-      });
-    }
-
-    // Tool call event
-    if (data.id && data.name && data.arguments) {
-      const toolCall: ToolCall = {
-        id: data.id as string,
-        name: data.name as string,
-        arguments: data.arguments as Record<string, unknown>,
-      };
-
-      const toolMessage: Message = {
-        id: `tool-${toolCall.id}`,
-        role: "assistant",
-        content: `Calling ${toolCall.name}...`,
-        timestamp: new Date().toLocaleTimeString(),
-        toolCalls: [toolCall],
-        isToolExecuting: true,
-      };
-
-      pendingToolCalls.set(toolCall.id, toolMessage);
-      setMessages((prev) => [...prev, toolMessage]);
-    }
-
-    // Tool result event
-    if (data.tool_call_id !== undefined) {
-      const result: ToolResult = {
-        toolCallId: data.tool_call_id as string,
-        success: data.success as boolean,
-        output: data.output,
-        error: data.error as string | undefined,
-      };
-
-      setMessages((prev) =>
-        prev.map((msg) => {
-          if (msg.toolCalls?.some((tc) => tc.id === result.toolCallId)) {
-            return {
-              ...msg,
-              isToolExecuting: false,
-              toolResult: result,
-              content: result.success
-                ? `${msg.toolCalls[0].name} completed`
-                : `${msg.toolCalls[0].name} failed`,
-            };
-          }
-          return msg;
-        })
-      );
-
-      pendingToolCalls.delete(result.toolCallId);
-    }
-  };
 
   // シンプルなストリーミング（後方互換性）
   const sendMessage = useCallback(

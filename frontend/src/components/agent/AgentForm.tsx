@@ -1,4 +1,4 @@
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { AgentCreate } from "@/lib/api-client/types.gen";
@@ -51,8 +51,9 @@ export function AgentForm({
   const {
     register,
     handleSubmit,
-    watch,
+    control,
     setValue,
+    getValues,
     formState: { errors },
   } = useForm<AgentFormValues>({
     resolver: zodResolver(agentSchema),
@@ -65,20 +66,20 @@ export function AgentForm({
     },
   });
 
-  const selectedProvider = watch("llm_provider");
+  const selectedProvider = useWatch({ control, name: "llm_provider" });
 
   // Update model when provider changes
   useEffect(() => {
     const models = LLM_MODELS[selectedProvider];
     if (models && models.length > 0) {
       // Only reset if the current model is not valid for the new provider
-      const currentModel = watch("llm_model");
+      const currentModel = getValues("llm_model");
       const isValid = models.some((m) => m.value === currentModel);
       if (!isValid) {
         setValue("llm_model", models[0].value);
       }
     }
-  }, [selectedProvider, setValue, watch]);
+  }, [selectedProvider, setValue, getValues]);
 
   const availableModels = LLM_MODELS[selectedProvider] || [];
 
