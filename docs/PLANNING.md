@@ -398,6 +398,22 @@ docker-compose logs -f backend   # ログ確認
 - Frontend: `npm run lint` - react-hooks/rules-of-hooks, exhaustive-deps など
 - 警告は許容、エラーはブロック
 
+### 環境変数セットアップ
+
+新しい開発環境では以下のファイルを作成:
+
+```bash
+# Frontend
+cp frontend/.env.example frontend/.env.local
+# Backend
+cp backend/.env.example backend/.env
+```
+
+Supabaseダッシュボードから値を取得:
+- `SUPABASE_URL`: Settings > API > Project URL
+- `SUPABASE_ANON_KEY`: Settings > API > anon public
+- `SUPABASE_JWT_SECRET`: Settings > JWT Keys > Legacy JWT Secret
+
 ---
 
 ## 参考リンク
