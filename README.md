@@ -153,7 +153,7 @@ When the backend is running, visit:
 
 ## License
 
-**Proprietary License** - Copyright (c) 2024-2025 Kazuki Takahashi. All Rights Reserved.
+**Proprietary License** - Copyright (c) 2024-2025 Kazuki Takahashi (高橋 一樹). All Rights Reserved.
 
 This software is proprietary and confidential. Unauthorized copying, modification, distribution, or use of this software is strictly prohibited without prior written permission from the copyright holder.
 
