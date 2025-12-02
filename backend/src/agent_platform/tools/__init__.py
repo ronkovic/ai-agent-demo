@@ -1,5 +1,6 @@
 """ツールモジュール."""
 
+from .a2a import InvokeAgentTool, register_invoke_agent_tool
 from .base import BaseTool, ToolDefinition, ToolParameter, ToolResult
 from .code import CodeExecutionTool, get_code_execution_tool, register_code_execution_tool
 from .registry import ToolRegistry
@@ -28,6 +29,9 @@ __all__ = [
     "WebSearchTool",
     "get_web_search_tool",
     "register_web_search_tool",
+    # A2A agent invocation
+    "InvokeAgentTool",
+    "register_invoke_agent_tool",
 ]
 
 
@@ -38,3 +42,4 @@ def register_default_tools() -> None:
     """
     register_code_execution_tool()
     register_web_search_tool()
+    register_invoke_agent_tool()

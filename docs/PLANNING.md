@@ -254,12 +254,15 @@ CREATE TABLE agent_cards (
 - [x] ツール実行UI + Storybook (ToolCallDisplay, ToolCallBadge)
 - [x] テスト追加 (test_tools.py: 19テスト, test_executor.py: 7テスト)
 
-### Phase 5: A2A統合
+### Phase 5: A2A統合 ✅
 
-- [ ] A2A SDKセットアップ
-- [ ] Agent Card生成・公開
-- [ ] A2Aサーバー実装 (タスク受信)
-- [ ] A2Aクライアント実装 (他エージェント呼び出し)
+- [x] A2A SDKセットアップ
+- [x] Agent Card生成・公開 (card.py)
+- [x] A2Aサーバー実装 (server.py, task_store.py, types.py)
+- [x] A2Aクライアント実装 (client.py)
+- [x] invoke_agentツール (tools/a2a.py)
+- [x] A2A APIルート (api/routes/a2a.py)
+- [x] テスト追加 (test_a2a.py: 33テスト)
 
 ### Phase 6: 統合・テスト
 
