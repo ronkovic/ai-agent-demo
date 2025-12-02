@@ -29,18 +29,18 @@ test.describe("Agents Page", () => {
   });
 
   test("should have create new agent button", async ({ page }) => {
-    // Look for create button
-    const createButton = page.getByRole("link", {
-      name: /new|create|新規|作成/i,
+    // Look for create button (it's a button, not a link)
+    const createButton = page.getByRole("button", {
+      name: /create agent/i,
     });
 
     await expect(createButton).toBeVisible();
   });
 
   test("should navigate to create agent page", async ({ page }) => {
-    // Click create button
-    const createButton = page.getByRole("link", {
-      name: /new|create|新規|作成/i,
+    // Click create button (it's a button, not a link)
+    const createButton = page.getByRole("button", {
+      name: /create agent/i,
     });
 
     if (await createButton.isVisible()) {
@@ -85,8 +85,9 @@ test.describe("Create Agent Page", () => {
   });
 
   test("should have submit button", async ({ page }) => {
+    // Look specifically for the form submit button (エージェントを保存)
     const submitButton = page.getByRole("button", {
-      name: /create|save|作成|保存/i,
+      name: /エージェントを保存|save agent/i,
     });
 
     await expect(submitButton).toBeVisible();
@@ -95,7 +96,7 @@ test.describe("Create Agent Page", () => {
   test("should validate required fields on submit", async ({ page }) => {
     // Try to submit empty form
     const submitButton = page.getByRole("button", {
-      name: /create|save|作成|保存/i,
+      name: /エージェントを保存|save agent/i,
     });
 
     await submitButton.click();
@@ -110,13 +111,14 @@ test.describe("Agent Detail Page", () => {
     await page.goto("/agents");
     await page.waitForLoadState("networkidle");
 
-    // Click on first agent card if exists
-    const agentCard = page
-      .locator('[data-testid="agent-card"], .agent-card')
-      .first();
+    // Click on "Chat with Agent" button on first agent card
+    const chatButton = page
+      .locator('[data-testid="agent-card"]')
+      .first()
+      .getByRole("button", { name: /chat with agent/i });
 
-    if (await agentCard.isVisible()) {
-      await agentCard.click();
+    if (await chatButton.isVisible()) {
+      await chatButton.click();
       // Should navigate to agent detail or chat page
       await expect(page).toHaveURL(/\/agents\/[a-f0-9-]+/);
     }
