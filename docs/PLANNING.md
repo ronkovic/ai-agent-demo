@@ -274,6 +274,11 @@ CREATE TABLE agent_cards (
   - GitHub Actions ワークフロー (.github/workflows/storybook.yml)
   - GitHub Pages デプロイ
   - Taskfile.yml タスク追加 (storybook:serve, test:e2e)
+- [x] CI/CD設定
+  - GitHub Actions CI (.github/workflows/ci.yml)
+  - Backend: ruff lint + pytest
+  - Frontend: eslint + typecheck + vitest
+  - E2E: Playwright tests
 - [x] ドキュメント・CLAUDE.md更新
   - CLAUDE.md 包括的更新 (アーキテクチャ、コマンド、ガイドライン)
   - README.md 作成 (ルート、backend、frontend)
