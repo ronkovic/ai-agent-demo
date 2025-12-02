@@ -1,0 +1,12 @@
+node_modules/
+.next/
+.git/
+.gitignore
+*.md
+.storybook/
+*.stories.tsx
+*.stories.ts
+storybook-static/
+coverage/
+.env*
+!.env.example

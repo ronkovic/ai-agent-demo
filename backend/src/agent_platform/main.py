@@ -1,0 +1,57 @@
+"""Agent Platform - メインエントリポイント."""
+
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+
+from agent_platform.api.routes import agents, chat, a2a
+from agent_platform.core.config import settings
+
+app = FastAPI(
+    title="Agent Platform API",
+    description="マルチユーザー対応AIエージェントプラットフォーム",
+    version="0.1.0",
+    docs_url="/docs",
+    redoc_url="/redoc",
+)
+
+# CORS設定
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=settings.cors_origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# ルーター登録
+app.include_router(agents.router, prefix="/api/agents", tags=["agents"])
+app.include_router(chat.router, prefix="/api/chat", tags=["chat"])
+app.include_router(a2a.router, prefix="/a2a", tags=["a2a"])
+
+
+@app.get("/")
+async def root() -> dict[str, str]:
+    """ルートエンドポイント."""
+    return {"message": "Agent Platform API", "version": "0.1.0"}
+
+
+@app.get("/health")
+async def health_check() -> dict[str, str]:
+    """ヘルスチェックエンドポイント."""
+    return {"status": "healthy"}
+
+
+def main() -> None:
+    """開発サーバー起動."""
+    import uvicorn
+
+    uvicorn.run(
+        "agent_platform.main:app",
+        host="0.0.0.0",
+        port=8000,
+        reload=True,
+    )
+
+
+if __name__ == "__main__":
+    main()
