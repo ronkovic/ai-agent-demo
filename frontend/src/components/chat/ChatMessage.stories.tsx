@@ -44,3 +44,102 @@ export const Streaming: Story = {
     isStreaming: true,
   },
 };
+
+// Tool call stories
+export const WithToolExecuting: Story = {
+  args: {
+    role: "assistant",
+    content: "Executing code...",
+    timestamp: "12:03 PM",
+    toolCalls: [
+      {
+        id: "call_1",
+        name: "execute_code",
+        arguments: {
+          language: "python",
+          code: 'print("Hello from Python!")',
+        },
+      },
+    ],
+    isToolExecuting: true,
+  },
+};
+
+export const WithToolSuccess: Story = {
+  args: {
+    role: "assistant",
+    content: "Code executed successfully",
+    timestamp: "12:04 PM",
+    toolCalls: [
+      {
+        id: "call_1",
+        name: "execute_code",
+        arguments: {
+          language: "python",
+          code: 'for i in range(3):\n    print(f"Count: {i}")',
+        },
+      },
+    ],
+    toolResult: {
+      toolCallId: "call_1",
+      success: true,
+      output: "Count: 0\nCount: 1\nCount: 2",
+    },
+    isToolExecuting: false,
+  },
+};
+
+export const WithToolError: Story = {
+  args: {
+    role: "assistant",
+    content: "Code execution failed",
+    timestamp: "12:05 PM",
+    toolCalls: [
+      {
+        id: "call_2",
+        name: "execute_code",
+        arguments: {
+          language: "python",
+          code: "import nonexistent_module",
+        },
+      },
+    ],
+    toolResult: {
+      toolCallId: "call_2",
+      success: false,
+      output: null,
+      error: "ModuleNotFoundError: No module named 'nonexistent_module'",
+    },
+    isToolExecuting: false,
+  },
+};
+
+export const WithWebSearch: Story = {
+  args: {
+    role: "assistant",
+    content: "Searching the web...",
+    timestamp: "12:06 PM",
+    toolCalls: [
+      {
+        id: "call_3",
+        name: "web_search",
+        arguments: {
+          query: "React best practices 2024",
+          max_results: 5,
+        },
+      },
+    ],
+    toolResult: {
+      toolCallId: "call_3",
+      success: true,
+      output: [
+        {
+          title: "React Best Practices",
+          url: "https://example.com/react",
+          snippet: "Learn modern React patterns...",
+        },
+      ],
+    },
+    isToolExecuting: false,
+  },
+};

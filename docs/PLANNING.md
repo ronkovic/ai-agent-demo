@@ -242,12 +242,17 @@ CREATE TABLE agent_cards (
 - [x] テーマ切り替え (ThemeToggle: システム/ライト/ダーク)
 - [ ] 認証フロー実装 (Phase 5でSupabase Auth統合予定)
 
-### Phase 4: ツール機能
+### Phase 4: ツール機能 ✅
 
-- [ ] ツールレジストリ設計・実装
-- [ ] コード実行ツール実装
-- [ ] Web検索ツール実装
-- [ ] ツール実行UI + Storybook
+- [x] ツールレジストリ設計・実装 (BaseTool, ToolDefinition, ToolRegistry)
+- [x] コード実行ツール実装 (Dockerコンテナ内でPython/JavaScript安全実行)
+- [x] Web検索ツール実装 (抽象プロバイダー + MockSearchProvider)
+- [x] ToolExecutor実装 (タイムアウト、並列実行、呼び出し制限)
+- [x] LLM拡張 (ToolCall dataclass, OpenAI/Anthropic/LiteLLM形式変換)
+- [x] ChatService統合 (chat_stream_with_tools, ChatEvent)
+- [x] SSE API拡張 (POST /stream/tools エンドポイント)
+- [x] ツール実行UI + Storybook (ToolCallDisplay, ToolCallBadge)
+- [x] テスト追加 (test_tools.py: 19テスト, test_executor.py: 7テスト)
 
 ### Phase 5: A2A統合
 

@@ -1,10 +1,30 @@
 """Agent Platform - メインエントリポイント."""
 
+import logging
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from agent_platform.api.routes import agents, chat, a2a
+from agent_platform.api.routes import a2a, agents, chat
 from agent_platform.core.config import settings
+from agent_platform.tools import register_default_tools
+
+logger = logging.getLogger(__name__)
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """Application lifespan events."""
+    # Startup
+    logger.info("Registering default tools...")
+    register_default_tools()
+    logger.info("Tools registered successfully")
+
+    yield
+
+    # Shutdown
+    logger.info("Application shutdown")
 
 app = FastAPI(
     title="Agent Platform API",
@@ -12,6 +32,7 @@ app = FastAPI(
     version="0.1.0",
     docs_url="/docs",
     redoc_url="/redoc",
+    lifespan=lifespan,
 )
 
 # CORS設定

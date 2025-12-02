@@ -30,6 +30,8 @@ dependencies = [
     "python-multipart>=0.0.17",
     # SSE
     "sse-starlette>=2.0.0",
+    # Tools
+    "docker>=7.0.0",
 ]
 
 [project.optional-dependencies]

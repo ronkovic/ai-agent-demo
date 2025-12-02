@@ -2,12 +2,17 @@ import { useEffect, useRef } from "react";
 import { ChatMessage } from "./ChatMessage";
 import { ChatInput } from "./ChatInput";
 import { cn } from "@/lib/utils";
+import type { ToolCallData, ToolResultData } from "./ToolCall";
 
 interface Message {
   id: string;
-  role: "user" | "assistant";
+  role: "user" | "assistant" | "tool";
   content: string;
   timestamp?: string;
+  // Tool support
+  toolCalls?: ToolCallData[];
+  toolResult?: ToolResultData;
+  isToolExecuting?: boolean;
 }
 
 interface ChatContainerProps {
@@ -45,15 +50,20 @@ export function ChatContainer({
               <p>Start a conversation with your agent.</p>
             </div>
           ) : (
-            messages.map((msg) => (
-              <ChatMessage
-                key={msg.id}
-                role={msg.role}
-                content={msg.content}
-                timestamp={msg.timestamp}
-                isStreaming={isStreaming && msg.id === messages[messages.length - 1].id}
-              />
-            ))
+            messages
+              .filter((msg) => msg.role !== "tool")
+              .map((msg) => (
+                <ChatMessage
+                  key={msg.id}
+                  role={msg.role as "user" | "assistant"}
+                  content={msg.content}
+                  timestamp={msg.timestamp}
+                  isStreaming={isStreaming && msg.id === messages[messages.length - 1].id}
+                  toolCalls={msg.toolCalls}
+                  toolResult={msg.toolResult}
+                  isToolExecuting={msg.isToolExecuting}
+                />
+              ))
           )}
           {isLoading && (
             <div className="flex justify-start">

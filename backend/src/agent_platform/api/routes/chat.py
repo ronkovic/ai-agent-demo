@@ -1,6 +1,8 @@
 """チャットAPI."""
 
+import json
 from datetime import datetime
+from typing import Any
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, status
@@ -14,7 +16,7 @@ from ..deps import (
     get_db,
     get_message_repo,
 )
-from ...core.chat import ChatService
+from ...core.chat import ChatEvent, ChatService
 from ...db import AgentRepository, Conversation, ConversationRepository, MessageRepository
 from ...llm import get_llm_provider
 
@@ -188,6 +190,90 @@ async def chat_stream(
             "event": "done",
             "data": "{}",
         }
+
+    return EventSourceResponse(event_generator())
+
+
+@router.post("/stream/tools")
+async def chat_stream_with_tools(
+    request: ChatRequest,
+    db: AsyncSession = Depends(get_db),
+    user_id: UUID = Depends(get_current_user_id),
+    chat_service: ChatService = Depends(get_chat_service),
+    agent_repo: AgentRepository = Depends(get_agent_repo),
+) -> EventSourceResponse:
+    """チャットメッセージ送信（SSEストリーミング + ツール対応）.
+
+    SSEイベントタイプ:
+    - start: 会話開始 {"conversation_id": "..."}
+    - content: テキストコンテンツ（文字列）
+    - tool_call: ツール呼び出し {"id": "...", "name": "...", "arguments": {...}}
+    - tool_result: ツール実行結果 {"tool_call_id": "...", "success": bool, "output": ..., "error": ...}
+    - done: 完了 {}
+    - error: エラー {"message": "..."}
+    """
+    # Get agent
+    agent = await get_agent_or_404(db, request.agent_id, user_id, agent_repo)
+
+    try:
+        # Start streaming chat with tools
+        conversation_id, stream = await chat_service.chat_stream_with_tools(
+            db=db,
+            agent=agent,
+            user_id=user_id,
+            user_message=request.message,
+            conversation_id=request.conversation_id,
+        )
+    except Exception as e:
+        # Handle initialization errors
+        async def error_generator():
+            yield {
+                "event": "error",
+                "data": json.dumps({"message": str(e)}),
+            }
+        return EventSourceResponse(error_generator())
+
+    async def event_generator():
+        """Generate SSE events with tool support."""
+        # First, send conversation_id
+        yield {
+            "event": "start",
+            "data": json.dumps({"conversation_id": str(conversation_id)}),
+        }
+
+        try:
+            async for event in stream:
+                if event.type == "content":
+                    # Content is sent as plain text for easier client parsing
+                    yield {
+                        "event": "content",
+                        "data": json.dumps({"content": event.data}),
+                    }
+                elif event.type == "tool_call":
+                    yield {
+                        "event": "tool_call",
+                        "data": json.dumps(event.data),
+                    }
+                elif event.type == "tool_result":
+                    yield {
+                        "event": "tool_result",
+                        "data": json.dumps(event.data),
+                    }
+                elif event.type == "done":
+                    yield {
+                        "event": "done",
+                        "data": "{}",
+                    }
+                elif event.type == "error":
+                    yield {
+                        "event": "error",
+                        "data": json.dumps({"message": str(event.data)}),
+                    }
+        except Exception as e:
+            yield {
+                "event": "error",
+                "data": json.dumps({"message": str(e)}),
+            }
 
     return EventSourceResponse(event_generator())
 
