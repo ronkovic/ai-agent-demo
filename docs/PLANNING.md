@@ -234,6 +234,8 @@ CREATE TABLE agent_cards (
 
 ### Phase 3: フロントエンドUI
 
+**指示書:** `docs/PHASE3_FRONTEND_INSTRUCTIONS.md` (Gemini 3.0 pro向け)
+
 - [ ] 基本UIコンポーネント作成 + Storybook登録
 - [ ] チャットUIコンポーネント + Storybook
 - [ ] エージェント管理UI + Storybook
