@@ -82,6 +82,7 @@ jobs:
 
       - name: Run unit tests
         run: npm test
+        timeout-minutes: 5
 
   e2e:
     name: E2E Tests
@@ -110,6 +111,7 @@ jobs:
 
       - name: Run E2E tests
         run: npm run test:e2e
+        timeout-minutes: 10
 
       - name: Upload test results
         if: failure()
