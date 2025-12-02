@@ -30,17 +30,17 @@ const mockAgents = [
   },
 ];
 
-// API base URL
-const API_BASE = "http://localhost:8000";
+// Use relative paths for browser interception (works with Next.js rewrites)
+// MSW intercepts at browser level before requests go to Next.js server
 
 export const handlers = [
   // List agents
-  http.get(`${API_BASE}/api/agents`, () => {
+  http.get("*/api/agents", () => {
     return HttpResponse.json(mockAgents);
   }),
 
   // Get single agent
-  http.get(`${API_BASE}/api/agents/:agentId`, ({ params }) => {
+  http.get("*/api/agents/:agentId", ({ params }) => {
     const agent = mockAgents.find((a) => a.id === params.agentId);
     if (!agent) {
       return new HttpResponse(null, { status: 404 });
@@ -49,7 +49,7 @@ export const handlers = [
   }),
 
   // Create agent
-  http.post(`${API_BASE}/api/agents`, async ({ request }) => {
+  http.post("*/api/agents", async ({ request }) => {
     const body = (await request.json()) as Record<string, unknown>;
     const newAgent = {
       id: crypto.randomUUID(),
@@ -63,7 +63,7 @@ export const handlers = [
   }),
 
   // Update agent
-  http.put(`${API_BASE}/api/agents/:agentId`, async ({ params, request }) => {
+  http.put("*/api/agents/:agentId", async ({ params, request }) => {
     const agentIndex = mockAgents.findIndex((a) => a.id === params.agentId);
     if (agentIndex === -1) {
       return new HttpResponse(null, { status: 404 });
@@ -78,7 +78,7 @@ export const handlers = [
   }),
 
   // Delete agent
-  http.delete(`${API_BASE}/api/agents/:agentId`, ({ params }) => {
+  http.delete("*/api/agents/:agentId", ({ params }) => {
     const agentIndex = mockAgents.findIndex((a) => a.id === params.agentId);
     if (agentIndex === -1) {
       return new HttpResponse(null, { status: 404 });
@@ -88,7 +88,7 @@ export const handlers = [
   }),
 
   // Chat endpoint (SSE streaming mock)
-  http.post(`${API_BASE}/api/chat/stream`, async ({ request }) => {
+  http.post("*/api/chat/stream", async ({ request }) => {
     const body = (await request.json()) as { message?: string };
     const userMessage = body?.message || "Hello";
 
@@ -132,7 +132,7 @@ export const handlers = [
   }),
 
   // Health check
-  http.get(`${API_BASE}/health`, () => {
+  http.get("*/health", () => {
     return HttpResponse.json({ status: "healthy" });
   }),
 ];

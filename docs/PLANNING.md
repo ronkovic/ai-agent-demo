@@ -278,7 +278,7 @@ CREATE TABLE agent_cards (
   - GitHub Actions CI (.github/workflows/ci.yml)
   - Backend: ruff lint + pytest (SQLite in-memory, DB不要)
   - Frontend: eslint + typecheck + vitest
-  - E2E: Playwright tests (MSWモック対応)
+  - E2E: Playwright tests (page.route()ネイティブモック)
   - CI lint修正 (ruff I001/F401/N815/F821, eslint setState-in-effect)
   - mainブランチプロテクション設定 (required status checks)
   - jsdom依存追加 (vitest unit tests用)
