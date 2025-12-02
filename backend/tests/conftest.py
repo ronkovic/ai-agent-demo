@@ -1,5 +1,6 @@
 """Pytest configuration and fixtures."""
 
+import os
 from collections.abc import AsyncGenerator
 from uuid import UUID
 
@@ -13,24 +14,38 @@ from sqlalchemy.ext.asyncio import (
     create_async_engine,
 )
 
-from agent_platform.core.config import settings
+from agent_platform.db.models import Base
 from agent_platform.db.session import get_db
 from agent_platform.main import app
 
-# Test database URL
-TEST_DATABASE_URL = settings.database_url
+# Test database URL - default to SQLite in-memory for CI/testing
+TEST_DATABASE_URL = os.environ.get(
+    "TEST_DATABASE_URL",
+    "sqlite+aiosqlite:///:memory:",
+)
 
 
 @pytest_asyncio.fixture
 async def db_engine() -> AsyncGenerator[AsyncEngine, None]:
     """Create async engine for tests."""
-    engine = create_async_engine(
-        TEST_DATABASE_URL,
-        echo=False,
-        pool_pre_ping=True,
-        pool_size=5,
-        max_overflow=10,
-    )
+    # SQLite doesn't support pool options
+    is_sqlite = TEST_DATABASE_URL.startswith("sqlite")
+
+    if is_sqlite:
+        engine = create_async_engine(TEST_DATABASE_URL, echo=False)
+    else:
+        engine = create_async_engine(
+            TEST_DATABASE_URL,
+            echo=False,
+            pool_pre_ping=True,
+            pool_size=5,
+            max_overflow=10,
+        )
+
+    # Create all tables for testing
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
+
     try:
         yield engine
     finally:
