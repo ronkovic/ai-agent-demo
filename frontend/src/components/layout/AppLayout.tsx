@@ -2,6 +2,7 @@
 
 import { ThemeProvider } from "next-themes";
 import { Sidebar } from "@/components/layout/Sidebar";
+import { ThemeToggle } from "@/components/layout/ThemeToggle";
 import { useAgents } from "@/hooks/useAgents";
 import { useRouter, useParams, usePathname } from "next/navigation";
 import { useState } from "react";
@@ -54,16 +55,19 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
         {/* Main Content */}
         <div className="flex flex-1 flex-col overflow-hidden">
           {/* Mobile Header */}
-          <div className="flex h-14 items-center border-b px-4 md:hidden">
-            <Button
-              variant="secondary"
-              size="sm"
-              onClick={() => setIsSidebarOpen(true)}
-              className="mr-4"
-            >
-              <Menu className="h-4 w-4" />
-            </Button>
-            <span className="font-semibold">AIエージェントプラットフォーム</span>
+          <div className="flex h-14 items-center justify-between border-b px-4 md:hidden">
+            <div className="flex items-center">
+              <Button
+                variant="secondary"
+                size="sm"
+                onClick={() => setIsSidebarOpen(true)}
+                className="mr-4"
+              >
+                <Menu className="h-4 w-4" />
+              </Button>
+              <span className="font-semibold">AIエージェントプラットフォーム</span>
+            </div>
+            <ThemeToggle />
           </div>
 
           <main className="flex-1 overflow-hidden">{children}</main>

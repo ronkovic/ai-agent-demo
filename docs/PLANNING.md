@@ -239,6 +239,7 @@ CREATE TABLE agent_cards (
 - [x] エージェント管理UI + Storybook (AgentCard, AgentForm)
 - [x] カスタムフック (useAgents, useChat with SSE)
 - [x] ページ統合・ルーティング (5ページ実装)
+- [x] テーマ切り替え (ThemeToggle: システム/ライト/ダーク)
 - [ ] 認証フロー実装 (Phase 5でSupabase Auth統合予定)
 
 ### Phase 4: ツール機能
