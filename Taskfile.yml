@@ -1,0 +1,217 @@
+version: '3'
+
+vars:
+  BACKEND_DIR: ./backend
+  FRONTEND_DIR: ./frontend
+
+tasks:
+  # ===================
+  # 開発環境セットアップ
+  # ===================
+  setup:
+    desc: 開発環境のセットアップ
+    cmds:
+      - task: setup:backend
+      - task: setup:frontend
+
+  setup:backend:
+    desc: バックエンドのセットアップ
+    dir: "{{.BACKEND_DIR}}"
+    cmds:
+      - uv sync --all-extras
+
+  setup:frontend:
+    desc: フロントエンドのセットアップ
+    dir: "{{.FRONTEND_DIR}}"
+    cmds:
+      - npm install
+
+  # ===================
+  # 開発サーバー
+  # ===================
+  dev:
+    desc: 開発サーバーを起動 (バックエンド + フロントエンド)
+    deps:
+      - dev:backend
+      - dev:frontend
+
+  dev:backend:
+    desc: バックエンド開発サーバーを起動
+    dir: "{{.BACKEND_DIR}}"
+    cmds:
+      - uv run fastapi dev src/agent_platform/main.py --port 8000
+
+  dev:frontend:
+    desc: フロントエンド開発サーバーを起動
+    dir: "{{.FRONTEND_DIR}}"
+    cmds:
+      - npm run dev
+
+  # ===================
+  # Storybook
+  # ===================
+  storybook:
+    desc: Storybookを起動
+    dir: "{{.FRONTEND_DIR}}"
+    cmds:
+      - npm run storybook
+
+  storybook:build:
+    desc: Storybookをビルド
+    dir: "{{.FRONTEND_DIR}}"
+    cmds:
+      - npm run build-storybook
+
+  storybook:serve:
+    desc: ビルド済みStorybookを配信
+    dir: "{{.FRONTEND_DIR}}"
+    cmds:
+      - npx serve storybook-static -p 6006
+
+  # ===================
+  # OpenAPI
+  # ===================
+  openapi:generate:
+    desc: OpenAPIスキーマを生成
+    dir: "{{.BACKEND_DIR}}"
+    cmds:
+      - uv run python scripts/generate_openapi.py
+
+  openapi:client:
+    desc: OpenAPIからTypeScriptクライアントを生成
+    dir: "{{.FRONTEND_DIR}}"
+    cmds:
+      - npm run generate-api
+
+  openapi:
+    desc: OpenAPIスキーマとクライアントを生成
+    cmds:
+      - task: openapi:generate
+      - task: openapi:client
+
+  # ===================
+  # Docker
+  # ===================
+  docker:up:
+    desc: Dockerコンテナを起動
+    cmds:
+      - docker-compose up -d
+
+  docker:down:
+    desc: Dockerコンテナを停止
+    cmds:
+      - docker-compose down
+
+  docker:logs:
+    desc: Dockerログを表示
+    cmds:
+      - docker-compose logs -f
+
+  docker:build:
+    desc: Dockerイメージをビルド
+    cmds:
+      - docker-compose build
+
+  # ===================
+  # テスト
+  # ===================
+  test:
+    desc: 全テストを実行
+    cmds:
+      - task: test:backend
+      - task: test:frontend
+
+  test:backend:
+    desc: バックエンドテストを実行
+    dir: "{{.BACKEND_DIR}}"
+    cmds:
+      - uv run pytest
+
+  test:frontend:
+    desc: フロントエンドテストを実行
+    dir: "{{.FRONTEND_DIR}}"
+    cmds:
+      - npm test
+
+  test:e2e:
+    desc: E2Eテストを実行
+    dir: "{{.FRONTEND_DIR}}"
+    cmds:
+      - npm run test:e2e
+
+  test:e2e:ui:
+    desc: E2Eテストを UI モードで実行
+    dir: "{{.FRONTEND_DIR}}"
+    cmds:
+      - npm run test:e2e:ui
+
+  test:all:
+    desc: 全テスト (unit + e2e) を実行
+    cmds:
+      - task: test
+      - task: test:e2e
+
+  # ===================
+  # リント・フォーマット
+  # ===================
+  lint:
+    desc: 全リントを実行
+    cmds:
+      - task: lint:backend
+      - task: lint:frontend
+
+  lint:backend:
+    desc: バックエンドリントを実行
+    dir: "{{.BACKEND_DIR}}"
+    cmds:
+      - uv run ruff check src/
+
+  lint:frontend:
+    desc: フロントエンドリントを実行
+    dir: "{{.FRONTEND_DIR}}"
+    cmds:
+      - npm run lint
+
+  format:
+    desc: 全フォーマットを実行
+    cmds:
+      - task: format:backend
+      - task: format:frontend
+
+  format:backend:
+    desc: バックエンドフォーマットを実行
+    dir: "{{.BACKEND_DIR}}"
+    cmds:
+      - uv run ruff format src/
+
+  format:frontend:
+    desc: フロントエンドフォーマットを実行
+    dir: "{{.FRONTEND_DIR}}"
+    cmds:
+      - npx prettier --write "src/**/*.{ts,tsx}"
+
+  # ===================
+  # ビルド
+  # ===================
+  build:
+    desc: 全ビルドを実行
+    cmds:
+      - task: build:frontend
+
+  build:frontend:
+    desc: フロントエンドビルドを実行
+    dir: "{{.FRONTEND_DIR}}"
+    cmds:
+      - npm run build
+
+  # ===================
+  # クリーンアップ
+  # ===================
+  clean:
+    desc: ビルド成果物を削除
+    cmds:
+      - rm -rf {{.FRONTEND_DIR}}/.next
+      - rm -rf {{.FRONTEND_DIR}}/storybook-static
+      - rm -rf {{.BACKEND_DIR}}/__pycache__
+      - find . -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null || true
+      - find . -type d -name ".pytest_cache" -exec rm -rf {} + 2>/dev/null || true
