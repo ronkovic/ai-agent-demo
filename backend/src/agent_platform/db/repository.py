@@ -1,12 +1,21 @@
 """Repository pattern for data access."""
 
+from datetime import UTC, datetime
 from uuid import UUID
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
-from .models import Agent, AgentCard, Conversation, Message
+from .models import (
+    Agent,
+    AgentCard,
+    Conversation,
+    Message,
+    PersonalAgent,
+    UserApiKey,
+    UserLLMConfig,
+)
 
 # =============================================================================
 # Agent Repository
@@ -241,3 +250,222 @@ class AgentCardRepository:
             select(AgentCard).where(AgentCard.agent_id == agent_id)
         )
         return result.scalar_one_or_none()
+
+
+# =============================================================================
+# Personal Agent Repository
+# =============================================================================
+
+
+class PersonalAgentRepository:
+    """PersonalAgent data access repository."""
+
+    async def create(
+        self,
+        db: AsyncSession,
+        *,
+        user_id: UUID,
+        name: str,
+        system_prompt: str,
+        description: str | None = None,
+        is_public: bool = False,
+    ) -> PersonalAgent:
+        """Create a new personal agent."""
+        agent = PersonalAgent(
+            user_id=user_id,
+            name=name,
+            description=description,
+            system_prompt=system_prompt,
+            is_public=is_public,
+        )
+        db.add(agent)
+        await db.flush()
+        await db.refresh(agent)
+        return agent
+
+    async def get(self, db: AsyncSession, agent_id: UUID) -> PersonalAgent | None:
+        """Get personal agent by ID."""
+        result = await db.execute(select(PersonalAgent).where(PersonalAgent.id == agent_id))
+        return result.scalar_one_or_none()
+
+    async def get_by_user(
+        self, db: AsyncSession, agent_id: UUID, user_id: UUID
+    ) -> PersonalAgent | None:
+        """Get personal agent by ID and user ID."""
+        result = await db.execute(
+            select(PersonalAgent).where(
+                PersonalAgent.id == agent_id, PersonalAgent.user_id == user_id
+            )
+        )
+        return result.scalar_one_or_none()
+
+    async def list_by_user(self, db: AsyncSession, user_id: UUID) -> list[PersonalAgent]:
+        """List all personal agents for a user."""
+        result = await db.execute(
+            select(PersonalAgent)
+            .where(PersonalAgent.user_id == user_id)
+            .order_by(PersonalAgent.created_at.desc())
+        )
+        return list(result.scalars().all())
+
+    async def update(
+        self,
+        db: AsyncSession,
+        agent: PersonalAgent,
+        **kwargs: str | bool | None,
+    ) -> PersonalAgent:
+        """Update personal agent fields."""
+        for key, value in kwargs.items():
+            if value is not None and hasattr(agent, key):
+                setattr(agent, key, value)
+        await db.flush()
+        await db.refresh(agent)
+        return agent
+
+    async def delete(self, db: AsyncSession, agent: PersonalAgent) -> None:
+        """Delete a personal agent."""
+        await db.delete(agent)
+        await db.flush()
+
+
+# =============================================================================
+# User LLM Config Repository
+# =============================================================================
+
+
+class UserLLMConfigRepository:
+    """UserLLMConfig data access repository."""
+
+    async def create(
+        self,
+        db: AsyncSession,
+        *,
+        user_id: UUID,
+        provider: str,
+        vault_secret_id: str,
+        is_default: bool = False,
+    ) -> UserLLMConfig:
+        """Create a new LLM config."""
+        config = UserLLMConfig(
+            user_id=user_id,
+            provider=provider,
+            vault_secret_id=vault_secret_id,
+            is_default=is_default,
+        )
+        db.add(config)
+        await db.flush()
+        await db.refresh(config)
+        return config
+
+    async def get(self, db: AsyncSession, config_id: UUID) -> UserLLMConfig | None:
+        """Get LLM config by ID."""
+        result = await db.execute(select(UserLLMConfig).where(UserLLMConfig.id == config_id))
+        return result.scalar_one_or_none()
+
+    async def get_by_user(
+        self, db: AsyncSession, config_id: UUID, user_id: UUID
+    ) -> UserLLMConfig | None:
+        """Get LLM config by ID and user ID."""
+        result = await db.execute(
+            select(UserLLMConfig).where(
+                UserLLMConfig.id == config_id, UserLLMConfig.user_id == user_id
+            )
+        )
+        return result.scalar_one_or_none()
+
+    async def get_by_user_provider(
+        self, db: AsyncSession, user_id: UUID, provider: str
+    ) -> UserLLMConfig | None:
+        """Get LLM config by user ID and provider."""
+        result = await db.execute(
+            select(UserLLMConfig).where(
+                UserLLMConfig.user_id == user_id, UserLLMConfig.provider == provider
+            )
+        )
+        return result.scalar_one_or_none()
+
+    async def list_by_user(self, db: AsyncSession, user_id: UUID) -> list[UserLLMConfig]:
+        """List all LLM configs for a user."""
+        result = await db.execute(
+            select(UserLLMConfig)
+            .where(UserLLMConfig.user_id == user_id)
+            .order_by(UserLLMConfig.created_at.desc())
+        )
+        return list(result.scalars().all())
+
+    async def delete(self, db: AsyncSession, config: UserLLMConfig) -> None:
+        """Delete a LLM config."""
+        await db.delete(config)
+        await db.flush()
+
+
+# =============================================================================
+# User API Key Repository
+# =============================================================================
+
+
+class UserApiKeyRepository:
+    """UserApiKey data access repository."""
+
+    async def create(
+        self,
+        db: AsyncSession,
+        *,
+        user_id: UUID,
+        name: str,
+        key_hash: str,
+        key_prefix: str,
+        scopes: list[str] | None = None,
+        rate_limit: int = 1000,
+        expires_at: datetime | None = None,
+    ) -> UserApiKey:
+        """Create a new API key."""
+        api_key = UserApiKey(
+            user_id=user_id,
+            name=name,
+            key_hash=key_hash,
+            key_prefix=key_prefix,
+            scopes=scopes or [],
+            rate_limit=rate_limit,
+            expires_at=expires_at,
+        )
+        db.add(api_key)
+        await db.flush()
+        await db.refresh(api_key)
+        return api_key
+
+    async def get(self, db: AsyncSession, key_id: UUID) -> UserApiKey | None:
+        """Get API key by ID."""
+        result = await db.execute(select(UserApiKey).where(UserApiKey.id == key_id))
+        return result.scalar_one_or_none()
+
+    async def get_by_user(self, db: AsyncSession, key_id: UUID, user_id: UUID) -> UserApiKey | None:
+        """Get API key by ID and user ID."""
+        result = await db.execute(
+            select(UserApiKey).where(UserApiKey.id == key_id, UserApiKey.user_id == user_id)
+        )
+        return result.scalar_one_or_none()
+
+    async def get_by_hash(self, db: AsyncSession, key_hash: str) -> UserApiKey | None:
+        """Get API key by hash (for authentication)."""
+        result = await db.execute(select(UserApiKey).where(UserApiKey.key_hash == key_hash))
+        return result.scalar_one_or_none()
+
+    async def list_by_user(self, db: AsyncSession, user_id: UUID) -> list[UserApiKey]:
+        """List all API keys for a user."""
+        result = await db.execute(
+            select(UserApiKey)
+            .where(UserApiKey.user_id == user_id)
+            .order_by(UserApiKey.created_at.desc())
+        )
+        return list(result.scalars().all())
+
+    async def update_last_used(self, db: AsyncSession, api_key: UserApiKey) -> None:
+        """Update last used timestamp."""
+        api_key.last_used_at = datetime.now(UTC)
+        await db.flush()
+
+    async def delete(self, db: AsyncSession, api_key: UserApiKey) -> None:
+        """Delete an API key."""
+        await db.delete(api_key)
+        await db.flush()

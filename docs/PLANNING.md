@@ -43,9 +43,9 @@
 
 ## Personal AI Agent SaaS要件 (Phase 7以降)
 
-- [ ] Personal AI Agent CRUD
-- [ ] ユーザーLLM APIキー管理 (Supabase Vault)
-- [ ] ユーザーAPIキー発行・認証
+- [x] Personal AI Agent CRUD
+- [x] ユーザーLLM APIキー管理 (Supabase Vault)
+- [x] ユーザーAPIキー発行・認証
 - [ ] エージェント公開/非公開設定
 - [ ] 公開エージェント検索・連携
 - [ ] ビジュアルワークフローエディタ (React Flow)
@@ -443,26 +443,33 @@ CREATE TABLE user_api_keys (
   - CLAUDE.md 包括的更新 (アーキテクチャ、コマンド、ガイドライン)
   - README.md 作成 (ルート、backend、frontend)
 
-### Phase 7: Personal Agent基盤
+### Phase 7: Personal Agent基盤 ✅
 
-- [ ] データベースモデル追加
+- [x] データベースモデル追加
   - `PersonalAgent` - オーケストレーターエージェント
   - `UserLLMConfig` - ユーザーLLM APIキー設定
   - `UserApiKey` - API認証キー
-- [ ] Supabase Vault統合サービス (`services/vault_service.py`)
-- [ ] Personal Agent CRUD API (`api/routes/personal_agents.py`)
-  - GET/POST/PUT/DELETE `/api/personal-agents`
-- [ ] User LLM Config API (`api/routes/user_settings.py`)
+- [x] Supabase Vault統合サービス (`services/vault_service.py`)
+  - 本番: Supabase Vault、開発: Fernet暗号化
+- [x] Personal Agent CRUD API (`api/routes/personal_agents.py`)
+  - GET/POST/PATCH/DELETE `/api/personal-agents`
+- [x] User LLM Config API (`api/routes/user_settings.py`)
   - GET/POST/DELETE `/api/user/llm-configs`
-- [ ] User API Key管理 API
+- [x] User API Key管理 API
   - GET/POST/DELETE `/api/user/api-keys`
   - SHA-256ハッシュ保存、生成時のみ表示
-- [ ] フロントエンド: Personal Agent一覧・作成・編集
+- [x] フロントエンド: Personal Agent一覧・作成・編集
   - `app/personal-agents/` ページ群
-- [ ] フロントエンド: Settings UI
+  - `hooks/usePersonalAgents.ts`
+  - `components/personal-agent/` コンポーネント
+- [x] フロントエンド: Settings UI
   - `app/settings/llm-keys/` - LLM APIキー管理
   - `app/settings/api-keys/` - APIキー管理
-- [ ] Personal Agent チャット機能
+  - `hooks/useLLMConfigs.ts`, `hooks/useApiKeys.ts`
+  - `components/settings/` コンポーネント
+- [x] Sidebar更新: パーソナルエージェントセクション、設定ボタン
+- [x] テスト: 28個のバックエンドテスト、E2Eテスト
+- [ ] Personal Agent チャット機能 (Phase 8で実装予定)
 
 ### Phase 8: ワークフローエンジン
 

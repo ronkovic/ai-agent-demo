@@ -2,7 +2,7 @@
 
 import pytest
 
-from agent_platform.core.executor import ToolExecutor, MAX_TOOL_CALLS_PER_TURN
+from agent_platform.core.executor import MAX_TOOL_CALLS_PER_TURN, ToolExecutor
 from agent_platform.tools import ToolRegistry
 from agent_platform.tools.web import MockSearchProvider, WebSearchTool
 

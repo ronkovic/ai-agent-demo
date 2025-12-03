@@ -7,7 +7,14 @@ from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
 from ..auth.jwt import AuthError, extract_user_id, verify_supabase_token
 from ..core.config import settings
-from ..db import AgentRepository, ConversationRepository, MessageRepository
+from ..db import (
+    AgentRepository,
+    ConversationRepository,
+    MessageRepository,
+    PersonalAgentRepository,
+    UserApiKeyRepository,
+    UserLLMConfigRepository,
+)
 from ..db.session import get_db
 
 # Re-export get_db for convenience
@@ -16,6 +23,9 @@ __all__ = [
     "get_agent_repo",
     "get_conversation_repo",
     "get_message_repo",
+    "get_personal_agent_repo",
+    "get_user_llm_config_repo",
+    "get_user_api_key_repo",
     "get_current_user_id",
 ]
 
@@ -37,6 +47,21 @@ def get_conversation_repo() -> ConversationRepository:
 def get_message_repo() -> MessageRepository:
     """Get message repository instance."""
     return MessageRepository()
+
+
+def get_personal_agent_repo() -> PersonalAgentRepository:
+    """Get personal agent repository instance."""
+    return PersonalAgentRepository()
+
+
+def get_user_llm_config_repo() -> UserLLMConfigRepository:
+    """Get user LLM config repository instance."""
+    return UserLLMConfigRepository()
+
+
+def get_user_api_key_repo() -> UserApiKeyRepository:
+    """Get user API key repository instance."""
+    return UserApiKeyRepository()
 
 
 async def get_current_user_id(

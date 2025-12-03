@@ -40,6 +40,9 @@ class Settings(BaseSettings):
     # A2A設定
     a2a_base_url: str = "http://localhost:8000"
 
+    # 暗号化設定（開発用Fernet暗号化キー）
+    encryption_key: str = ""
+
 
 @lru_cache
 def get_settings() -> Settings:

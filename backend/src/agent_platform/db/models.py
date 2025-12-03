@@ -4,7 +4,17 @@ from datetime import datetime
 from typing import Any
 from uuid import UUID, uuid4
 
-from sqlalchemy import JSON, Boolean, DateTime, ForeignKey, String, Text, func
+from sqlalchemy import (
+    JSON,
+    Boolean,
+    DateTime,
+    ForeignKey,
+    Integer,
+    String,
+    Text,
+    UniqueConstraint,
+    func,
+)
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.dialects.postgresql import UUID as PGUUID
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
@@ -161,3 +171,61 @@ class AgentCard(Base):
 
     # Relationships
     agent: Mapped["Agent"] = relationship("Agent", back_populates="agent_card")
+
+
+class PersonalAgent(Base):
+    """パーソナルAIエージェント（オーケストレーター）モデル."""
+
+    __tablename__ = "personal_agents"
+
+    id: Mapped[UUID] = mapped_column(GUID(), primary_key=True, default=uuid4)
+    user_id: Mapped[UUID] = mapped_column(GUID(), nullable=False, index=True)
+    name: Mapped[str] = mapped_column(String(255), nullable=False)
+    description: Mapped[str | None] = mapped_column(Text, nullable=True)
+    system_prompt: Mapped[str] = mapped_column(Text, nullable=False)
+    is_public: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False
+    )
+
+
+class UserLLMConfig(Base):
+    """ユーザーLLM APIキー設定モデル."""
+
+    __tablename__ = "user_llm_configs"
+
+    id: Mapped[UUID] = mapped_column(GUID(), primary_key=True, default=uuid4)
+    user_id: Mapped[UUID] = mapped_column(GUID(), nullable=False, index=True)
+    # Provider: openai, anthropic, google, bedrock
+    provider: Mapped[str] = mapped_column(String(50), nullable=False)
+    vault_secret_id: Mapped[str] = mapped_column(String(255), nullable=False)
+    is_default: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False
+    )
+
+    __table_args__ = (
+        UniqueConstraint("user_id", "provider", name="uq_user_llm_config_user_provider"),
+    )
+
+
+class UserApiKey(Base):
+    """ユーザーAPIキーモデル."""
+
+    __tablename__ = "user_api_keys"
+
+    id: Mapped[UUID] = mapped_column(GUID(), primary_key=True, default=uuid4)
+    user_id: Mapped[UUID] = mapped_column(GUID(), nullable=False, index=True)
+    name: Mapped[str] = mapped_column(String(255), nullable=False)
+    key_hash: Mapped[str] = mapped_column(String(64), nullable=False)  # SHA-256
+    key_prefix: Mapped[str] = mapped_column(String(12), nullable=False)  # "sk_live_xxxx"
+    scopes: Mapped[list[str]] = mapped_column(PortableJSON(), default=list, nullable=False)
+    rate_limit: Mapped[int] = mapped_column(Integer, default=1000, nullable=False)
+    expires_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    last_used_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False
+    )

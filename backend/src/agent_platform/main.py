@@ -6,7 +6,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from agent_platform.api.routes import a2a, agents, chat
+from agent_platform.api.routes import a2a, agents, chat, personal_agents, user_settings
 from agent_platform.core.config import settings
 from agent_platform.db.models import Base
 from agent_platform.db.session import engine
@@ -53,6 +53,8 @@ app.add_middleware(
 
 # ルーター登録
 app.include_router(agents.router, prefix="/api/agents", tags=["agents"])
+app.include_router(personal_agents.router, prefix="/api/personal-agents", tags=["personal-agents"])
+app.include_router(user_settings.router, prefix="/api/user", tags=["user-settings"])
 app.include_router(chat.router, prefix="/api/chat", tags=["chat"])
 app.include_router(a2a.router, prefix="/a2a", tags=["a2a"])
 

@@ -27,6 +27,10 @@ export type AgentCard = {
      */
     version?: string;
     /**
+     * Protocolversion
+     */
+    protocolVersion?: string;
+    /**
      * Capabilities
      */
     capabilities?: {
@@ -38,6 +42,20 @@ export type AgentCard = {
     skills?: Array<{
         [key: string]: unknown;
     }>;
+    /**
+     * Defaultinputmodes
+     */
+    defaultInputModes?: Array<string>;
+    /**
+     * Defaultoutputmodes
+     */
+    defaultOutputModes?: Array<string>;
+    /**
+     * Provider
+     */
+    provider?: {
+        [key: string]: string;
+    } | null;
 };
 
 /**
@@ -292,6 +310,128 @@ export type HttpValidationError = {
 };
 
 /**
+ * MessagePart
+ *
+ * A2Aメッセージパート.
+ */
+export type MessagePart = {
+    /**
+     * Type
+     */
+    type?: string;
+    /**
+     * Text
+     */
+    text: string;
+};
+
+/**
+ * PersonalAgentCreate
+ *
+ * Personal Agent作成リクエスト.
+ */
+export type PersonalAgentCreate = {
+    /**
+     * Name
+     */
+    name: string;
+    /**
+     * Description
+     */
+    description?: string | null;
+    /**
+     * System Prompt
+     */
+    system_prompt: string;
+    /**
+     * Is Public
+     */
+    is_public?: boolean;
+};
+
+/**
+ * PersonalAgentResponse
+ *
+ * Personal Agentレスポンス.
+ */
+export type PersonalAgentResponse = {
+    /**
+     * Id
+     */
+    id: string;
+    /**
+     * User Id
+     */
+    user_id: string;
+    /**
+     * Name
+     */
+    name: string;
+    /**
+     * Description
+     */
+    description: string | null;
+    /**
+     * System Prompt
+     */
+    system_prompt: string;
+    /**
+     * Is Public
+     */
+    is_public: boolean;
+    /**
+     * Created At
+     */
+    created_at: string;
+    /**
+     * Updated At
+     */
+    updated_at: string;
+};
+
+/**
+ * PersonalAgentUpdate
+ *
+ * Personal Agent更新リクエスト.
+ */
+export type PersonalAgentUpdate = {
+    /**
+     * Name
+     */
+    name?: string | null;
+    /**
+     * Description
+     */
+    description?: string | null;
+    /**
+     * System Prompt
+     */
+    system_prompt?: string | null;
+    /**
+     * Is Public
+     */
+    is_public?: boolean | null;
+};
+
+/**
+ * TaskMessage
+ *
+ * A2Aタスクメッセージ.
+ */
+export type TaskMessage = {
+    /**
+     * Role
+     */
+    role?: string;
+    /**
+     * Parts
+     */
+    parts: Array<MessagePart | {
+        [key: string]: unknown;
+    }>;
+};
+
+/**
  * TaskRequest
  *
  * A2Aタスクリクエスト.
@@ -300,13 +440,8 @@ export type TaskRequest = {
     /**
      * Id
      */
-    id: string;
-    /**
-     * Message
-     */
-    message: {
-        [key: string]: unknown;
-    };
+    id?: string | null;
+    message: TaskMessage;
 };
 
 /**
@@ -323,12 +458,198 @@ export type TaskResponse = {
      * Status
      */
     status: string;
+    result?: TaskResult | null;
     /**
-     * Result
+     * Error
      */
-    result?: {
+    error?: string | null;
+    /**
+     * Agent Id
+     */
+    agent_id?: string | null;
+};
+
+/**
+ * TaskResult
+ *
+ * A2Aタスク結果.
+ */
+export type TaskResult = {
+    message?: TaskResultMessage | null;
+};
+
+/**
+ * TaskResultMessage
+ *
+ * A2Aタスク結果メッセージ.
+ */
+export type TaskResultMessage = {
+    /**
+     * Role
+     */
+    role: string;
+    /**
+     * Parts
+     */
+    parts: Array<{
         [key: string]: unknown;
-    } | null;
+    }>;
+};
+
+/**
+ * UserApiKeyCreate
+ *
+ * API Key作成リクエスト.
+ */
+export type UserApiKeyCreate = {
+    /**
+     * Name
+     */
+    name: string;
+    /**
+     * Scopes
+     */
+    scopes?: Array<string>;
+    /**
+     * Rate Limit
+     */
+    rate_limit?: number;
+    /**
+     * Expires At
+     */
+    expires_at?: string | null;
+};
+
+/**
+ * UserApiKeyCreated
+ *
+ * API Key作成レスポンス（生キー含む、作成時のみ）.
+ */
+export type UserApiKeyCreated = {
+    /**
+     * Id
+     */
+    id: string;
+    /**
+     * Name
+     */
+    name: string;
+    /**
+     * Key
+     */
+    key: string;
+    /**
+     * Key Prefix
+     */
+    key_prefix: string;
+    /**
+     * Scopes
+     */
+    scopes: Array<string>;
+    /**
+     * Rate Limit
+     */
+    rate_limit: number;
+    /**
+     * Expires At
+     */
+    expires_at: string | null;
+    /**
+     * Created At
+     */
+    created_at: string;
+};
+
+/**
+ * UserApiKeyResponse
+ *
+ * API Keyレスポンス（一覧表示用、生キーなし）.
+ */
+export type UserApiKeyResponse = {
+    /**
+     * Id
+     */
+    id: string;
+    /**
+     * User Id
+     */
+    user_id: string;
+    /**
+     * Name
+     */
+    name: string;
+    /**
+     * Key Prefix
+     */
+    key_prefix: string;
+    /**
+     * Scopes
+     */
+    scopes: Array<string>;
+    /**
+     * Rate Limit
+     */
+    rate_limit: number;
+    /**
+     * Expires At
+     */
+    expires_at: string | null;
+    /**
+     * Last Used At
+     */
+    last_used_at: string | null;
+    /**
+     * Created At
+     */
+    created_at: string;
+};
+
+/**
+ * UserLLMConfigCreate
+ *
+ * LLM Config作成リクエスト.
+ */
+export type UserLlmConfigCreate = {
+    /**
+     * Provider
+     */
+    provider: string;
+    /**
+     * Api Key
+     */
+    api_key: string;
+    /**
+     * Is Default
+     */
+    is_default?: boolean;
+};
+
+/**
+ * UserLLMConfigResponse
+ *
+ * LLM Configレスポンス.
+ */
+export type UserLlmConfigResponse = {
+    /**
+     * Id
+     */
+    id: string;
+    /**
+     * User Id
+     */
+    user_id: string;
+    /**
+     * Provider
+     */
+    provider: string;
+    /**
+     * Is Default
+     */
+    is_default: boolean;
+    /**
+     * Created At
+     */
+    created_at: string;
 };
 
 /**
@@ -482,6 +803,285 @@ export type UpdateAgentApiAgentsAgentIdPatchResponses = {
 
 export type UpdateAgentApiAgentsAgentIdPatchResponse = UpdateAgentApiAgentsAgentIdPatchResponses[keyof UpdateAgentApiAgentsAgentIdPatchResponses];
 
+export type ListPersonalAgentsApiPersonalAgentsGetData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/personal-agents';
+};
+
+export type ListPersonalAgentsApiPersonalAgentsGetResponses = {
+    /**
+     * Response List Personal Agents Api Personal Agents Get
+     *
+     * Successful Response
+     */
+    200: Array<PersonalAgentResponse>;
+};
+
+export type ListPersonalAgentsApiPersonalAgentsGetResponse = ListPersonalAgentsApiPersonalAgentsGetResponses[keyof ListPersonalAgentsApiPersonalAgentsGetResponses];
+
+export type CreatePersonalAgentApiPersonalAgentsPostData = {
+    body: PersonalAgentCreate;
+    path?: never;
+    query?: never;
+    url: '/api/personal-agents';
+};
+
+export type CreatePersonalAgentApiPersonalAgentsPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type CreatePersonalAgentApiPersonalAgentsPostError = CreatePersonalAgentApiPersonalAgentsPostErrors[keyof CreatePersonalAgentApiPersonalAgentsPostErrors];
+
+export type CreatePersonalAgentApiPersonalAgentsPostResponses = {
+    /**
+     * Successful Response
+     */
+    201: PersonalAgentResponse;
+};
+
+export type CreatePersonalAgentApiPersonalAgentsPostResponse = CreatePersonalAgentApiPersonalAgentsPostResponses[keyof CreatePersonalAgentApiPersonalAgentsPostResponses];
+
+export type DeletePersonalAgentApiPersonalAgentsAgentIdDeleteData = {
+    body?: never;
+    path: {
+        /**
+         * Agent Id
+         */
+        agent_id: string;
+    };
+    query?: never;
+    url: '/api/personal-agents/{agent_id}';
+};
+
+export type DeletePersonalAgentApiPersonalAgentsAgentIdDeleteErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type DeletePersonalAgentApiPersonalAgentsAgentIdDeleteError = DeletePersonalAgentApiPersonalAgentsAgentIdDeleteErrors[keyof DeletePersonalAgentApiPersonalAgentsAgentIdDeleteErrors];
+
+export type DeletePersonalAgentApiPersonalAgentsAgentIdDeleteResponses = {
+    /**
+     * Successful Response
+     */
+    204: void;
+};
+
+export type DeletePersonalAgentApiPersonalAgentsAgentIdDeleteResponse = DeletePersonalAgentApiPersonalAgentsAgentIdDeleteResponses[keyof DeletePersonalAgentApiPersonalAgentsAgentIdDeleteResponses];
+
+export type GetPersonalAgentApiPersonalAgentsAgentIdGetData = {
+    body?: never;
+    path: {
+        /**
+         * Agent Id
+         */
+        agent_id: string;
+    };
+    query?: never;
+    url: '/api/personal-agents/{agent_id}';
+};
+
+export type GetPersonalAgentApiPersonalAgentsAgentIdGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type GetPersonalAgentApiPersonalAgentsAgentIdGetError = GetPersonalAgentApiPersonalAgentsAgentIdGetErrors[keyof GetPersonalAgentApiPersonalAgentsAgentIdGetErrors];
+
+export type GetPersonalAgentApiPersonalAgentsAgentIdGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: PersonalAgentResponse;
+};
+
+export type GetPersonalAgentApiPersonalAgentsAgentIdGetResponse = GetPersonalAgentApiPersonalAgentsAgentIdGetResponses[keyof GetPersonalAgentApiPersonalAgentsAgentIdGetResponses];
+
+export type UpdatePersonalAgentApiPersonalAgentsAgentIdPatchData = {
+    body: PersonalAgentUpdate;
+    path: {
+        /**
+         * Agent Id
+         */
+        agent_id: string;
+    };
+    query?: never;
+    url: '/api/personal-agents/{agent_id}';
+};
+
+export type UpdatePersonalAgentApiPersonalAgentsAgentIdPatchErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type UpdatePersonalAgentApiPersonalAgentsAgentIdPatchError = UpdatePersonalAgentApiPersonalAgentsAgentIdPatchErrors[keyof UpdatePersonalAgentApiPersonalAgentsAgentIdPatchErrors];
+
+export type UpdatePersonalAgentApiPersonalAgentsAgentIdPatchResponses = {
+    /**
+     * Successful Response
+     */
+    200: PersonalAgentResponse;
+};
+
+export type UpdatePersonalAgentApiPersonalAgentsAgentIdPatchResponse = UpdatePersonalAgentApiPersonalAgentsAgentIdPatchResponses[keyof UpdatePersonalAgentApiPersonalAgentsAgentIdPatchResponses];
+
+export type ListLlmConfigsApiUserLlmConfigsGetData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/user/llm-configs';
+};
+
+export type ListLlmConfigsApiUserLlmConfigsGetResponses = {
+    /**
+     * Response List Llm Configs Api User Llm Configs Get
+     *
+     * Successful Response
+     */
+    200: Array<UserLlmConfigResponse>;
+};
+
+export type ListLlmConfigsApiUserLlmConfigsGetResponse = ListLlmConfigsApiUserLlmConfigsGetResponses[keyof ListLlmConfigsApiUserLlmConfigsGetResponses];
+
+export type CreateLlmConfigApiUserLlmConfigsPostData = {
+    body: UserLlmConfigCreate;
+    path?: never;
+    query?: never;
+    url: '/api/user/llm-configs';
+};
+
+export type CreateLlmConfigApiUserLlmConfigsPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type CreateLlmConfigApiUserLlmConfigsPostError = CreateLlmConfigApiUserLlmConfigsPostErrors[keyof CreateLlmConfigApiUserLlmConfigsPostErrors];
+
+export type CreateLlmConfigApiUserLlmConfigsPostResponses = {
+    /**
+     * Successful Response
+     */
+    201: UserLlmConfigResponse;
+};
+
+export type CreateLlmConfigApiUserLlmConfigsPostResponse = CreateLlmConfigApiUserLlmConfigsPostResponses[keyof CreateLlmConfigApiUserLlmConfigsPostResponses];
+
+export type DeleteLlmConfigApiUserLlmConfigsConfigIdDeleteData = {
+    body?: never;
+    path: {
+        /**
+         * Config Id
+         */
+        config_id: string;
+    };
+    query?: never;
+    url: '/api/user/llm-configs/{config_id}';
+};
+
+export type DeleteLlmConfigApiUserLlmConfigsConfigIdDeleteErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type DeleteLlmConfigApiUserLlmConfigsConfigIdDeleteError = DeleteLlmConfigApiUserLlmConfigsConfigIdDeleteErrors[keyof DeleteLlmConfigApiUserLlmConfigsConfigIdDeleteErrors];
+
+export type DeleteLlmConfigApiUserLlmConfigsConfigIdDeleteResponses = {
+    /**
+     * Successful Response
+     */
+    204: void;
+};
+
+export type DeleteLlmConfigApiUserLlmConfigsConfigIdDeleteResponse = DeleteLlmConfigApiUserLlmConfigsConfigIdDeleteResponses[keyof DeleteLlmConfigApiUserLlmConfigsConfigIdDeleteResponses];
+
+export type ListApiKeysApiUserApiKeysGetData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/user/api-keys';
+};
+
+export type ListApiKeysApiUserApiKeysGetResponses = {
+    /**
+     * Response List Api Keys Api User Api Keys Get
+     *
+     * Successful Response
+     */
+    200: Array<UserApiKeyResponse>;
+};
+
+export type ListApiKeysApiUserApiKeysGetResponse = ListApiKeysApiUserApiKeysGetResponses[keyof ListApiKeysApiUserApiKeysGetResponses];
+
+export type CreateApiKeyApiUserApiKeysPostData = {
+    body: UserApiKeyCreate;
+    path?: never;
+    query?: never;
+    url: '/api/user/api-keys';
+};
+
+export type CreateApiKeyApiUserApiKeysPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type CreateApiKeyApiUserApiKeysPostError = CreateApiKeyApiUserApiKeysPostErrors[keyof CreateApiKeyApiUserApiKeysPostErrors];
+
+export type CreateApiKeyApiUserApiKeysPostResponses = {
+    /**
+     * Successful Response
+     */
+    201: UserApiKeyCreated;
+};
+
+export type CreateApiKeyApiUserApiKeysPostResponse = CreateApiKeyApiUserApiKeysPostResponses[keyof CreateApiKeyApiUserApiKeysPostResponses];
+
+export type DeleteApiKeyApiUserApiKeysKeyIdDeleteData = {
+    body?: never;
+    path: {
+        /**
+         * Key Id
+         */
+        key_id: string;
+    };
+    query?: never;
+    url: '/api/user/api-keys/{key_id}';
+};
+
+export type DeleteApiKeyApiUserApiKeysKeyIdDeleteErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type DeleteApiKeyApiUserApiKeysKeyIdDeleteError = DeleteApiKeyApiUserApiKeysKeyIdDeleteErrors[keyof DeleteApiKeyApiUserApiKeysKeyIdDeleteErrors];
+
+export type DeleteApiKeyApiUserApiKeysKeyIdDeleteResponses = {
+    /**
+     * Successful Response
+     */
+    204: void;
+};
+
+export type DeleteApiKeyApiUserApiKeysKeyIdDeleteResponse = DeleteApiKeyApiUserApiKeysKeyIdDeleteResponses[keyof DeleteApiKeyApiUserApiKeysKeyIdDeleteResponses];
+
 export type ChatApiChatPostData = {
     body: ChatRequest;
     path?: never;
@@ -524,6 +1124,29 @@ export type ChatStreamApiChatStreamPostErrors = {
 export type ChatStreamApiChatStreamPostError = ChatStreamApiChatStreamPostErrors[keyof ChatStreamApiChatStreamPostErrors];
 
 export type ChatStreamApiChatStreamPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: unknown;
+};
+
+export type ChatStreamWithToolsApiChatStreamToolsPostData = {
+    body: ChatRequest;
+    path?: never;
+    query?: never;
+    url: '/api/chat/stream/tools';
+};
+
+export type ChatStreamWithToolsApiChatStreamToolsPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ChatStreamWithToolsApiChatStreamToolsPostError = ChatStreamWithToolsApiChatStreamToolsPostErrors[keyof ChatStreamWithToolsApiChatStreamToolsPostErrors];
+
+export type ChatStreamWithToolsApiChatStreamToolsPostResponses = {
     /**
      * Successful Response
      */

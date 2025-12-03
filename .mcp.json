@@ -73,6 +73,16 @@
         "https://aws-mcp.us-east-1.api.aws/mcp",
         "--metadata", "AWS_REGION=ap-northeast-1"
       ]
+    },
+    "supabase": {
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "-y",
+        "@supabase/mcp-server-supabase@latest",
+        "--access-token",
+        "sbp_f829fc49ac871fe5ee9d215cca8f5622a1df6f81"
+      ]
     }
   }
 }

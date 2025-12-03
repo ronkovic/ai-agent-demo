@@ -32,6 +32,7 @@ dependencies = [
     "sse-starlette>=2.0.0",
     # Tools
     "docker>=7.0.0",
+    "aiosqlite>=0.21.0",
 ]
 
 [project.optional-dependencies]

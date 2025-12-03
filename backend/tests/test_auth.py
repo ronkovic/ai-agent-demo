@@ -1,6 +1,6 @@
 """Tests for authentication module."""
 
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 from uuid import UUID
 
 import pytest
@@ -21,8 +21,8 @@ class TestJWTVerification:
             "email": "test@example.com",
             "aud": "authenticated",
             "role": "authenticated",
-            "exp": int((datetime.now(timezone.utc) + timedelta(hours=1)).timestamp()),
-            "iat": int(datetime.now(timezone.utc).timestamp()),
+            "exp": int((datetime.now(UTC) + timedelta(hours=1)).timestamp()),
+            "iat": int(datetime.now(UTC).timestamp()),
         }
 
     @pytest.fixture
@@ -50,7 +50,7 @@ class TestJWTVerification:
 
         # Set expiration to past
         valid_payload["exp"] = int(
-            (datetime.now(timezone.utc) - timedelta(hours=1)).timestamp()
+            (datetime.now(UTC) - timedelta(hours=1)).timestamp()
         )
         token = jwt.encode(valid_payload, jwt_secret, algorithm="HS256")
 

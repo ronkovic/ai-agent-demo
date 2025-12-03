@@ -29,7 +29,12 @@
               }
             }
           }
-        }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
       },
       "post": {
         "tags": [
@@ -69,7 +74,12 @@
               }
             }
           }
-        }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
       }
     },
     "/api/agents/{agent_id}": {
@@ -80,6 +90,11 @@
         "summary": "Get Agent",
         "description": "エージェント取得.",
         "operationId": "get_agent_api_agents__agent_id__get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
         "parameters": [
           {
             "name": "agent_id",
@@ -122,6 +137,11 @@
         "summary": "Update Agent",
         "description": "エージェント更新.",
         "operationId": "update_agent_api_agents__agent_id__patch",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
         "parameters": [
           {
             "name": "agent_id",
@@ -174,6 +194,11 @@
         "summary": "Delete Agent",
         "description": "エージェント削除.",
         "operationId": "delete_agent_api_agents__agent_id__delete",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
         "parameters": [
           {
             "name": "agent_id",
@@ -183,6 +208,464 @@
               "type": "string",
               "format": "uuid",
               "title": "Agent Id"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/personal-agents": {
+      "get": {
+        "tags": [
+          "personal-agents"
+        ],
+        "summary": "List Personal Agents",
+        "description": "Personal Agent一覧取得.",
+        "operationId": "list_personal_agents_api_personal_agents_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/PersonalAgentResponse"
+                  },
+                  "type": "array",
+                  "title": "Response List Personal Agents Api Personal Agents Get"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "personal-agents"
+        ],
+        "summary": "Create Personal Agent",
+        "description": "Personal Agent作成.",
+        "operationId": "create_personal_agent_api_personal_agents_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PersonalAgentCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PersonalAgentResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/personal-agents/{agent_id}": {
+      "get": {
+        "tags": [
+          "personal-agents"
+        ],
+        "summary": "Get Personal Agent",
+        "description": "Personal Agent取得.",
+        "operationId": "get_personal_agent_api_personal_agents__agent_id__get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "agent_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Agent Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PersonalAgentResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "personal-agents"
+        ],
+        "summary": "Update Personal Agent",
+        "description": "Personal Agent更新.",
+        "operationId": "update_personal_agent_api_personal_agents__agent_id__patch",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "agent_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Agent Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PersonalAgentUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PersonalAgentResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "personal-agents"
+        ],
+        "summary": "Delete Personal Agent",
+        "description": "Personal Agent削除.",
+        "operationId": "delete_personal_agent_api_personal_agents__agent_id__delete",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "agent_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Agent Id"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/user/llm-configs": {
+      "get": {
+        "tags": [
+          "user-settings"
+        ],
+        "summary": "List Llm Configs",
+        "description": "LLM Config一覧取得.",
+        "operationId": "list_llm_configs_api_user_llm_configs_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/UserLLMConfigResponse"
+                  },
+                  "type": "array",
+                  "title": "Response List Llm Configs Api User Llm Configs Get"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "user-settings"
+        ],
+        "summary": "Create Llm Config",
+        "description": "LLM Config作成.",
+        "operationId": "create_llm_config_api_user_llm_configs_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserLLMConfigCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserLLMConfigResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/user/llm-configs/{config_id}": {
+      "delete": {
+        "tags": [
+          "user-settings"
+        ],
+        "summary": "Delete Llm Config",
+        "description": "LLM Config削除.",
+        "operationId": "delete_llm_config_api_user_llm_configs__config_id__delete",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "config_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Config Id"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/user/api-keys": {
+      "get": {
+        "tags": [
+          "user-settings"
+        ],
+        "summary": "List Api Keys",
+        "description": "API Key一覧取得.",
+        "operationId": "list_api_keys_api_user_api_keys_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/UserApiKeyResponse"
+                  },
+                  "type": "array",
+                  "title": "Response List Api Keys Api User Api Keys Get"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "user-settings"
+        ],
+        "summary": "Create Api Key",
+        "description": "API Key作成.\n\n注意: 生のAPIキーはこのレスポンスでのみ返されます。\n以降は表示できないため、ユーザーに保存を促してください。",
+        "operationId": "create_api_key_api_user_api_keys_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserApiKeyCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserApiKeyCreated"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/user/api-keys/{key_id}": {
+      "delete": {
+        "tags": [
+          "user-settings"
+        ],
+        "summary": "Delete Api Key",
+        "description": "API Key削除.",
+        "operationId": "delete_api_key_api_user_api_keys__key_id__delete",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "key_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Key Id"
             }
           }
         ],
@@ -242,7 +725,12 @@
               }
             }
           }
-        }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
       }
     },
     "/api/chat/stream": {
@@ -282,7 +770,57 @@
               }
             }
           }
-        }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/chat/stream/tools": {
+      "post": {
+        "tags": [
+          "chat"
+        ],
+        "summary": "Chat Stream With Tools",
+        "description": "チャットメッセージ送信（SSEストリーミング + ツール対応）.\n\nSSEイベントタイプ:\n- start: 会話開始 {\"conversation_id\": \"...\"}\n- content: テキストコンテンツ（文字列）\n- tool_call: ツール呼び出し {\"id\": \"...\", \"name\": \"...\", \"arguments\": {...}}\n- tool_result: ツール実行結果 {\"tool_call_id\": \"...\", \"success\": bool, ...}\n- done: 完了 {}\n- error: エラー {\"message\": \"...\"}",
+        "operationId": "chat_stream_with_tools_api_chat_stream_tools_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChatRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
       }
     },
     "/api/chat/conversations": {
@@ -293,6 +831,11 @@
         "summary": "List Conversations",
         "description": "会話一覧取得.",
         "operationId": "list_conversations_api_chat_conversations_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
         "parameters": [
           {
             "name": "agent_id",
@@ -339,6 +882,11 @@
         "summary": "Create Conversation",
         "description": "会話作成.",
         "operationId": "create_conversation_api_chat_conversations_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
         "parameters": [
           {
             "name": "agent_id",
@@ -399,6 +947,11 @@
         "summary": "Get Conversation",
         "description": "会話履歴取得.",
         "operationId": "get_conversation_api_chat_conversations__conversation_id__get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
         "parameters": [
           {
             "name": "conversation_id",
@@ -441,6 +994,11 @@
         "summary": "Delete Conversation",
         "description": "会話削除.",
         "operationId": "delete_conversation_api_chat_conversations__conversation_id__delete",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
         "parameters": [
           {
             "name": "conversation_id",
@@ -476,7 +1034,7 @@
           "a2a"
         ],
         "summary": "Get Agent Card",
-        "description": "Agent Card取得.",
+        "description": "Agent Card取得.\n\nA2Aプロトコルの発見メカニズム用エンドポイント。\nエージェントの機能とスキルを記述したAgent Cardを返す。",
         "operationId": "get_agent_card_a2a_agents__agent_id___well_known_agent_json_get",
         "parameters": [
           {
@@ -520,7 +1078,7 @@
           "a2a"
         ],
         "summary": "Create Task",
-        "description": "タスク送信.",
+        "description": "タスク送信.\n\nA2Aプロトコルでタスクを送信し、エージェントに処理を依頼する。",
         "operationId": "create_task_a2a_agents__agent_id__tasks_post",
         "parameters": [
           {
@@ -574,7 +1132,7 @@
           "a2a"
         ],
         "summary": "Get Task",
-        "description": "タスク状態取得.",
+        "description": "タスク状態取得.\n\n送信したタスクの現在の状態を取得する。",
         "operationId": "get_task_a2a_agents__agent_id__tasks__task_id__get",
         "parameters": [
           {
@@ -627,7 +1185,7 @@
           "a2a"
         ],
         "summary": "Cancel Task",
-        "description": "タスクキャンセル.",
+        "description": "タスクキャンセル.\n\n実行中のタスクをキャンセルする。",
         "operationId": "cancel_task_a2a_agents__agent_id__tasks__task_id__cancel_post",
         "parameters": [
           {
@@ -742,14 +1300,15 @@
             "title": "Version",
             "default": "1.0.0"
           },
+          "protocolVersion": {
+            "type": "string",
+            "title": "Protocolversion",
+            "default": "0.3.0"
+          },
           "capabilities": {
             "additionalProperties": true,
             "type": "object",
-            "title": "Capabilities",
-            "default": {
-              "streaming": true,
-              "pushNotifications": false
-            }
+            "title": "Capabilities"
           },
           "skills": {
             "items": {
@@ -757,8 +1316,35 @@
               "type": "object"
             },
             "type": "array",
-            "title": "Skills",
-            "default": []
+            "title": "Skills"
+          },
+          "defaultInputModes": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Defaultinputmodes"
+          },
+          "defaultOutputModes": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Defaultoutputmodes"
+          },
+          "provider": {
+            "anyOf": [
+              {
+                "additionalProperties": {
+                  "type": "string"
+                },
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Provider"
           }
         },
         "type": "object",
@@ -1181,21 +1767,220 @@
         "type": "object",
         "title": "HTTPValidationError"
       },
-      "TaskRequest": {
+      "MessagePart": {
+        "properties": {
+          "type": {
+            "type": "string",
+            "title": "Type",
+            "default": "text"
+          },
+          "text": {
+            "type": "string",
+            "title": "Text"
+          }
+        },
+        "type": "object",
+        "required": [
+          "text"
+        ],
+        "title": "MessagePart",
+        "description": "A2Aメッセージパート."
+      },
+      "PersonalAgentCreate": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          },
+          "system_prompt": {
+            "type": "string",
+            "title": "System Prompt"
+          },
+          "is_public": {
+            "type": "boolean",
+            "title": "Is Public",
+            "default": false
+          }
+        },
+        "type": "object",
+        "required": [
+          "name",
+          "system_prompt"
+        ],
+        "title": "PersonalAgentCreate",
+        "description": "Personal Agent作成リクエスト."
+      },
+      "PersonalAgentResponse": {
         "properties": {
           "id": {
             "type": "string",
+            "format": "uuid",
             "title": "Id"
           },
-          "message": {
-            "additionalProperties": true,
-            "type": "object",
-            "title": "Message"
+          "user_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "User Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          },
+          "system_prompt": {
+            "type": "string",
+            "title": "System Prompt"
+          },
+          "is_public": {
+            "type": "boolean",
+            "title": "Is Public"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Updated At"
           }
         },
         "type": "object",
         "required": [
           "id",
+          "user_id",
+          "name",
+          "description",
+          "system_prompt",
+          "is_public",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "PersonalAgentResponse",
+        "description": "Personal Agentレスポンス."
+      },
+      "PersonalAgentUpdate": {
+        "properties": {
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          },
+          "system_prompt": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "System Prompt"
+          },
+          "is_public": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Is Public"
+          }
+        },
+        "type": "object",
+        "title": "PersonalAgentUpdate",
+        "description": "Personal Agent更新リクエスト."
+      },
+      "TaskMessage": {
+        "properties": {
+          "role": {
+            "type": "string",
+            "title": "Role",
+            "default": "user"
+          },
+          "parts": {
+            "items": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/MessagePart"
+                },
+                {
+                  "additionalProperties": true,
+                  "type": "object"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Parts"
+          }
+        },
+        "type": "object",
+        "required": [
+          "parts"
+        ],
+        "title": "TaskMessage",
+        "description": "A2Aタスクメッセージ."
+      },
+      "TaskRequest": {
+        "properties": {
+          "id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Id"
+          },
+          "message": {
+            "$ref": "#/components/schemas/TaskMessage"
+          }
+        },
+        "type": "object",
+        "required": [
           "message"
         ],
         "title": "TaskRequest",
@@ -1214,14 +1999,34 @@
           "result": {
             "anyOf": [
               {
-                "additionalProperties": true,
-                "type": "object"
+                "$ref": "#/components/schemas/TaskResult"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "error": {
+            "anyOf": [
+              {
+                "type": "string"
               },
               {
                 "type": "null"
               }
             ],
-            "title": "Result"
+            "title": "Error"
+          },
+          "agent_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Agent Id"
           }
         },
         "type": "object",
@@ -1231,6 +2036,284 @@
         ],
         "title": "TaskResponse",
         "description": "A2Aタスクレスポンス."
+      },
+      "TaskResult": {
+        "properties": {
+          "message": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TaskResultMessage"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "title": "TaskResult",
+        "description": "A2Aタスク結果."
+      },
+      "TaskResultMessage": {
+        "properties": {
+          "role": {
+            "type": "string",
+            "title": "Role"
+          },
+          "parts": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Parts"
+          }
+        },
+        "type": "object",
+        "required": [
+          "role",
+          "parts"
+        ],
+        "title": "TaskResultMessage",
+        "description": "A2Aタスク結果メッセージ."
+      },
+      "UserApiKeyCreate": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "scopes": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Scopes",
+            "default": []
+          },
+          "rate_limit": {
+            "type": "integer",
+            "title": "Rate Limit",
+            "default": 1000
+          },
+          "expires_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expires At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "name"
+        ],
+        "title": "UserApiKeyCreate",
+        "description": "API Key作成リクエスト."
+      },
+      "UserApiKeyCreated": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "key": {
+            "type": "string",
+            "title": "Key"
+          },
+          "key_prefix": {
+            "type": "string",
+            "title": "Key Prefix"
+          },
+          "scopes": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Scopes"
+          },
+          "rate_limit": {
+            "type": "integer",
+            "title": "Rate Limit"
+          },
+          "expires_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expires At"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "key",
+          "key_prefix",
+          "scopes",
+          "rate_limit",
+          "expires_at",
+          "created_at"
+        ],
+        "title": "UserApiKeyCreated",
+        "description": "API Key作成レスポンス（生キー含む、作成時のみ）."
+      },
+      "UserApiKeyResponse": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "user_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "User Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "key_prefix": {
+            "type": "string",
+            "title": "Key Prefix"
+          },
+          "scopes": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Scopes"
+          },
+          "rate_limit": {
+            "type": "integer",
+            "title": "Rate Limit"
+          },
+          "expires_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expires At"
+          },
+          "last_used_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Used At"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "user_id",
+          "name",
+          "key_prefix",
+          "scopes",
+          "rate_limit",
+          "expires_at",
+          "last_used_at",
+          "created_at"
+        ],
+        "title": "UserApiKeyResponse",
+        "description": "API Keyレスポンス（一覧表示用、生キーなし）."
+      },
+      "UserLLMConfigCreate": {
+        "properties": {
+          "provider": {
+            "type": "string",
+            "title": "Provider"
+          },
+          "api_key": {
+            "type": "string",
+            "title": "Api Key"
+          },
+          "is_default": {
+            "type": "boolean",
+            "title": "Is Default",
+            "default": false
+          }
+        },
+        "type": "object",
+        "required": [
+          "provider",
+          "api_key"
+        ],
+        "title": "UserLLMConfigCreate",
+        "description": "LLM Config作成リクエスト."
+      },
+      "UserLLMConfigResponse": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "user_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "User Id"
+          },
+          "provider": {
+            "type": "string",
+            "title": "Provider"
+          },
+          "is_default": {
+            "type": "boolean",
+            "title": "Is Default"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "user_id",
+          "provider",
+          "is_default",
+          "created_at"
+        ],
+        "title": "UserLLMConfigResponse",
+        "description": "LLM Configレスポンス."
       },
       "ValidationError": {
         "properties": {
@@ -1264,6 +2347,12 @@
           "type"
         ],
         "title": "ValidationError"
+      }
+    },
+    "securitySchemes": {
+      "HTTPBearer": {
+        "type": "http",
+        "scheme": "bearer"
       }
     }
   }

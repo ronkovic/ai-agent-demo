@@ -6,9 +6,18 @@
       "mcp__filesystem__list_directory",
       "mcp__filesystem__directory_tree",
       "mcp__serena__write_memory",
-      "mcp__serena__list_memories"
+      "mcp__serena__list_memories",
+      "mcp__serena__find_file",
+      "mcp__serena__list_dir",
+      "mcp__filesystem__read_multiple_files",
+      "mcp__supabase__search_docs",
+      "mcp__filesystem__write_file",
+      "mcp__filesystem__create_directory",
+      "Bash(uv run ruff:*)",
+      "Bash(uv run alembic revision:*)"
     ]
   },
+  "enableAllProjectMcpServers": true,
   "enabledMcpjsonServers": [
     "filesystem",
     "context7",
@@ -16,7 +25,8 @@
     "serena",
     "chrome-devtools",
     "next-devtools",
-    "aws-mcp"
+    "aws-mcp",
+    "supabase"
   ],
   "hooks": {
     "PreToolUse": [

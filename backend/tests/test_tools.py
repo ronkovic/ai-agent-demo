@@ -3,7 +3,6 @@
 import pytest
 
 from agent_platform.tools import (
-    BaseTool,
     ToolDefinition,
     ToolParameter,
     ToolRegistry,
