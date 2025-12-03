@@ -471,27 +471,33 @@ CREATE TABLE user_api_keys (
 - [x] テスト: 28個のバックエンドテスト、E2Eテスト
 - [ ] Personal Agent チャット機能 (Phase 8で実装予定)
 
-### Phase 8: ワークフローエンジン
+### Phase 8: ワークフローエンジン ✅ 完了
 
-- [ ] Workflow データベースモデル
+- [x] Workflow データベースモデル
   - `Workflow` - ワークフロー定義
   - `WorkflowExecution` - 実行履歴
-- [ ] React Flow エディタ基盤
+- [x] React Flow エディタ基盤
   - `components/workflow/WorkflowEditor.tsx`
   - `components/workflow/nodes/` - カスタムノード群
-- [ ] ノードタイプ実装
-  - `TriggerNode` - トリガー（チャット、Webhook、スケジュール、API）
+  - `components/workflow/NodePalette.tsx` - ドラッグ可能ノードパレット
+  - `components/workflow/NodeConfigPanel.tsx` - ノード設定パネル
+- [x] ノードタイプ実装 (6種)
+  - `TriggerNode` - トリガー（手動、スケジュール、Webhook）
   - `AgentNode` - AIエージェント実行
-  - `OutputNode` - 結果出力
-- [ ] ワークフローエンジン (`services/workflow_engine.py`)
-  - DAG構築・トポロジカルソート
+  - `OutputNode` - 結果出力（return/webhook/store）
+  - `ConditionNode` - 条件分岐 (true/false出力)
+  - `TransformNode` - データ変換（JMESPath/テンプレート）
+  - `ToolNode` - ツール実行
+- [x] ワークフローエンジン (`services/workflow_engine.py`)
+  - DAG構築・トポロジカルソート（カーンのアルゴリズム）
   - ノード順次実行
-  - コンテキスト伝播
-- [ ] ノードタイプ追加
-  - `ConditionNode` - 条件分岐
-  - `TransformNode` - データ変換
-  - `ToolNode` - 外部ツール呼び出し
-- [ ] ワークフロー実行履歴UI
+  - コンテキスト伝播 (`WorkflowContext`)
+  - テンプレート解決 (`{{node_id.path}}`)
+  - 条件評価 (eq, ne, gt, lt, contains, exists)
+- [x] ワークフロー実行履歴UI
+  - `ExecutionHistory.tsx` - 実行一覧
+  - `ExecutionDetail.tsx` - 実行詳細・ノード結果表示
+- [x] バックエンドテスト: 37テスト追加 (test_workflows.py, test_workflow_engine.py)
 
 ### Phase 9: トリガー実装
 

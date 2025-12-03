@@ -33,6 +33,7 @@ dependencies = [
     # Tools
     "docker>=7.0.0",
     "aiosqlite>=0.21.0",
+    "jmespath>=1.0.1",
 ]
 
 [project.optional-dependencies]

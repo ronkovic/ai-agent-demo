@@ -14,6 +14,8 @@ from ..db import (
     PersonalAgentRepository,
     UserApiKeyRepository,
     UserLLMConfigRepository,
+    WorkflowExecutionRepository,
+    WorkflowRepository,
 )
 from ..db.session import get_db
 
@@ -26,6 +28,8 @@ __all__ = [
     "get_personal_agent_repo",
     "get_user_llm_config_repo",
     "get_user_api_key_repo",
+    "get_workflow_repo",
+    "get_workflow_execution_repo",
     "get_current_user_id",
 ]
 
@@ -62,6 +66,16 @@ def get_user_llm_config_repo() -> UserLLMConfigRepository:
 def get_user_api_key_repo() -> UserApiKeyRepository:
     """Get user API key repository instance."""
     return UserApiKeyRepository()
+
+
+def get_workflow_repo() -> WorkflowRepository:
+    """Get workflow repository instance."""
+    return WorkflowRepository()
+
+
+def get_workflow_execution_repo() -> WorkflowExecutionRepository:
+    """Get workflow execution repository instance."""
+    return WorkflowExecutionRepository()
 
 
 async def get_current_user_id(

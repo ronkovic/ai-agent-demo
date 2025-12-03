@@ -9,6 +9,8 @@ from .models import (
     PersonalAgent,
     UserApiKey,
     UserLLMConfig,
+    Workflow,
+    WorkflowExecution,
 )
 from .repository import (
     AgentCardRepository,
@@ -18,6 +20,8 @@ from .repository import (
     PersonalAgentRepository,
     UserApiKeyRepository,
     UserLLMConfigRepository,
+    WorkflowExecutionRepository,
+    WorkflowRepository,
 )
 from .session import AsyncSessionLocal, engine, get_db
 
@@ -31,6 +35,8 @@ __all__ = [
     "PersonalAgent",
     "UserLLMConfig",
     "UserApiKey",
+    "Workflow",
+    "WorkflowExecution",
     # Session
     "engine",
     "AsyncSessionLocal",
@@ -43,4 +49,6 @@ __all__ = [
     "PersonalAgentRepository",
     "UserLLMConfigRepository",
     "UserApiKeyRepository",
+    "WorkflowRepository",
+    "WorkflowExecutionRepository",
 ]

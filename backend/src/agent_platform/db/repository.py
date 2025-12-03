@@ -15,6 +15,8 @@ from .models import (
     PersonalAgent,
     UserApiKey,
     UserLLMConfig,
+    Workflow,
+    WorkflowExecution,
 )
 
 # =============================================================================
@@ -469,3 +471,164 @@ class UserApiKeyRepository:
         """Delete an API key."""
         await db.delete(api_key)
         await db.flush()
+
+
+# =============================================================================
+# Workflow Repository
+# =============================================================================
+
+
+class WorkflowRepository:
+    """Workflow data access repository."""
+
+    async def create(
+        self,
+        db: AsyncSession,
+        *,
+        user_id: UUID,
+        name: str,
+        description: str | None = None,
+        nodes: list[dict] | None = None,
+        edges: list[dict] | None = None,
+        trigger_config: dict | None = None,
+        is_active: bool = True,
+    ) -> Workflow:
+        """Create a new workflow."""
+        workflow = Workflow(
+            user_id=user_id,
+            name=name,
+            description=description,
+            nodes=nodes or [],
+            edges=edges or [],
+            trigger_config=trigger_config or {},
+            is_active=is_active,
+        )
+        db.add(workflow)
+        await db.flush()
+        await db.refresh(workflow)
+        return workflow
+
+    async def get(self, db: AsyncSession, workflow_id: UUID) -> Workflow | None:
+        """Get workflow by ID."""
+        result = await db.execute(select(Workflow).where(Workflow.id == workflow_id))
+        return result.scalar_one_or_none()
+
+    async def get_by_user(
+        self, db: AsyncSession, workflow_id: UUID, user_id: UUID
+    ) -> Workflow | None:
+        """Get workflow by ID and user ID."""
+        result = await db.execute(
+            select(Workflow).where(Workflow.id == workflow_id, Workflow.user_id == user_id)
+        )
+        return result.scalar_one_or_none()
+
+    async def list_by_user(self, db: AsyncSession, user_id: UUID) -> list[Workflow]:
+        """List all workflows for a user."""
+        result = await db.execute(
+            select(Workflow).where(Workflow.user_id == user_id).order_by(Workflow.created_at.desc())
+        )
+        return list(result.scalars().all())
+
+    async def update(
+        self,
+        db: AsyncSession,
+        workflow: Workflow,
+        **kwargs: str | bool | list | dict | None,
+    ) -> Workflow:
+        """Update workflow fields."""
+        for key, value in kwargs.items():
+            if value is not None and hasattr(workflow, key):
+                setattr(workflow, key, value)
+        await db.flush()
+        await db.refresh(workflow)
+        return workflow
+
+    async def delete(self, db: AsyncSession, workflow: Workflow) -> None:
+        """Delete a workflow."""
+        await db.delete(workflow)
+        await db.flush()
+
+
+# =============================================================================
+# Workflow Execution Repository
+# =============================================================================
+
+
+class WorkflowExecutionRepository:
+    """WorkflowExecution data access repository."""
+
+    async def create(
+        self,
+        db: AsyncSession,
+        *,
+        workflow_id: UUID,
+        status: str = "pending",
+        trigger_data: dict | None = None,
+    ) -> WorkflowExecution:
+        """Create a new workflow execution."""
+        execution = WorkflowExecution(
+            workflow_id=workflow_id,
+            status=status,
+            trigger_data=trigger_data,
+            node_results={},
+        )
+        db.add(execution)
+        await db.flush()
+        await db.refresh(execution)
+        return execution
+
+    async def get(self, db: AsyncSession, execution_id: UUID) -> WorkflowExecution | None:
+        """Get execution by ID."""
+        result = await db.execute(
+            select(WorkflowExecution).where(WorkflowExecution.id == execution_id)
+        )
+        return result.scalar_one_or_none()
+
+    async def list_by_workflow(
+        self, db: AsyncSession, workflow_id: UUID, limit: int = 50
+    ) -> list[WorkflowExecution]:
+        """List all executions for a workflow."""
+        result = await db.execute(
+            select(WorkflowExecution)
+            .where(WorkflowExecution.workflow_id == workflow_id)
+            .order_by(WorkflowExecution.created_at.desc())
+            .limit(limit)
+        )
+        return list(result.scalars().all())
+
+    async def update_status(
+        self,
+        db: AsyncSession,
+        execution: WorkflowExecution,
+        status: str,
+        node_results: dict | None = None,
+        error: str | None = None,
+        started_at: datetime | None = None,
+        completed_at: datetime | None = None,
+    ) -> WorkflowExecution:
+        """Update execution status."""
+        execution.status = status
+        if node_results is not None:
+            execution.node_results = node_results
+        if error is not None:
+            execution.error = error
+        if started_at is not None:
+            execution.started_at = started_at
+        if completed_at is not None:
+            execution.completed_at = completed_at
+        await db.flush()
+        await db.refresh(execution)
+        return execution
+
+    async def update_node_result(
+        self,
+        db: AsyncSession,
+        execution: WorkflowExecution,
+        node_id: str,
+        result: dict,
+    ) -> WorkflowExecution:
+        """Update a single node result."""
+        execution.node_results[node_id] = result
+        await db.flush()
+        await db.refresh(execution)
+        return execution

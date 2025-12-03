@@ -326,6 +326,22 @@ export type MessagePart = {
 };
 
 /**
+ * NodePosition
+ *
+ * ノード位置.
+ */
+export type NodePosition = {
+    /**
+     * X
+     */
+    x: number;
+    /**
+     * Y
+     */
+    y: number;
+};
+
+/**
  * PersonalAgentCreate
  *
  * Personal Agent作成リクエスト.
@@ -668,6 +684,237 @@ export type ValidationError = {
      * Error Type
      */
     type: string;
+};
+
+/**
+ * WorkflowCreate
+ *
+ * Workflow作成リクエスト.
+ */
+export type WorkflowCreate = {
+    /**
+     * Name
+     */
+    name: string;
+    /**
+     * Description
+     */
+    description?: string | null;
+    /**
+     * Nodes
+     */
+    nodes?: Array<WorkflowNode>;
+    /**
+     * Edges
+     */
+    edges?: Array<WorkflowEdge>;
+    /**
+     * Trigger Config
+     */
+    trigger_config?: {
+        [key: string]: unknown;
+    };
+};
+
+/**
+ * WorkflowEdge
+ *
+ * ワークフローエッジ.
+ */
+export type WorkflowEdge = {
+    /**
+     * Id
+     */
+    id: string;
+    /**
+     * Source
+     */
+    source: string;
+    /**
+     * Target
+     */
+    target: string;
+    /**
+     * Sourcehandle
+     */
+    sourceHandle?: string | null;
+    /**
+     * Targethandle
+     */
+    targetHandle?: string | null;
+};
+
+/**
+ * WorkflowExecutionCreate
+ *
+ * Workflow実行リクエスト.
+ */
+export type WorkflowExecutionCreate = {
+    /**
+     * Trigger Data
+     */
+    trigger_data?: {
+        [key: string]: unknown;
+    } | null;
+};
+
+/**
+ * WorkflowExecutionResponse
+ *
+ * Workflow実行レスポンス.
+ */
+export type WorkflowExecutionResponse = {
+    /**
+     * Id
+     */
+    id: string;
+    /**
+     * Workflow Id
+     */
+    workflow_id: string;
+    /**
+     * Status
+     */
+    status: string;
+    /**
+     * Trigger Data
+     */
+    trigger_data: {
+        [key: string]: unknown;
+    } | null;
+    /**
+     * Node Results
+     */
+    node_results: {
+        [key: string]: unknown;
+    };
+    /**
+     * Error
+     */
+    error: string | null;
+    /**
+     * Started At
+     */
+    started_at: string | null;
+    /**
+     * Completed At
+     */
+    completed_at: string | null;
+    /**
+     * Created At
+     */
+    created_at: string;
+};
+
+/**
+ * WorkflowNode
+ *
+ * ワークフローノード.
+ */
+export type WorkflowNode = {
+    /**
+     * Id
+     */
+    id: string;
+    /**
+     * Type
+     */
+    type: string;
+    position: NodePosition;
+    /**
+     * Data
+     */
+    data?: {
+        [key: string]: unknown;
+    };
+};
+
+/**
+ * WorkflowResponse
+ *
+ * Workflowレスポンス.
+ */
+export type WorkflowResponse = {
+    /**
+     * Id
+     */
+    id: string;
+    /**
+     * User Id
+     */
+    user_id: string;
+    /**
+     * Name
+     */
+    name: string;
+    /**
+     * Description
+     */
+    description: string | null;
+    /**
+     * Nodes
+     */
+    nodes: Array<{
+        [key: string]: unknown;
+    }>;
+    /**
+     * Edges
+     */
+    edges: Array<{
+        [key: string]: unknown;
+    }>;
+    /**
+     * Trigger Config
+     */
+    trigger_config: {
+        [key: string]: unknown;
+    };
+    /**
+     * Is Active
+     */
+    is_active: boolean;
+    /**
+     * Created At
+     */
+    created_at: string;
+    /**
+     * Updated At
+     */
+    updated_at: string;
+};
+
+/**
+ * WorkflowUpdate
+ *
+ * Workflow更新リクエスト.
+ */
+export type WorkflowUpdate = {
+    /**
+     * Name
+     */
+    name?: string | null;
+    /**
+     * Description
+     */
+    description?: string | null;
+    /**
+     * Nodes
+     */
+    nodes?: Array<WorkflowNode> | null;
+    /**
+     * Edges
+     */
+    edges?: Array<WorkflowEdge> | null;
+    /**
+     * Trigger Config
+     */
+    trigger_config?: {
+        [key: string]: unknown;
+    } | null;
+    /**
+     * Is Active
+     */
+    is_active?: boolean | null;
 };
 
 export type ListAgentsApiAgentsGetData = {
@@ -1081,6 +1328,243 @@ export type DeleteApiKeyApiUserApiKeysKeyIdDeleteResponses = {
 };
 
 export type DeleteApiKeyApiUserApiKeysKeyIdDeleteResponse = DeleteApiKeyApiUserApiKeysKeyIdDeleteResponses[keyof DeleteApiKeyApiUserApiKeysKeyIdDeleteResponses];
+
+export type ListWorkflowsApiWorkflowsGetData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/workflows';
+};
+
+export type ListWorkflowsApiWorkflowsGetResponses = {
+    /**
+     * Response List Workflows Api Workflows Get
+     *
+     * Successful Response
+     */
+    200: Array<WorkflowResponse>;
+};
+
+export type ListWorkflowsApiWorkflowsGetResponse = ListWorkflowsApiWorkflowsGetResponses[keyof ListWorkflowsApiWorkflowsGetResponses];
+
+export type CreateWorkflowApiWorkflowsPostData = {
+    body: WorkflowCreate;
+    path?: never;
+    query?: never;
+    url: '/api/workflows';
+};
+
+export type CreateWorkflowApiWorkflowsPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type CreateWorkflowApiWorkflowsPostError = CreateWorkflowApiWorkflowsPostErrors[keyof CreateWorkflowApiWorkflowsPostErrors];
+
+export type CreateWorkflowApiWorkflowsPostResponses = {
+    /**
+     * Successful Response
+     */
+    201: WorkflowResponse;
+};
+
+export type CreateWorkflowApiWorkflowsPostResponse = CreateWorkflowApiWorkflowsPostResponses[keyof CreateWorkflowApiWorkflowsPostResponses];
+
+export type DeleteWorkflowApiWorkflowsWorkflowIdDeleteData = {
+    body?: never;
+    path: {
+        /**
+         * Workflow Id
+         */
+        workflow_id: string;
+    };
+    query?: never;
+    url: '/api/workflows/{workflow_id}';
+};
+
+export type DeleteWorkflowApiWorkflowsWorkflowIdDeleteErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type DeleteWorkflowApiWorkflowsWorkflowIdDeleteError = DeleteWorkflowApiWorkflowsWorkflowIdDeleteErrors[keyof DeleteWorkflowApiWorkflowsWorkflowIdDeleteErrors];
+
+export type DeleteWorkflowApiWorkflowsWorkflowIdDeleteResponses = {
+    /**
+     * Successful Response
+     */
+    204: void;
+};
+
+export type DeleteWorkflowApiWorkflowsWorkflowIdDeleteResponse = DeleteWorkflowApiWorkflowsWorkflowIdDeleteResponses[keyof DeleteWorkflowApiWorkflowsWorkflowIdDeleteResponses];
+
+export type GetWorkflowApiWorkflowsWorkflowIdGetData = {
+    body?: never;
+    path: {
+        /**
+         * Workflow Id
+         */
+        workflow_id: string;
+    };
+    query?: never;
+    url: '/api/workflows/{workflow_id}';
+};
+
+export type GetWorkflowApiWorkflowsWorkflowIdGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type GetWorkflowApiWorkflowsWorkflowIdGetError = GetWorkflowApiWorkflowsWorkflowIdGetErrors[keyof GetWorkflowApiWorkflowsWorkflowIdGetErrors];
+
+export type GetWorkflowApiWorkflowsWorkflowIdGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: WorkflowResponse;
+};
+
+export type GetWorkflowApiWorkflowsWorkflowIdGetResponse = GetWorkflowApiWorkflowsWorkflowIdGetResponses[keyof GetWorkflowApiWorkflowsWorkflowIdGetResponses];
+
+export type UpdateWorkflowApiWorkflowsWorkflowIdPatchData = {
+    body: WorkflowUpdate;
+    path: {
+        /**
+         * Workflow Id
+         */
+        workflow_id: string;
+    };
+    query?: never;
+    url: '/api/workflows/{workflow_id}';
+};
+
+export type UpdateWorkflowApiWorkflowsWorkflowIdPatchErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type UpdateWorkflowApiWorkflowsWorkflowIdPatchError = UpdateWorkflowApiWorkflowsWorkflowIdPatchErrors[keyof UpdateWorkflowApiWorkflowsWorkflowIdPatchErrors];
+
+export type UpdateWorkflowApiWorkflowsWorkflowIdPatchResponses = {
+    /**
+     * Successful Response
+     */
+    200: WorkflowResponse;
+};
+
+export type UpdateWorkflowApiWorkflowsWorkflowIdPatchResponse = UpdateWorkflowApiWorkflowsWorkflowIdPatchResponses[keyof UpdateWorkflowApiWorkflowsWorkflowIdPatchResponses];
+
+export type ExecuteWorkflowApiWorkflowsWorkflowIdExecutePostData = {
+    /**
+     * Execution Data
+     */
+    body?: WorkflowExecutionCreate | null;
+    path: {
+        /**
+         * Workflow Id
+         */
+        workflow_id: string;
+    };
+    query?: never;
+    url: '/api/workflows/{workflow_id}/execute';
+};
+
+export type ExecuteWorkflowApiWorkflowsWorkflowIdExecutePostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ExecuteWorkflowApiWorkflowsWorkflowIdExecutePostError = ExecuteWorkflowApiWorkflowsWorkflowIdExecutePostErrors[keyof ExecuteWorkflowApiWorkflowsWorkflowIdExecutePostErrors];
+
+export type ExecuteWorkflowApiWorkflowsWorkflowIdExecutePostResponses = {
+    /**
+     * Successful Response
+     */
+    202: WorkflowExecutionResponse;
+};
+
+export type ExecuteWorkflowApiWorkflowsWorkflowIdExecutePostResponse = ExecuteWorkflowApiWorkflowsWorkflowIdExecutePostResponses[keyof ExecuteWorkflowApiWorkflowsWorkflowIdExecutePostResponses];
+
+export type ListWorkflowExecutionsApiWorkflowsWorkflowIdExecutionsGetData = {
+    body?: never;
+    path: {
+        /**
+         * Workflow Id
+         */
+        workflow_id: string;
+    };
+    query?: {
+        /**
+         * Limit
+         */
+        limit?: number;
+    };
+    url: '/api/workflows/{workflow_id}/executions';
+};
+
+export type ListWorkflowExecutionsApiWorkflowsWorkflowIdExecutionsGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ListWorkflowExecutionsApiWorkflowsWorkflowIdExecutionsGetError = ListWorkflowExecutionsApiWorkflowsWorkflowIdExecutionsGetErrors[keyof ListWorkflowExecutionsApiWorkflowsWorkflowIdExecutionsGetErrors];
+
+export type ListWorkflowExecutionsApiWorkflowsWorkflowIdExecutionsGetResponses = {
+    /**
+     * Response List Workflow Executions Api Workflows  Workflow Id  Executions Get
+     *
+     * Successful Response
+     */
+    200: Array<WorkflowExecutionResponse>;
+};
+
+export type ListWorkflowExecutionsApiWorkflowsWorkflowIdExecutionsGetResponse = ListWorkflowExecutionsApiWorkflowsWorkflowIdExecutionsGetResponses[keyof ListWorkflowExecutionsApiWorkflowsWorkflowIdExecutionsGetResponses];
+
+export type GetWorkflowExecutionApiWorkflowsWorkflowIdExecutionsExecutionIdGetData = {
+    body?: never;
+    path: {
+        /**
+         * Workflow Id
+         */
+        workflow_id: string;
+        /**
+         * Execution Id
+         */
+        execution_id: string;
+    };
+    query?: never;
+    url: '/api/workflows/{workflow_id}/executions/{execution_id}';
+};
+
+export type GetWorkflowExecutionApiWorkflowsWorkflowIdExecutionsExecutionIdGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type GetWorkflowExecutionApiWorkflowsWorkflowIdExecutionsExecutionIdGetError = GetWorkflowExecutionApiWorkflowsWorkflowIdExecutionsExecutionIdGetErrors[keyof GetWorkflowExecutionApiWorkflowsWorkflowIdExecutionsExecutionIdGetErrors];
+
+export type GetWorkflowExecutionApiWorkflowsWorkflowIdExecutionsExecutionIdGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: WorkflowExecutionResponse;
+};
+
+export type GetWorkflowExecutionApiWorkflowsWorkflowIdExecutionsExecutionIdGetResponse = GetWorkflowExecutionApiWorkflowsWorkflowIdExecutionsExecutionIdGetResponses[keyof GetWorkflowExecutionApiWorkflowsWorkflowIdExecutionsExecutionIdGetResponses];
 
 export type ChatApiChatPostData = {
     body: ChatRequest;

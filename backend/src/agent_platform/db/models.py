@@ -229,3 +229,64 @@ class UserApiKey(Base):
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), nullable=False
     )
+
+
+class Workflow(Base):
+    """ワークフローモデル."""
+
+    __tablename__ = "workflows"
+
+    id: Mapped[UUID] = mapped_column(GUID(), primary_key=True, default=uuid4)
+    user_id: Mapped[UUID] = mapped_column(GUID(), nullable=False, index=True)
+    name: Mapped[str] = mapped_column(String(255), nullable=False)
+    description: Mapped[str | None] = mapped_column(Text, nullable=True)
+    # React Flow形式のノード/エッジ定義
+    nodes: Mapped[list[dict[str, Any]]] = mapped_column(
+        PortableJSON(), default=list, nullable=False
+    )
+    edges: Mapped[list[dict[str, Any]]] = mapped_column(
+        PortableJSON(), default=list, nullable=False
+    )
+    # トリガー設定
+    trigger_config: Mapped[dict[str, Any]] = mapped_column(
+        PortableJSON(), default=dict, nullable=False
+    )
+    is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False
+    )
+
+    # Relationships
+    executions: Mapped[list["WorkflowExecution"]] = relationship(
+        "WorkflowExecution", back_populates="workflow", cascade="all, delete-orphan"
+    )
+
+
+class WorkflowExecution(Base):
+    """ワークフロー実行履歴モデル."""
+
+    __tablename__ = "workflow_executions"
+
+    id: Mapped[UUID] = mapped_column(GUID(), primary_key=True, default=uuid4)
+    workflow_id: Mapped[UUID] = mapped_column(
+        GUID(), ForeignKey("workflows.id", ondelete="CASCADE"), nullable=False, index=True
+    )
+    # Status: pending, running, completed, failed, cancelled
+    status: Mapped[str] = mapped_column(String(20), nullable=False)
+    trigger_data: Mapped[dict[str, Any] | None] = mapped_column(PortableJSON(), nullable=True)
+    # 各ノードの実行結果
+    node_results: Mapped[dict[str, Any]] = mapped_column(
+        PortableJSON(), default=dict, nullable=False
+    )
+    error: Mapped[str | None] = mapped_column(Text, nullable=True)
+    started_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    completed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False
+    )
+
+    # Relationships
+    workflow: Mapped["Workflow"] = relationship("Workflow", back_populates="executions")

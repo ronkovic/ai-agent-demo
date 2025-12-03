@@ -1,7 +1,7 @@
 "use client";
 
 import { AgentResponse, PersonalAgentResponse } from "@/lib/api-client/types.gen";
-import { Plus, Bot, Settings, User } from "lucide-react";
+import { Plus, Bot, Settings, User, Workflow } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/Button";
 import { useRouter, usePathname } from "next/navigation";
@@ -45,6 +45,22 @@ export function Sidebar({
       </div>
 
       <div className="flex-1 overflow-y-auto px-2">
+        {/* Workflows Section */}
+        <div className="mb-4">
+          <button
+            onClick={() => router.push("/workflows")}
+            className={cn(
+              "flex w-full items-center gap-2 rounded-md px-2 py-2 text-sm font-medium transition-colors hover:bg-gray-100 dark:hover:bg-gray-800",
+              pathname.startsWith("/workflows")
+                ? "bg-green-50 text-green-600 dark:bg-green-900/20 dark:text-green-400"
+                : "text-gray-700 dark:text-gray-300"
+            )}
+          >
+            <Workflow className="h-4 w-4" />
+            <span>ワークフロー</span>
+          </button>
+        </div>
+
         {/* Personal Agents Section */}
         {personalAgents.length > 0 && (
           <>
