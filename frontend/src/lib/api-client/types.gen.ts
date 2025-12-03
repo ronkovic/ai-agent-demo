@@ -183,6 +183,56 @@ export type AgentUpdate = {
 };
 
 /**
+ * ApiTriggerErrorResponse
+ *
+ * API Trigger エラーレスポンス.
+ */
+export type ApiTriggerErrorResponse = {
+    /**
+     * Detail
+     */
+    detail: string;
+};
+
+/**
+ * ApiTriggerRequest
+ *
+ * API Trigger リクエスト.
+ */
+export type ApiTriggerRequest = {
+    /**
+     * Trigger Data
+     */
+    trigger_data?: {
+        [key: string]: unknown;
+    } | null;
+};
+
+/**
+ * ApiTriggerResponse
+ *
+ * API Trigger レスポンス.
+ */
+export type ApiTriggerResponse = {
+    /**
+     * Status
+     */
+    status: string;
+    /**
+     * Task Id
+     */
+    task_id: string;
+    /**
+     * Workflow Id
+     */
+    workflow_id: string;
+    /**
+     * Rate Limit Remaining
+     */
+    rate_limit_remaining: number;
+};
+
+/**
  * ChatMessageResponse
  *
  * チャットメッセージ.
@@ -427,6 +477,78 @@ export type PersonalAgentUpdate = {
      * Is Public
      */
     is_public?: boolean | null;
+};
+
+/**
+ * ScheduleTriggerCreate
+ *
+ * スケジュールトリガー作成リクエスト.
+ */
+export type ScheduleTriggerCreate = {
+    /**
+     * Cron Expression
+     *
+     * cron式 (例: '0 9 * * *')
+     */
+    cron_expression: string;
+    /**
+     * Timezone
+     *
+     * タイムゾーン
+     */
+    timezone?: string;
+};
+
+/**
+ * ScheduleTriggerResponse
+ *
+ * スケジュールトリガーレスポンス.
+ */
+export type ScheduleTriggerResponse = {
+    /**
+     * Id
+     */
+    id: string;
+    /**
+     * Workflow Id
+     */
+    workflow_id: string;
+    /**
+     * Cron Expression
+     */
+    cron_expression: string;
+    /**
+     * Timezone
+     */
+    timezone: string;
+    /**
+     * Is Active
+     */
+    is_active: boolean;
+    /**
+     * Last Run At
+     */
+    last_run_at: string | null;
+    /**
+     * Next Run At
+     */
+    next_run_at: string | null;
+    /**
+     * Created At
+     */
+    created_at: string;
+};
+
+/**
+ * ScheduleTriggerToggle
+ *
+ * スケジュールトリガー有効/無効切り替え.
+ */
+export type ScheduleTriggerToggle = {
+    /**
+     * Is Active
+     */
+    is_active: boolean;
 };
 
 /**
@@ -684,6 +806,104 @@ export type ValidationError = {
      * Error Type
      */
     type: string;
+};
+
+/**
+ * WebhookErrorResponse
+ *
+ * Webhookエラーレスポンス.
+ */
+export type WebhookErrorResponse = {
+    /**
+     * Detail
+     */
+    detail: string;
+};
+
+/**
+ * WebhookResponse
+ *
+ * Webhook実行レスポンス.
+ */
+export type WebhookResponse = {
+    /**
+     * Status
+     */
+    status: string;
+    /**
+     * Task Id
+     */
+    task_id: string;
+    /**
+     * Workflow Id
+     */
+    workflow_id: string;
+};
+
+/**
+ * WebhookTriggerCreate
+ *
+ * Webhookトリガー作成リクエスト.
+ */
+export type WebhookTriggerCreate = {
+    /**
+     * Webhook Path
+     *
+     * Webhookパス (例: 'my-workflow-hook')
+     */
+    webhook_path: string;
+};
+
+/**
+ * WebhookTriggerResponse
+ *
+ * Webhookトリガーレスポンス.
+ */
+export type WebhookTriggerResponse = {
+    /**
+     * Id
+     */
+    id: string;
+    /**
+     * Workflow Id
+     */
+    workflow_id: string;
+    /**
+     * Webhook Path
+     */
+    webhook_path: string;
+    /**
+     * Secret
+     */
+    secret: string | null;
+    /**
+     * Is Active
+     */
+    is_active: boolean;
+    /**
+     * Last Triggered At
+     */
+    last_triggered_at: string | null;
+    /**
+     * Created At
+     */
+    created_at: string;
+    /**
+     * Webhook Url
+     */
+    webhook_url: string;
+};
+
+/**
+ * WebhookTriggerSecretResponse
+ *
+ * Webhookシークレット再生成レスポンス.
+ */
+export type WebhookTriggerSecretResponse = {
+    /**
+     * Secret
+     */
+    secret: string;
 };
 
 /**
@@ -1890,6 +2110,394 @@ export type CancelTaskA2aAgentsAgentIdTasksTaskIdCancelPostResponses = {
 };
 
 export type CancelTaskA2aAgentsAgentIdTasksTaskIdCancelPostResponse = CancelTaskA2aAgentsAgentIdTasksTaskIdCancelPostResponses[keyof CancelTaskA2aAgentsAgentIdTasksTaskIdCancelPostResponses];
+
+export type HandleWebhookWebhooksWebhookPathPostData = {
+    body?: never;
+    path: {
+        /**
+         * Webhook Path
+         */
+        webhook_path: string;
+    };
+    query?: never;
+    url: '/webhooks/{webhook_path}';
+};
+
+export type HandleWebhookWebhooksWebhookPathPostErrors = {
+    /**
+     * Unauthorized
+     */
+    401: WebhookErrorResponse;
+    /**
+     * Not Found
+     */
+    404: WebhookErrorResponse;
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type HandleWebhookWebhooksWebhookPathPostError = HandleWebhookWebhooksWebhookPathPostErrors[keyof HandleWebhookWebhooksWebhookPathPostErrors];
+
+export type HandleWebhookWebhooksWebhookPathPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: WebhookResponse;
+};
+
+export type HandleWebhookWebhooksWebhookPathPostResponse = HandleWebhookWebhooksWebhookPathPostResponses[keyof HandleWebhookWebhooksWebhookPathPostResponses];
+
+export type ApiExecuteWorkflowV1ExecuteWorkflowIdPostData = {
+    /**
+     * Request
+     */
+    body?: ApiTriggerRequest | null;
+    headers: {
+        /**
+         * X-Api-Key
+         */
+        'X-API-Key': string;
+    };
+    path: {
+        /**
+         * Workflow Id
+         */
+        workflow_id: string;
+    };
+    query?: never;
+    url: '/v1/execute/{workflow_id}';
+};
+
+export type ApiExecuteWorkflowV1ExecuteWorkflowIdPostErrors = {
+    /**
+     * Unauthorized
+     */
+    401: ApiTriggerErrorResponse;
+    /**
+     * Forbidden
+     */
+    403: ApiTriggerErrorResponse;
+    /**
+     * Not Found
+     */
+    404: ApiTriggerErrorResponse;
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+    /**
+     * Too Many Requests
+     */
+    429: ApiTriggerErrorResponse;
+};
+
+export type ApiExecuteWorkflowV1ExecuteWorkflowIdPostError = ApiExecuteWorkflowV1ExecuteWorkflowIdPostErrors[keyof ApiExecuteWorkflowV1ExecuteWorkflowIdPostErrors];
+
+export type ApiExecuteWorkflowV1ExecuteWorkflowIdPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: ApiTriggerResponse;
+};
+
+export type ApiExecuteWorkflowV1ExecuteWorkflowIdPostResponse = ApiExecuteWorkflowV1ExecuteWorkflowIdPostResponses[keyof ApiExecuteWorkflowV1ExecuteWorkflowIdPostResponses];
+
+export type GetRateLimitStatusV1RateLimitGetData = {
+    body?: never;
+    headers: {
+        /**
+         * X-Api-Key
+         */
+        'X-API-Key': string;
+    };
+    path?: never;
+    query?: never;
+    url: '/v1/rate-limit';
+};
+
+export type GetRateLimitStatusV1RateLimitGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type GetRateLimitStatusV1RateLimitGetError = GetRateLimitStatusV1RateLimitGetErrors[keyof GetRateLimitStatusV1RateLimitGetErrors];
+
+export type GetRateLimitStatusV1RateLimitGetResponses = {
+    /**
+     * Response Get Rate Limit Status V1 Rate Limit Get
+     *
+     * Successful Response
+     */
+    200: {
+        [key: string]: unknown;
+    };
+};
+
+export type GetRateLimitStatusV1RateLimitGetResponse = GetRateLimitStatusV1RateLimitGetResponses[keyof GetRateLimitStatusV1RateLimitGetResponses];
+
+export type ListScheduleTriggersApiWorkflowsWorkflowIdTriggersSchedulesGetData = {
+    body?: never;
+    path: {
+        /**
+         * Workflow Id
+         */
+        workflow_id: string;
+    };
+    query?: never;
+    url: '/api/workflows/{workflow_id}/triggers/schedules';
+};
+
+export type ListScheduleTriggersApiWorkflowsWorkflowIdTriggersSchedulesGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ListScheduleTriggersApiWorkflowsWorkflowIdTriggersSchedulesGetError = ListScheduleTriggersApiWorkflowsWorkflowIdTriggersSchedulesGetErrors[keyof ListScheduleTriggersApiWorkflowsWorkflowIdTriggersSchedulesGetErrors];
+
+export type ListScheduleTriggersApiWorkflowsWorkflowIdTriggersSchedulesGetResponses = {
+    /**
+     * Response List Schedule Triggers Api Workflows  Workflow Id  Triggers Schedules Get
+     *
+     * Successful Response
+     */
+    200: Array<ScheduleTriggerResponse>;
+};
+
+export type ListScheduleTriggersApiWorkflowsWorkflowIdTriggersSchedulesGetResponse = ListScheduleTriggersApiWorkflowsWorkflowIdTriggersSchedulesGetResponses[keyof ListScheduleTriggersApiWorkflowsWorkflowIdTriggersSchedulesGetResponses];
+
+export type CreateScheduleTriggerApiWorkflowsWorkflowIdTriggersSchedulesPostData = {
+    body: ScheduleTriggerCreate;
+    path: {
+        /**
+         * Workflow Id
+         */
+        workflow_id: string;
+    };
+    query?: never;
+    url: '/api/workflows/{workflow_id}/triggers/schedules';
+};
+
+export type CreateScheduleTriggerApiWorkflowsWorkflowIdTriggersSchedulesPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type CreateScheduleTriggerApiWorkflowsWorkflowIdTriggersSchedulesPostError = CreateScheduleTriggerApiWorkflowsWorkflowIdTriggersSchedulesPostErrors[keyof CreateScheduleTriggerApiWorkflowsWorkflowIdTriggersSchedulesPostErrors];
+
+export type CreateScheduleTriggerApiWorkflowsWorkflowIdTriggersSchedulesPostResponses = {
+    /**
+     * Successful Response
+     */
+    201: ScheduleTriggerResponse;
+};
+
+export type CreateScheduleTriggerApiWorkflowsWorkflowIdTriggersSchedulesPostResponse = CreateScheduleTriggerApiWorkflowsWorkflowIdTriggersSchedulesPostResponses[keyof CreateScheduleTriggerApiWorkflowsWorkflowIdTriggersSchedulesPostResponses];
+
+export type DeleteScheduleTriggerApiWorkflowsWorkflowIdTriggersSchedulesTriggerIdDeleteData = {
+    body?: never;
+    path: {
+        /**
+         * Workflow Id
+         */
+        workflow_id: string;
+        /**
+         * Trigger Id
+         */
+        trigger_id: string;
+    };
+    query?: never;
+    url: '/api/workflows/{workflow_id}/triggers/schedules/{trigger_id}';
+};
+
+export type DeleteScheduleTriggerApiWorkflowsWorkflowIdTriggersSchedulesTriggerIdDeleteErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type DeleteScheduleTriggerApiWorkflowsWorkflowIdTriggersSchedulesTriggerIdDeleteError = DeleteScheduleTriggerApiWorkflowsWorkflowIdTriggersSchedulesTriggerIdDeleteErrors[keyof DeleteScheduleTriggerApiWorkflowsWorkflowIdTriggersSchedulesTriggerIdDeleteErrors];
+
+export type DeleteScheduleTriggerApiWorkflowsWorkflowIdTriggersSchedulesTriggerIdDeleteResponses = {
+    /**
+     * Successful Response
+     */
+    204: void;
+};
+
+export type DeleteScheduleTriggerApiWorkflowsWorkflowIdTriggersSchedulesTriggerIdDeleteResponse = DeleteScheduleTriggerApiWorkflowsWorkflowIdTriggersSchedulesTriggerIdDeleteResponses[keyof DeleteScheduleTriggerApiWorkflowsWorkflowIdTriggersSchedulesTriggerIdDeleteResponses];
+
+export type ToggleScheduleTriggerApiWorkflowsWorkflowIdTriggersSchedulesTriggerIdTogglePatchData = {
+    body: ScheduleTriggerToggle;
+    path: {
+        /**
+         * Workflow Id
+         */
+        workflow_id: string;
+        /**
+         * Trigger Id
+         */
+        trigger_id: string;
+    };
+    query?: never;
+    url: '/api/workflows/{workflow_id}/triggers/schedules/{trigger_id}/toggle';
+};
+
+export type ToggleScheduleTriggerApiWorkflowsWorkflowIdTriggersSchedulesTriggerIdTogglePatchErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ToggleScheduleTriggerApiWorkflowsWorkflowIdTriggersSchedulesTriggerIdTogglePatchError = ToggleScheduleTriggerApiWorkflowsWorkflowIdTriggersSchedulesTriggerIdTogglePatchErrors[keyof ToggleScheduleTriggerApiWorkflowsWorkflowIdTriggersSchedulesTriggerIdTogglePatchErrors];
+
+export type ToggleScheduleTriggerApiWorkflowsWorkflowIdTriggersSchedulesTriggerIdTogglePatchResponses = {
+    /**
+     * Successful Response
+     */
+    200: ScheduleTriggerResponse;
+};
+
+export type ToggleScheduleTriggerApiWorkflowsWorkflowIdTriggersSchedulesTriggerIdTogglePatchResponse = ToggleScheduleTriggerApiWorkflowsWorkflowIdTriggersSchedulesTriggerIdTogglePatchResponses[keyof ToggleScheduleTriggerApiWorkflowsWorkflowIdTriggersSchedulesTriggerIdTogglePatchResponses];
+
+export type ListWebhookTriggersApiWorkflowsWorkflowIdTriggersWebhooksGetData = {
+    body?: never;
+    path: {
+        /**
+         * Workflow Id
+         */
+        workflow_id: string;
+    };
+    query?: never;
+    url: '/api/workflows/{workflow_id}/triggers/webhooks';
+};
+
+export type ListWebhookTriggersApiWorkflowsWorkflowIdTriggersWebhooksGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ListWebhookTriggersApiWorkflowsWorkflowIdTriggersWebhooksGetError = ListWebhookTriggersApiWorkflowsWorkflowIdTriggersWebhooksGetErrors[keyof ListWebhookTriggersApiWorkflowsWorkflowIdTriggersWebhooksGetErrors];
+
+export type ListWebhookTriggersApiWorkflowsWorkflowIdTriggersWebhooksGetResponses = {
+    /**
+     * Response List Webhook Triggers Api Workflows  Workflow Id  Triggers Webhooks Get
+     *
+     * Successful Response
+     */
+    200: Array<WebhookTriggerResponse>;
+};
+
+export type ListWebhookTriggersApiWorkflowsWorkflowIdTriggersWebhooksGetResponse = ListWebhookTriggersApiWorkflowsWorkflowIdTriggersWebhooksGetResponses[keyof ListWebhookTriggersApiWorkflowsWorkflowIdTriggersWebhooksGetResponses];
+
+export type CreateWebhookTriggerApiWorkflowsWorkflowIdTriggersWebhooksPostData = {
+    body: WebhookTriggerCreate;
+    path: {
+        /**
+         * Workflow Id
+         */
+        workflow_id: string;
+    };
+    query?: never;
+    url: '/api/workflows/{workflow_id}/triggers/webhooks';
+};
+
+export type CreateWebhookTriggerApiWorkflowsWorkflowIdTriggersWebhooksPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type CreateWebhookTriggerApiWorkflowsWorkflowIdTriggersWebhooksPostError = CreateWebhookTriggerApiWorkflowsWorkflowIdTriggersWebhooksPostErrors[keyof CreateWebhookTriggerApiWorkflowsWorkflowIdTriggersWebhooksPostErrors];
+
+export type CreateWebhookTriggerApiWorkflowsWorkflowIdTriggersWebhooksPostResponses = {
+    /**
+     * Successful Response
+     */
+    201: WebhookTriggerResponse;
+};
+
+export type CreateWebhookTriggerApiWorkflowsWorkflowIdTriggersWebhooksPostResponse = CreateWebhookTriggerApiWorkflowsWorkflowIdTriggersWebhooksPostResponses[keyof CreateWebhookTriggerApiWorkflowsWorkflowIdTriggersWebhooksPostResponses];
+
+export type DeleteWebhookTriggerApiWorkflowsWorkflowIdTriggersWebhooksTriggerIdDeleteData = {
+    body?: never;
+    path: {
+        /**
+         * Workflow Id
+         */
+        workflow_id: string;
+        /**
+         * Trigger Id
+         */
+        trigger_id: string;
+    };
+    query?: never;
+    url: '/api/workflows/{workflow_id}/triggers/webhooks/{trigger_id}';
+};
+
+export type DeleteWebhookTriggerApiWorkflowsWorkflowIdTriggersWebhooksTriggerIdDeleteErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type DeleteWebhookTriggerApiWorkflowsWorkflowIdTriggersWebhooksTriggerIdDeleteError = DeleteWebhookTriggerApiWorkflowsWorkflowIdTriggersWebhooksTriggerIdDeleteErrors[keyof DeleteWebhookTriggerApiWorkflowsWorkflowIdTriggersWebhooksTriggerIdDeleteErrors];
+
+export type DeleteWebhookTriggerApiWorkflowsWorkflowIdTriggersWebhooksTriggerIdDeleteResponses = {
+    /**
+     * Successful Response
+     */
+    204: void;
+};
+
+export type DeleteWebhookTriggerApiWorkflowsWorkflowIdTriggersWebhooksTriggerIdDeleteResponse = DeleteWebhookTriggerApiWorkflowsWorkflowIdTriggersWebhooksTriggerIdDeleteResponses[keyof DeleteWebhookTriggerApiWorkflowsWorkflowIdTriggersWebhooksTriggerIdDeleteResponses];
+
+export type RegenerateWebhookSecretApiWorkflowsWorkflowIdTriggersWebhooksTriggerIdRegenerateSecretPostData = {
+    body?: never;
+    path: {
+        /**
+         * Workflow Id
+         */
+        workflow_id: string;
+        /**
+         * Trigger Id
+         */
+        trigger_id: string;
+    };
+    query?: never;
+    url: '/api/workflows/{workflow_id}/triggers/webhooks/{trigger_id}/regenerate-secret';
+};
+
+export type RegenerateWebhookSecretApiWorkflowsWorkflowIdTriggersWebhooksTriggerIdRegenerateSecretPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type RegenerateWebhookSecretApiWorkflowsWorkflowIdTriggersWebhooksTriggerIdRegenerateSecretPostError = RegenerateWebhookSecretApiWorkflowsWorkflowIdTriggersWebhooksTriggerIdRegenerateSecretPostErrors[keyof RegenerateWebhookSecretApiWorkflowsWorkflowIdTriggersWebhooksTriggerIdRegenerateSecretPostErrors];
+
+export type RegenerateWebhookSecretApiWorkflowsWorkflowIdTriggersWebhooksTriggerIdRegenerateSecretPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: WebhookTriggerSecretResponse;
+};
+
+export type RegenerateWebhookSecretApiWorkflowsWorkflowIdTriggersWebhooksTriggerIdRegenerateSecretPostResponse = RegenerateWebhookSecretApiWorkflowsWorkflowIdTriggersWebhooksTriggerIdRegenerateSecretPostResponses[keyof RegenerateWebhookSecretApiWorkflowsWorkflowIdTriggersWebhooksTriggerIdRegenerateSecretPostResponses];
 
 export type RootGetData = {
     body?: never;

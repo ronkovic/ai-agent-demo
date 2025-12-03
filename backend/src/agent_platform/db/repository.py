@@ -13,8 +13,10 @@ from .models import (
     Conversation,
     Message,
     PersonalAgent,
+    ScheduleTrigger,
     UserApiKey,
     UserLLMConfig,
+    WebhookTrigger,
     Workflow,
     WorkflowExecution,
 )
@@ -632,3 +634,158 @@ class WorkflowExecutionRepository:
         await db.flush()
         await db.refresh(execution)
         return execution
+
+
+# =============================================================================
+# Schedule Trigger Repository
+# =============================================================================
+
+
+class ScheduleTriggerRepository:
+    """ScheduleTrigger data access repository."""
+
+    async def create(
+        self,
+        db: AsyncSession,
+        *,
+        workflow_id: UUID,
+        cron_expression: str,
+        timezone: str = "UTC",
+        is_active: bool = True,
+    ) -> ScheduleTrigger:
+        """Create a new schedule trigger."""
+        trigger = ScheduleTrigger(
+            workflow_id=workflow_id,
+            cron_expression=cron_expression,
+            timezone=timezone,
+            is_active=is_active,
+        )
+        db.add(trigger)
+        await db.flush()
+        await db.refresh(trigger)
+        return trigger
+
+    async def get(self, db: AsyncSession, trigger_id: UUID) -> ScheduleTrigger | None:
+        """Get schedule trigger by ID."""
+        result = await db.execute(
+            select(ScheduleTrigger).where(ScheduleTrigger.id == trigger_id)
+        )
+        return result.scalar_one_or_none()
+
+    async def list_by_workflow(
+        self, db: AsyncSession, workflow_id: UUID
+    ) -> list[ScheduleTrigger]:
+        """List all schedule triggers for a workflow."""
+        result = await db.execute(
+            select(ScheduleTrigger)
+            .where(ScheduleTrigger.workflow_id == workflow_id)
+            .order_by(ScheduleTrigger.created_at.desc())
+        )
+        return list(result.scalars().all())
+
+    async def list_active(self, db: AsyncSession) -> list[ScheduleTrigger]:
+        """List all active schedule triggers."""
+        result = await db.execute(
+            select(ScheduleTrigger)
+            .where(ScheduleTrigger.is_active == True)  # noqa: E712
+            .options(selectinload(ScheduleTrigger.workflow))
+        )
+        return list(result.scalars().all())
+
+    async def update(
+        self,
+        db: AsyncSession,
+        trigger: ScheduleTrigger,
+        **kwargs: str | bool | datetime | None,
+    ) -> ScheduleTrigger:
+        """Update schedule trigger fields."""
+        for key, value in kwargs.items():
+            if value is not None and hasattr(trigger, key):
+                setattr(trigger, key, value)
+        await db.flush()
+        await db.refresh(trigger)
+        return trigger
+
+    async def delete(self, db: AsyncSession, trigger: ScheduleTrigger) -> None:
+        """Delete a schedule trigger."""
+        await db.delete(trigger)
+        await db.flush()
+
+
+# =============================================================================
+# Webhook Trigger Repository
+# =============================================================================
+
+
+class WebhookTriggerRepository:
+    """WebhookTrigger data access repository."""
+
+    async def create(
+        self,
+        db: AsyncSession,
+        *,
+        workflow_id: UUID,
+        webhook_path: str,
+        secret: str | None = None,
+        is_active: bool = True,
+    ) -> WebhookTrigger:
+        """Create a new webhook trigger."""
+        trigger = WebhookTrigger(
+            workflow_id=workflow_id,
+            webhook_path=webhook_path,
+            secret=secret,
+            is_active=is_active,
+        )
+        db.add(trigger)
+        await db.flush()
+        await db.refresh(trigger)
+        return trigger
+
+    async def get(self, db: AsyncSession, trigger_id: UUID) -> WebhookTrigger | None:
+        """Get webhook trigger by ID."""
+        result = await db.execute(
+            select(WebhookTrigger).where(WebhookTrigger.id == trigger_id)
+        )
+        return result.scalar_one_or_none()
+
+    async def get_by_path(
+        self, db: AsyncSession, webhook_path: str
+    ) -> WebhookTrigger | None:
+        """Get webhook trigger by path."""
+        result = await db.execute(
+            select(WebhookTrigger)
+            .where(WebhookTrigger.webhook_path == webhook_path)
+            .where(WebhookTrigger.is_active == True)  # noqa: E712
+            .options(selectinload(WebhookTrigger.workflow))
+        )
+        return result.scalar_one_or_none()
+
+    async def list_by_workflow(
+        self, db: AsyncSession, workflow_id: UUID
+    ) -> list[WebhookTrigger]:
+        """List all webhook triggers for a workflow."""
+        result = await db.execute(
+            select(WebhookTrigger)
+            .where(WebhookTrigger.workflow_id == workflow_id)
+            .order_by(WebhookTrigger.created_at.desc())
+        )
+        return list(result.scalars().all())
+
+    async def update(
+        self,
+        db: AsyncSession,
+        trigger: WebhookTrigger,
+        **kwargs: str | bool | datetime | None,
+    ) -> WebhookTrigger:
+        """Update webhook trigger fields."""
+        for key, value in kwargs.items():
+            if value is not None and hasattr(trigger, key):
+                setattr(trigger, key, value)
+        await db.flush()
+        await db.refresh(trigger)
+        return trigger
+
+    async def delete(self, db: AsyncSession, trigger: WebhookTrigger) -> None:
+        """Delete a webhook trigger."""
+        await db.delete(trigger)
+        await db.flush()

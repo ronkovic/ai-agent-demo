@@ -48,6 +48,27 @@ tasks:
       - npm run dev
 
   # ===================
+  # Celery
+  # ===================
+  celery:worker:
+    desc: Celery Workerを起動
+    dir: "{{.BACKEND_DIR}}"
+    cmds:
+      - uv run celery -A agent_platform.tasks.celery_app worker --loglevel=info
+
+  celery:beat:
+    desc: Celery Beatを起動 (スケジューラー)
+    dir: "{{.BACKEND_DIR}}"
+    cmds:
+      - uv run celery -A agent_platform.tasks.celery_app beat --loglevel=info
+
+  celery:all:
+    desc: Celery Worker + Beatを起動
+    deps:
+      - celery:worker
+      - celery:beat
+
+  # ===================
   # Storybook
   # ===================
   storybook:

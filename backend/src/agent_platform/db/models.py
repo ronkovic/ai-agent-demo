@@ -263,6 +263,12 @@ class Workflow(Base):
     executions: Mapped[list["WorkflowExecution"]] = relationship(
         "WorkflowExecution", back_populates="workflow", cascade="all, delete-orphan"
     )
+    schedule_triggers: Mapped[list["ScheduleTrigger"]] = relationship(
+        "ScheduleTrigger", back_populates="workflow", cascade="all, delete-orphan"
+    )
+    webhook_triggers: Mapped[list["WebhookTrigger"]] = relationship(
+        "WebhookTrigger", back_populates="workflow", cascade="all, delete-orphan"
+    )
 
 
 class WorkflowExecution(Base):
@@ -290,3 +296,48 @@ class WorkflowExecution(Base):
 
     # Relationships
     workflow: Mapped["Workflow"] = relationship("Workflow", back_populates="executions")
+
+
+class ScheduleTrigger(Base):
+    """スケジュールトリガーモデル."""
+
+    __tablename__ = "schedule_triggers"
+
+    id: Mapped[UUID] = mapped_column(GUID(), primary_key=True, default=uuid4)
+    workflow_id: Mapped[UUID] = mapped_column(
+        GUID(), ForeignKey("workflows.id", ondelete="CASCADE"), nullable=False, index=True
+    )
+    cron_expression: Mapped[str] = mapped_column(String(100), nullable=False)
+    timezone: Mapped[str] = mapped_column(String(50), default="UTC", nullable=False)
+    is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
+    last_run_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    next_run_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False
+    )
+
+    # Relationships
+    workflow: Mapped["Workflow"] = relationship("Workflow", back_populates="schedule_triggers")
+
+
+class WebhookTrigger(Base):
+    """Webhookトリガーモデル."""
+
+    __tablename__ = "webhook_triggers"
+
+    id: Mapped[UUID] = mapped_column(GUID(), primary_key=True, default=uuid4)
+    workflow_id: Mapped[UUID] = mapped_column(
+        GUID(), ForeignKey("workflows.id", ondelete="CASCADE"), nullable=False, index=True
+    )
+    webhook_path: Mapped[str] = mapped_column(String(255), nullable=False, unique=True)
+    secret: Mapped[str | None] = mapped_column(String(255), nullable=True)  # HMAC secret
+    is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
+    last_triggered_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False
+    )
+
+    # Relationships
+    workflow: Mapped["Workflow"] = relationship("Workflow", back_populates="webhook_triggers")

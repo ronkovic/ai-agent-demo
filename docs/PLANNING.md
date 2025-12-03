@@ -48,10 +48,10 @@
 - [x] ユーザーAPIキー発行・認証
 - [ ] エージェント公開/非公開設定
 - [ ] 公開エージェント検索・連携
-- [ ] ビジュアルワークフローエディタ (React Flow)
-- [ ] ワークフローエンジン (DAG実行)
-- [ ] トリガー: チャット、Webhook、スケジュール (Celery Beat)、API
-- [ ] Rate Limiting (APIキー単位)
+- [x] ビジュアルワークフローエディタ (React Flow)
+- [x] ワークフローエンジン (DAG実行)
+- [x] トリガー: チャット、Webhook、スケジュール (Celery Beat)、API
+- [x] Rate Limiting (APIキー単位)
 
 ## 将来拡張
 

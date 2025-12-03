@@ -6,7 +6,17 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from agent_platform.api.routes import a2a, agents, chat, personal_agents, user_settings, workflows
+from agent_platform.api.routes import (
+    a2a,
+    agents,
+    api_trigger,
+    chat,
+    personal_agents,
+    triggers,
+    user_settings,
+    webhooks,
+    workflows,
+)
 from agent_platform.core.config import settings
 from agent_platform.db.models import Base
 from agent_platform.db.session import engine
@@ -58,6 +68,11 @@ app.include_router(user_settings.router, prefix="/api/user", tags=["user-setting
 app.include_router(workflows.router, prefix="/api/workflows", tags=["workflows"])
 app.include_router(chat.router, prefix="/api/chat", tags=["chat"])
 app.include_router(a2a.router, prefix="/a2a", tags=["a2a"])
+app.include_router(webhooks.router, prefix="/webhooks", tags=["webhooks"])
+app.include_router(api_trigger.router, prefix="/v1", tags=["api-trigger"])
+app.include_router(
+    triggers.router, prefix="/api/workflows/{workflow_id}/triggers", tags=["triggers"]
+)
 
 
 @app.get("/")

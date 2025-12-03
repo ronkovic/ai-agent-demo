@@ -1,12 +1,20 @@
 "use client";
 
-import { ArrowLeft, History, Play, Save, Settings } from "lucide-react";
+import {
+  ArrowLeft,
+  CalendarClock,
+  History,
+  Play,
+  Save,
+  Settings,
+} from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 
 import { Header } from "@/components/layout/Header";
 import { Button } from "@/components/ui/Button";
 import { WorkflowEditor } from "@/components/workflow/WorkflowEditor";
+import { TriggerPanel } from "@/components/workflow/triggers";
 import { useAuthFetch } from "@/hooks/useAuthFetch";
 import { useWorkflowExecution } from "@/hooks/useWorkflowExecution";
 import { useWorkflows } from "@/hooks/useWorkflows";
@@ -37,6 +45,7 @@ export default function EditWorkflowPage() {
   const [edges, setEdges] = useState<WorkflowEdge[]>([]);
   const [isActive, setIsActive] = useState(true);
   const [showSettings, setShowSettings] = useState(false);
+  const [showTriggers, setShowTriggers] = useState(false);
 
   // Fetch workflow
   useEffect(() => {
@@ -163,6 +172,16 @@ export default function EditWorkflowPage() {
 
           <Button
             variant="outline"
+            size="icon"
+            onClick={() => setShowTriggers(!showTriggers)}
+            className={cn(showTriggers && "bg-accent")}
+            title="トリガー設定"
+          >
+            <CalendarClock className="h-4 w-4" />
+          </Button>
+
+          <Button
+            variant="outline"
             onClick={() =>
               router.push(`/workflows/${workflowId}/executions`)
             }
@@ -222,12 +241,19 @@ export default function EditWorkflowPage() {
         </div>
       )}
 
-      <div className="flex-1">
-        <WorkflowEditor
-          initialNodes={nodes}
-          initialEdges={edges}
-          onChange={handleChange}
-        />
+      <div className="flex flex-1 overflow-hidden">
+        <div className="flex-1">
+          <WorkflowEditor
+            initialNodes={nodes}
+            initialEdges={edges}
+            onChange={handleChange}
+          />
+        </div>
+        {showTriggers && (
+          <div className="w-96 shrink-0 overflow-y-auto border-l bg-background p-4">
+            <TriggerPanel workflowId={workflowId} />
+          </div>
+        )}
       </div>
     </div>
   );

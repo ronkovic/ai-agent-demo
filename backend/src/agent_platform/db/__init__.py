@@ -7,8 +7,10 @@ from .models import (
     Conversation,
     Message,
     PersonalAgent,
+    ScheduleTrigger,
     UserApiKey,
     UserLLMConfig,
+    WebhookTrigger,
     Workflow,
     WorkflowExecution,
 )
@@ -18,8 +20,10 @@ from .repository import (
     ConversationRepository,
     MessageRepository,
     PersonalAgentRepository,
+    ScheduleTriggerRepository,
     UserApiKeyRepository,
     UserLLMConfigRepository,
+    WebhookTriggerRepository,
     WorkflowExecutionRepository,
     WorkflowRepository,
 )
@@ -37,6 +41,8 @@ __all__ = [
     "UserApiKey",
     "Workflow",
     "WorkflowExecution",
+    "ScheduleTrigger",
+    "WebhookTrigger",
     # Session
     "engine",
     "AsyncSessionLocal",
@@ -51,4 +57,6 @@ __all__ = [
     "UserApiKeyRepository",
     "WorkflowRepository",
     "WorkflowExecutionRepository",
+    "ScheduleTriggerRepository",
+    "WebhookTriggerRepository",
 ]

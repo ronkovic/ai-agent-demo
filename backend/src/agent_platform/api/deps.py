@@ -1,9 +1,12 @@
 """API dependencies for dependency injection."""
 
+import hashlib
+from datetime import UTC, datetime
 from uuid import UUID
 
-from fastapi import Depends, HTTPException
+from fastapi import Depends, Header, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..auth.jwt import AuthError, extract_user_id, verify_supabase_token
 from ..core.config import settings
@@ -12,12 +15,14 @@ from ..db import (
     ConversationRepository,
     MessageRepository,
     PersonalAgentRepository,
+    UserApiKey,
     UserApiKeyRepository,
     UserLLMConfigRepository,
     WorkflowExecutionRepository,
     WorkflowRepository,
 )
 from ..db.session import get_db
+from ..services.rate_limiter import get_rate_limit_key, rate_limiter
 
 # Re-export get_db for convenience
 __all__ = [
@@ -31,6 +36,7 @@ __all__ = [
     "get_workflow_repo",
     "get_workflow_execution_repo",
     "get_current_user_id",
+    "verify_api_key",
 ]
 
 # HTTP Bearer token security scheme
@@ -116,3 +122,59 @@ async def get_current_user_id(
             detail=e.message,
             headers={"WWW-Authenticate": "Bearer"},
         )
+
+
+async def verify_api_key(
+    x_api_key: str = Header(..., alias="X-API-Key"),
+    db: AsyncSession = Depends(get_db),
+) -> UserApiKey:
+    """APIキー認証 + Rate Limiting.
+
+    Args:
+        x_api_key: X-API-Key ヘッダー値
+        db: データベースセッション
+
+    Returns:
+        認証されたUserApiKeyインスタンス
+
+    Raises:
+        HTTPException: 認証失敗、有効期限切れ、レート制限超過
+    """
+    # ハッシュ計算
+    key_hash = hashlib.sha256(x_api_key.encode()).hexdigest()
+
+    # APIキー検索
+    api_key_repo = UserApiKeyRepository()
+    api_key = await api_key_repo.get_by_hash(db, key_hash)
+
+    if not api_key:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid API key",
+        )
+
+    # 有効期限チェック
+    if api_key.expires_at and api_key.expires_at < datetime.now(UTC):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="API key expired",
+        )
+
+    # Rate Limiting
+    rate_key = get_rate_limit_key(api_key.id)
+    allowed, remaining = await rate_limiter.check_rate_limit(
+        rate_key,
+        api_key.rate_limit,
+    )
+
+    if not allowed:
+        raise HTTPException(
+            status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+            detail="Rate limit exceeded",
+            headers={"X-RateLimit-Remaining": "0"},
+        )
+
+    # last_used_at 更新
+    api_key.last_used_at = datetime.now(UTC)
+
+    return api_key

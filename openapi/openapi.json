@@ -914,7 +914,7 @@
           "workflows"
         ],
         "summary": "Execute Workflow",
-        "description": "Workflow実行.\n\nNote: 現時点では実行レコードを作成するのみ。\n実際のワークフロー実行はStep 5のWorkflow Engineで実装。",
+        "description": "Workflow実行.\n\nワークフローを非同期で実行し、実行レコードを返す。",
         "operationId": "execute_workflow_api_workflows__workflow_id__execute_post",
         "security": [
           {
@@ -1642,6 +1642,676 @@
         }
       }
     },
+    "/webhooks/{webhook_path}": {
+      "post": {
+        "tags": [
+          "webhooks"
+        ],
+        "summary": "Handle Webhook",
+        "description": "Webhookリクエストを受信してワークフロー実行.\n\n- HMAC署名が設定されている場合は検証を行う\n- ワークフローを非同期タスクとして実行",
+        "operationId": "handle_webhook_webhooks__webhook_path__post",
+        "parameters": [
+          {
+            "name": "webhook_path",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Webhook Path"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WebhookResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WebhookErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WebhookErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/execute/{workflow_id}": {
+      "post": {
+        "tags": [
+          "api-trigger"
+        ],
+        "summary": "Api Execute Workflow",
+        "description": "APIキー認証でワークフロー実行.\n\n- X-API-Key ヘッダーでAPIキーを渡す\n- Rate Limiting が適用される\n- スコープ \"workflows:execute\" または \"*\" が必要",
+        "operationId": "api_execute_workflow_v1_execute__workflow_id__post",
+        "parameters": [
+          {
+            "name": "workflow_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Workflow Id"
+            }
+          },
+          {
+            "name": "X-API-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "X-Api-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "anyOf": [
+                  {
+                    "$ref": "#/components/schemas/ApiTriggerRequest"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Request"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiTriggerResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiTriggerErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiTriggerErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiTriggerErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiTriggerErrorResponse"
+                }
+              }
+            },
+            "description": "Too Many Requests"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/rate-limit": {
+      "get": {
+        "tags": [
+          "api-trigger"
+        ],
+        "summary": "Get Rate Limit Status",
+        "description": "現在のRate Limit状態を取得.",
+        "operationId": "get_rate_limit_status_v1_rate_limit_get",
+        "parameters": [
+          {
+            "name": "X-API-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "X-Api-Key"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Get Rate Limit Status V1 Rate Limit Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/workflows/{workflow_id}/triggers/schedules": {
+      "get": {
+        "tags": [
+          "triggers"
+        ],
+        "summary": "List Schedule Triggers",
+        "description": "ワークフローのスケジュールトリガー一覧を取得.",
+        "operationId": "list_schedule_triggers_api_workflows__workflow_id__triggers_schedules_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "workflow_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Workflow Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ScheduleTriggerResponse"
+                  },
+                  "title": "Response List Schedule Triggers Api Workflows  Workflow Id  Triggers Schedules Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "triggers"
+        ],
+        "summary": "Create Schedule Trigger",
+        "description": "スケジュールトリガーを作成.",
+        "operationId": "create_schedule_trigger_api_workflows__workflow_id__triggers_schedules_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "workflow_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Workflow Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ScheduleTriggerCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScheduleTriggerResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/workflows/{workflow_id}/triggers/schedules/{trigger_id}": {
+      "delete": {
+        "tags": [
+          "triggers"
+        ],
+        "summary": "Delete Schedule Trigger",
+        "description": "スケジュールトリガーを削除.",
+        "operationId": "delete_schedule_trigger_api_workflows__workflow_id__triggers_schedules__trigger_id__delete",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "workflow_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Workflow Id"
+            }
+          },
+          {
+            "name": "trigger_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Trigger Id"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/workflows/{workflow_id}/triggers/schedules/{trigger_id}/toggle": {
+      "patch": {
+        "tags": [
+          "triggers"
+        ],
+        "summary": "Toggle Schedule Trigger",
+        "description": "スケジュールトリガーの有効/無効を切り替え.",
+        "operationId": "toggle_schedule_trigger_api_workflows__workflow_id__triggers_schedules__trigger_id__toggle_patch",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "workflow_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Workflow Id"
+            }
+          },
+          {
+            "name": "trigger_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Trigger Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ScheduleTriggerToggle"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScheduleTriggerResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/workflows/{workflow_id}/triggers/webhooks": {
+      "get": {
+        "tags": [
+          "triggers"
+        ],
+        "summary": "List Webhook Triggers",
+        "description": "ワークフローのWebhookトリガー一覧を取得.",
+        "operationId": "list_webhook_triggers_api_workflows__workflow_id__triggers_webhooks_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "workflow_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Workflow Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/WebhookTriggerResponse"
+                  },
+                  "title": "Response List Webhook Triggers Api Workflows  Workflow Id  Triggers Webhooks Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "triggers"
+        ],
+        "summary": "Create Webhook Trigger",
+        "description": "Webhookトリガーを作成.",
+        "operationId": "create_webhook_trigger_api_workflows__workflow_id__triggers_webhooks_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "workflow_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Workflow Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WebhookTriggerCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WebhookTriggerResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/workflows/{workflow_id}/triggers/webhooks/{trigger_id}": {
+      "delete": {
+        "tags": [
+          "triggers"
+        ],
+        "summary": "Delete Webhook Trigger",
+        "description": "Webhookトリガーを削除.",
+        "operationId": "delete_webhook_trigger_api_workflows__workflow_id__triggers_webhooks__trigger_id__delete",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "workflow_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Workflow Id"
+            }
+          },
+          {
+            "name": "trigger_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Trigger Id"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/workflows/{workflow_id}/triggers/webhooks/{trigger_id}/regenerate-secret": {
+      "post": {
+        "tags": [
+          "triggers"
+        ],
+        "summary": "Regenerate Webhook Secret",
+        "description": "Webhookシークレットを再生成.",
+        "operationId": "regenerate_webhook_secret_api_workflows__workflow_id__triggers_webhooks__trigger_id__regenerate_secret_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "workflow_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Workflow Id"
+            }
+          },
+          {
+            "name": "trigger_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Trigger Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WebhookTriggerSecretResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/": {
       "get": {
         "summary": "Root",
@@ -1983,6 +2653,68 @@
         "type": "object",
         "title": "AgentUpdate",
         "description": "エージェント更新リクエスト."
+      },
+      "ApiTriggerErrorResponse": {
+        "properties": {
+          "detail": {
+            "type": "string",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "required": [
+          "detail"
+        ],
+        "title": "ApiTriggerErrorResponse",
+        "description": "API Trigger エラーレスポンス."
+      },
+      "ApiTriggerRequest": {
+        "properties": {
+          "trigger_data": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Trigger Data"
+          }
+        },
+        "type": "object",
+        "title": "ApiTriggerRequest",
+        "description": "API Trigger リクエスト."
+      },
+      "ApiTriggerResponse": {
+        "properties": {
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "task_id": {
+            "type": "string",
+            "title": "Task Id"
+          },
+          "workflow_id": {
+            "type": "string",
+            "title": "Workflow Id"
+          },
+          "rate_limit_remaining": {
+            "type": "integer",
+            "title": "Rate Limit Remaining"
+          }
+        },
+        "type": "object",
+        "required": [
+          "status",
+          "task_id",
+          "workflow_id",
+          "rate_limit_remaining"
+        ],
+        "title": "ApiTriggerResponse",
+        "description": "API Trigger レスポンス."
       },
       "ChatMessageResponse": {
         "properties": {
@@ -2360,6 +3092,109 @@
         "type": "object",
         "title": "PersonalAgentUpdate",
         "description": "Personal Agent更新リクエスト."
+      },
+      "ScheduleTriggerCreate": {
+        "properties": {
+          "cron_expression": {
+            "type": "string",
+            "title": "Cron Expression",
+            "description": "cron式 (例: '0 9 * * *')"
+          },
+          "timezone": {
+            "type": "string",
+            "title": "Timezone",
+            "description": "タイムゾーン",
+            "default": "UTC"
+          }
+        },
+        "type": "object",
+        "required": [
+          "cron_expression"
+        ],
+        "title": "ScheduleTriggerCreate",
+        "description": "スケジュールトリガー作成リクエスト."
+      },
+      "ScheduleTriggerResponse": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "workflow_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Workflow Id"
+          },
+          "cron_expression": {
+            "type": "string",
+            "title": "Cron Expression"
+          },
+          "timezone": {
+            "type": "string",
+            "title": "Timezone"
+          },
+          "is_active": {
+            "type": "boolean",
+            "title": "Is Active"
+          },
+          "last_run_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Run At"
+          },
+          "next_run_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Run At"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "workflow_id",
+          "cron_expression",
+          "timezone",
+          "is_active",
+          "last_run_at",
+          "next_run_at",
+          "created_at"
+        ],
+        "title": "ScheduleTriggerResponse",
+        "description": "スケジュールトリガーレスポンス."
+      },
+      "ScheduleTriggerToggle": {
+        "properties": {
+          "is_active": {
+            "type": "boolean",
+            "title": "Is Active"
+          }
+        },
+        "type": "object",
+        "required": [
+          "is_active"
+        ],
+        "title": "ScheduleTriggerToggle",
+        "description": "スケジュールトリガー有効/無効切り替え."
       },
       "TaskMessage": {
         "properties": {
@@ -2776,6 +3611,140 @@
           "type"
         ],
         "title": "ValidationError"
+      },
+      "WebhookErrorResponse": {
+        "properties": {
+          "detail": {
+            "type": "string",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "required": [
+          "detail"
+        ],
+        "title": "WebhookErrorResponse",
+        "description": "Webhookエラーレスポンス."
+      },
+      "WebhookResponse": {
+        "properties": {
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "task_id": {
+            "type": "string",
+            "title": "Task Id"
+          },
+          "workflow_id": {
+            "type": "string",
+            "title": "Workflow Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "status",
+          "task_id",
+          "workflow_id"
+        ],
+        "title": "WebhookResponse",
+        "description": "Webhook実行レスポンス."
+      },
+      "WebhookTriggerCreate": {
+        "properties": {
+          "webhook_path": {
+            "type": "string",
+            "title": "Webhook Path",
+            "description": "Webhookパス (例: 'my-workflow-hook')"
+          }
+        },
+        "type": "object",
+        "required": [
+          "webhook_path"
+        ],
+        "title": "WebhookTriggerCreate",
+        "description": "Webhookトリガー作成リクエスト."
+      },
+      "WebhookTriggerResponse": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "workflow_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Workflow Id"
+          },
+          "webhook_path": {
+            "type": "string",
+            "title": "Webhook Path"
+          },
+          "secret": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Secret"
+          },
+          "is_active": {
+            "type": "boolean",
+            "title": "Is Active"
+          },
+          "last_triggered_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Triggered At"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "webhook_url": {
+            "type": "string",
+            "title": "Webhook Url"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "workflow_id",
+          "webhook_path",
+          "secret",
+          "is_active",
+          "last_triggered_at",
+          "created_at",
+          "webhook_url"
+        ],
+        "title": "WebhookTriggerResponse",
+        "description": "Webhookトリガーレスポンス."
+      },
+      "WebhookTriggerSecretResponse": {
+        "properties": {
+          "secret": {
+            "type": "string",
+            "title": "Secret"
+          }
+        },
+        "type": "object",
+        "required": [
+          "secret"
+        ],
+        "title": "WebhookTriggerSecretResponse",
+        "description": "Webhookシークレット再生成レスポンス."
       },
       "WorkflowCreate": {
         "properties": {
