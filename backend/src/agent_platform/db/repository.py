@@ -41,6 +41,7 @@ class AgentRepository:
         description: str | None = None,
         tools: list[str] | None = None,
         a2a_enabled: bool = False,
+        is_public: bool = False,
     ) -> Agent:
         """Create a new agent."""
         agent = Agent(
@@ -52,6 +53,7 @@ class AgentRepository:
             llm_model=llm_model,
             tools=tools or [],
             a2a_enabled=a2a_enabled,
+            is_public=is_public,
         )
         db.add(agent)
         await db.flush()

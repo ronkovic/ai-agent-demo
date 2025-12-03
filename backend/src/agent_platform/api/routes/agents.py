@@ -3,11 +3,13 @@
 from datetime import datetime
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from pydantic import BaseModel, ConfigDict
+from sqlalchemy import or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from ...db import AgentRepository
+from ...db.models import Agent
 from ..deps import get_agent_repo, get_current_user_id, get_db
 
 router = APIRouter()
@@ -28,6 +30,7 @@ class AgentCreate(BaseModel):
     llm_model: str
     tools: list[str] = []
     a2a_enabled: bool = False
+    is_public: bool = False
 
 
 class AgentResponse(BaseModel):
@@ -44,8 +47,24 @@ class AgentResponse(BaseModel):
     llm_model: str
     tools: list[str]
     a2a_enabled: bool
+    is_public: bool
     created_at: datetime
     updated_at: datetime
+
+
+class PublicAgentResponse(BaseModel):
+    """公開エージェント用レスポンス (system_prompt 含まない)."""
+
+    model_config = ConfigDict(from_attributes=True)
+
+    id: UUID
+    user_id: UUID
+    name: str
+    description: str | None
+    llm_provider: str
+    llm_model: str
+    tools: list[str]
+    created_at: datetime
 
 
 class AgentUpdate(BaseModel):
@@ -58,6 +77,7 @@ class AgentUpdate(BaseModel):
     llm_model: str | None = None
     tools: list[str] | None = None
     a2a_enabled: bool | None = None
+    is_public: bool | None = None
 
 
 # =============================================================================
@@ -74,6 +94,49 @@ async def list_agents(
     """エージェント一覧取得."""
     agents = await repo.list_by_user(db, user_id)
     return [AgentResponse.model_validate(agent) for agent in agents]
+
+
+@router.get("/public", response_model=list[PublicAgentResponse])
+async def list_public_agents(
+    db: AsyncSession = Depends(get_db),
+    user_id: UUID = Depends(get_current_user_id),  # 認証必須
+    skip: int = Query(0, ge=0),
+    limit: int = Query(20, ge=1, le=100),
+) -> list[PublicAgentResponse]:
+    """公開エージェント一覧取得 (認証必須)."""
+    result = await db.execute(
+        select(Agent)
+        .where(Agent.is_public == True)  # noqa: E712
+        .order_by(Agent.created_at.desc())
+        .offset(skip)
+        .limit(limit)
+    )
+    agents = result.scalars().all()
+    return [PublicAgentResponse.model_validate(agent) for agent in agents]
+
+
+@router.get("/public/search", response_model=list[PublicAgentResponse])
+async def search_public_agents(
+    q: str = Query(..., min_length=1),
+    db: AsyncSession = Depends(get_db),
+    user_id: UUID = Depends(get_current_user_id),  # 認証必須
+    limit: int = Query(20, ge=1, le=100),
+) -> list[PublicAgentResponse]:
+    """公開エージェント検索 (認証必須)."""
+    pattern = f"%{q}%"
+    result = await db.execute(
+        select(Agent)
+        .where(Agent.is_public == True)  # noqa: E712
+        .where(
+            or_(
+                Agent.name.ilike(pattern),
+                Agent.description.ilike(pattern),
+            )
+        )
+        .limit(limit)
+    )
+    agents = result.scalars().all()
+    return [PublicAgentResponse.model_validate(agent) for agent in agents]
 
 
 @router.post("", response_model=AgentResponse, status_code=status.HTTP_201_CREATED)
@@ -94,6 +157,7 @@ async def create_agent(
         llm_model=agent_data.llm_model,
         tools=agent_data.tools,
         a2a_enabled=agent_data.a2a_enabled,
+        is_public=agent_data.is_public,
     )
     return AgentResponse.model_validate(agent)
 
@@ -103,14 +167,23 @@ async def get_agent(
     agent_id: UUID,
     db: AsyncSession = Depends(get_db),
     user_id: UUID = Depends(get_current_user_id),
-    repo: AgentRepository = Depends(get_agent_repo),
 ) -> AgentResponse:
-    """エージェント取得."""
-    agent = await repo.get_by_user(db, agent_id, user_id)
+    """エージェント取得.
+
+    公開エージェントまたは自分のエージェントのみ取得可能.
+    """
+    result = await db.execute(select(Agent).where(Agent.id == agent_id))
+    agent = result.scalar_one_or_none()
     if not agent:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"Agent {agent_id} not found",
+        )
+    # 公開エージェントまたは自分のエージェントのみアクセス可能
+    if not agent.is_public and agent.user_id != user_id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Access denied",
         )
     return AgentResponse.model_validate(agent)
 

@@ -13,6 +13,7 @@ const mockAgents = [
     llm_model: "claude-3-5-sonnet-20241022",
     tools: ["code_execution"],
     a2a_enabled: false,
+    is_public: false,
     created_at: "2024-01-01T00:00:00Z",
     updated_at: "2024-01-01T00:00:00Z",
   },
@@ -26,8 +27,33 @@ const mockAgents = [
     llm_model: "claude-3-5-sonnet-20241022",
     tools: ["web_search"],
     a2a_enabled: true,
+    is_public: false,
     created_at: "2024-01-02T00:00:00Z",
     updated_at: "2024-01-02T00:00:00Z",
+  },
+];
+
+// Mock data - Public Agents
+const mockPublicAgents = [
+  {
+    id: "public-agent-1",
+    user_id: "other-user-1",
+    name: "Public Helper Agent",
+    description: "A helpful public agent for everyone",
+    llm_provider: "claude",
+    llm_model: "claude-3-5-sonnet-20241022",
+    tools: [],
+    created_at: "2024-01-01T00:00:00Z",
+  },
+  {
+    id: "public-agent-2",
+    user_id: "other-user-2",
+    name: "Public Translator",
+    description: "Translates text between languages",
+    llm_provider: "openai",
+    llm_model: "gpt-4o",
+    tools: [],
+    created_at: "2024-01-02T00:00:00Z",
   },
 ];
 
@@ -122,6 +148,35 @@ const mockWebhookTriggers: Record<string, unknown[]> = {
  * Set up API mocking for a page
  */
 async function setupApiMocks(page: Page) {
+  // Mock GET/POST /api/agents/public
+  await page.route("**/api/agents/public", async (route) => {
+    if (route.request().method() === "GET") {
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify(mockPublicAgents),
+      });
+    } else {
+      await route.continue();
+    }
+  });
+
+  // Mock GET /api/agents/public/search
+  await page.route("**/api/agents/public/search*", async (route) => {
+    const url = new URL(route.request().url());
+    const query = url.searchParams.get("q")?.toLowerCase() || "";
+    const filtered = mockPublicAgents.filter(
+      (a) =>
+        a.name.toLowerCase().includes(query) ||
+        (a.description && a.description.toLowerCase().includes(query))
+    );
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify(filtered),
+    });
+  });
+
   // Mock GET /api/agents
   await page.route("**/api/agents", async (route) => {
     if (route.request().method() === "GET") {
@@ -136,6 +191,7 @@ async function setupApiMocks(page: Page) {
         id: crypto.randomUUID(),
         user_id: "00000000-0000-0000-0000-000000000001",
         ...body,
+        is_public: body.is_public || false,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
       };

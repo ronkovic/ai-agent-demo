@@ -92,6 +92,10 @@ export type AgentCreate = {
      * A2A Enabled
      */
     a2a_enabled?: boolean;
+    /**
+     * Is Public
+     */
+    is_public?: boolean;
 };
 
 /**
@@ -137,6 +141,10 @@ export type AgentResponse = {
      */
     a2a_enabled: boolean;
     /**
+     * Is Public
+     */
+    is_public: boolean;
+    /**
      * Created At
      */
     created_at: string;
@@ -180,6 +188,10 @@ export type AgentUpdate = {
      * A2A Enabled
      */
     a2a_enabled?: boolean | null;
+    /**
+     * Is Public
+     */
+    is_public?: boolean | null;
 };
 
 /**
@@ -477,6 +489,46 @@ export type PersonalAgentUpdate = {
      * Is Public
      */
     is_public?: boolean | null;
+};
+
+/**
+ * PublicAgentResponse
+ *
+ * 公開エージェント用レスポンス (system_prompt 含まない).
+ */
+export type PublicAgentResponse = {
+    /**
+     * Id
+     */
+    id: string;
+    /**
+     * User Id
+     */
+    user_id: string;
+    /**
+     * Name
+     */
+    name: string;
+    /**
+     * Description
+     */
+    description: string | null;
+    /**
+     * Llm Provider
+     */
+    llm_provider: string;
+    /**
+     * Llm Model
+     */
+    llm_model: string;
+    /**
+     * Tools
+     */
+    tools: Array<string>;
+    /**
+     * Created At
+     */
+    created_at: string;
 };
 
 /**
@@ -1179,6 +1231,78 @@ export type CreateAgentApiAgentsPostResponses = {
 };
 
 export type CreateAgentApiAgentsPostResponse = CreateAgentApiAgentsPostResponses[keyof CreateAgentApiAgentsPostResponses];
+
+export type ListPublicAgentsApiAgentsPublicGetData = {
+    body?: never;
+    path?: never;
+    query?: {
+        /**
+         * Skip
+         */
+        skip?: number;
+        /**
+         * Limit
+         */
+        limit?: number;
+    };
+    url: '/api/agents/public';
+};
+
+export type ListPublicAgentsApiAgentsPublicGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ListPublicAgentsApiAgentsPublicGetError = ListPublicAgentsApiAgentsPublicGetErrors[keyof ListPublicAgentsApiAgentsPublicGetErrors];
+
+export type ListPublicAgentsApiAgentsPublicGetResponses = {
+    /**
+     * Response List Public Agents Api Agents Public Get
+     *
+     * Successful Response
+     */
+    200: Array<PublicAgentResponse>;
+};
+
+export type ListPublicAgentsApiAgentsPublicGetResponse = ListPublicAgentsApiAgentsPublicGetResponses[keyof ListPublicAgentsApiAgentsPublicGetResponses];
+
+export type SearchPublicAgentsApiAgentsPublicSearchGetData = {
+    body?: never;
+    path?: never;
+    query: {
+        /**
+         * Q
+         */
+        q: string;
+        /**
+         * Limit
+         */
+        limit?: number;
+    };
+    url: '/api/agents/public/search';
+};
+
+export type SearchPublicAgentsApiAgentsPublicSearchGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type SearchPublicAgentsApiAgentsPublicSearchGetError = SearchPublicAgentsApiAgentsPublicSearchGetErrors[keyof SearchPublicAgentsApiAgentsPublicSearchGetErrors];
+
+export type SearchPublicAgentsApiAgentsPublicSearchGetResponses = {
+    /**
+     * Response Search Public Agents Api Agents Public Search Get
+     *
+     * Successful Response
+     */
+    200: Array<PublicAgentResponse>;
+};
+
+export type SearchPublicAgentsApiAgentsPublicSearchGetResponse = SearchPublicAgentsApiAgentsPublicSearchGetResponses[keyof SearchPublicAgentsApiAgentsPublicSearchGetResponses];
 
 export type DeleteAgentApiAgentsAgentIdDeleteData = {
     body?: never;

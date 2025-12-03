@@ -12,6 +12,7 @@ const agentSchema = z.object({
   system_prompt: z.string().min(1, "System prompt is required"),
   llm_provider: z.enum(["claude", "openai", "bedrock"]),
   llm_model: z.string().min(1, "Model is required"),
+  is_public: z.boolean().default(false),
 });
 
 type AgentFormValues = z.infer<typeof agentSchema>;
@@ -63,6 +64,7 @@ export function AgentForm({
       system_prompt: initialData?.system_prompt || "",
       llm_provider: (initialData?.llm_provider as "claude" | "openai" | "bedrock") || "claude",
       llm_model: initialData?.llm_model || LLM_MODELS.claude[0].value,
+      is_public: initialData?.is_public || false,
     },
   });
 
@@ -161,6 +163,26 @@ export function AgentForm({
         {errors.system_prompt && (
           <p className="text-sm text-red-500">{errors.system_prompt.message}</p>
         )}
+      </div>
+
+      <div className="flex items-center justify-between rounded-lg border border-gray-200 p-4 dark:border-gray-800">
+        <div className="space-y-0.5">
+          <label
+            htmlFor="is_public"
+            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-gray-900 dark:text-gray-100"
+          >
+            公開設定
+          </label>
+          <p className="text-sm text-gray-500 dark:text-gray-400">
+            他のユーザーがこのエージェントをワークフローで利用できます
+          </p>
+        </div>
+        <input
+          id="is_public"
+          type="checkbox"
+          {...register("is_public")}
+          className="h-5 w-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-900"
+        />
       </div>
 
       <div className="flex justify-end gap-4">

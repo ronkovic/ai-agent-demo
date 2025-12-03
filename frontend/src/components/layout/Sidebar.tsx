@@ -1,7 +1,7 @@
 "use client";
 
 import { AgentResponse, PersonalAgentResponse } from "@/lib/api-client/types.gen";
-import { Plus, Bot, Settings, User, Workflow } from "lucide-react";
+import { Plus, Bot, Settings, User, Workflow, Globe } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/Button";
 import { useRouter, usePathname } from "next/navigation";
@@ -113,6 +113,22 @@ export function Sidebar({
               </button>
             ))
           )}
+        </div>
+
+        {/* Public Agents Section */}
+        <div className="mt-4">
+          <button
+            onClick={() => router.push("/agents/explore")}
+            className={cn(
+              "flex w-full items-center gap-2 rounded-md px-2 py-2 text-sm font-medium transition-colors hover:bg-gray-100 dark:hover:bg-gray-800",
+              pathname === "/agents/explore"
+                ? "bg-teal-50 text-teal-600 dark:bg-teal-900/20 dark:text-teal-400"
+                : "text-gray-700 dark:text-gray-300"
+            )}
+          >
+            <Globe className="h-4 w-4" />
+            <span>公開エージェント</span>
+          </button>
         </div>
       </div>
 

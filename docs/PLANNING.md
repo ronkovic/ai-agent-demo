@@ -46,8 +46,8 @@
 - [x] Personal AI Agent CRUD
 - [x] ユーザーLLM APIキー管理 (Supabase Vault)
 - [x] ユーザーAPIキー発行・認証
-- [ ] エージェント公開/非公開設定
-- [ ] 公開エージェント検索・連携
+- [x] エージェント公開/非公開設定
+- [x] 公開エージェント検索・連携
 - [x] ビジュアルワークフローエディタ (React Flow)
 - [x] ワークフローエンジン (DAG実行)
 - [x] トリガー: チャット、Webhook、スケジュール (Celery Beat)、API
