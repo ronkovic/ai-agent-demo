@@ -499,24 +499,41 @@ CREATE TABLE user_api_keys (
   - `ExecutionDetail.tsx` - 実行詳細・ノード結果表示
 - [x] バックエンドテスト: 37テスト追加 (test_workflows.py, test_workflow_engine.py)
 
-### Phase 9: トリガー実装
+### Phase 9: トリガー実装 ✅ 完了
 
-- [ ] Celery + Redis 設定
-  - `tasks/celery_config.py`
+- [x] Celery + Redis 設定
+  - `tasks/celery_app.py` - Celery設定
+  - `tasks/workflow_tasks.py` - 非同期タスク定義
+  - `tasks/scheduler.py` - Celery Beat動的スケジュール同期
   - Docker Compose に Redis 追加
-- [ ] Schedule Trigger (Celery Beat)
+- [x] Schedule Trigger (Celery Beat)
   - `ScheduleTrigger` モデル
-  - `tasks/schedule_tasks.py`
-  - cron式パーサー
-- [ ] Webhook Trigger
+  - cron式パーサー (croniter)
+  - トグル (有効/無効) 機能
+- [x] Webhook Trigger
   - `WebhookTrigger` モデル
   - `api/routes/webhooks.py`
-  - HMAC署名検証
-- [ ] API Trigger (APIキー認証)
-  - `api/dependencies.py` に `verify_api_key`
-  - POST `/api/v1/execute/{agent_id}`
-  - Rate Limiting実装
-- [ ] トリガー管理UI
+  - HMAC-SHA256署名検証
+  - シークレット再生成機能
+- [x] API Trigger (APIキー認証)
+  - `api/deps.py` に `verify_api_key`
+  - POST `/v1/execute/{workflow_id}`
+  - Rate Limiting実装 (`services/rate_limiter.py` - Redis Sorted Set)
+- [x] トリガー管理 API
+  - GET/POST/DELETE `/api/workflows/{id}/triggers/schedules`
+  - GET/POST/DELETE `/api/workflows/{id}/triggers/webhooks`
+  - PATCH `/api/workflows/{id}/triggers/schedules/{id}/toggle`
+  - POST `/api/workflows/{id}/triggers/webhooks/{id}/regenerate-secret`
+- [x] トリガー設定UI
+  - `components/workflow/triggers/TriggerPanel.tsx` - タブ切り替えパネル
+  - `components/workflow/triggers/ScheduleTriggerForm.tsx` - cronプリセット選択
+  - `components/workflow/triggers/ScheduleTriggerList.tsx` - トグル・削除
+  - `components/workflow/triggers/WebhookTriggerForm.tsx` - パス入力・シークレット表示
+  - `components/workflow/triggers/WebhookTriggerList.tsx` - URL表示・シークレット再生成
+  - `hooks/useTriggers.ts` - トリガー管理フック
+- [x] テスト
+  - Backend: 18テスト (モデル、API、HMAC検証)
+  - E2E: トリガー設定UIテスト
 
 ### Phase 10: 公開エージェント
 
@@ -643,6 +660,7 @@ cp backend/.env.example backend/.env
 ```
 
 Supabaseダッシュボードから値を取得:
+
 - `SUPABASE_URL`: Settings > API > Project URL
 - `SUPABASE_ANON_KEY`: Settings > API > anon public
 - `SUPABASE_JWT_SECRET`: Settings > JWT Keys > Legacy JWT Secret
@@ -741,4 +759,4 @@ CELERY_RESULT_BACKEND=redis://localhost:6379/0
 **Proprietary License** - Copyright (c) 2024-2025 Kazuki Takahashi (高橋 一樹). All Rights Reserved.
 
 商用利用には別途ライセンス契約が必要です。
-連絡先: ron.kovic.0704@gmail.com
+連絡先: <ron.kovic.0704@gmail.com>
