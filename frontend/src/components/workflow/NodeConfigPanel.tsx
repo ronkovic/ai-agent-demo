@@ -1,10 +1,13 @@
 "use client";
 
+import { useMemo } from "react";
 import type { Node } from "@xyflow/react";
-import { X } from "lucide-react";
+import { Globe, User, X } from "lucide-react";
 
 import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
+import { useAgents } from "@/hooks/useAgents";
+import { usePublicAgents } from "@/hooks/usePublicAgents";
 
 import type { AgentNodeData } from "./nodes/AgentNode";
 import type { ConditionNodeData } from "./nodes/ConditionNode";
@@ -155,19 +158,82 @@ function AgentConfig({
   data: AgentNodeData;
   onChange: (key: string, value: unknown) => void;
 }) {
+  const { agents: myAgents, isLoading: isLoadingMyAgents } = useAgents();
+  const { agents: publicAgents, isLoading: isLoadingPublicAgents } = usePublicAgents();
+
+  // Compute selected agent info from current data
+  const selectedAgent = useMemo(() => {
+    if (!data.agent_id) return null;
+    const myAgent = myAgents.find((a) => a.id === data.agent_id);
+    if (myAgent) return { ...myAgent, isPublic: false };
+    const pubAgent = publicAgents.find((a) => a.id === data.agent_id);
+    if (pubAgent) return { ...pubAgent, isPublic: true };
+    return null;
+  }, [data.agent_id, myAgents, publicAgents]);
+
+  const handleAgentChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const agentId = e.target.value;
+    if (!agentId) {
+      onChange("agent_id", "");
+      onChange("agent_name", "");
+      return;
+    }
+
+    // Find agent name
+    const myAgent = myAgents.find((a) => a.id === agentId);
+    const pubAgent = publicAgents.find((a) => a.id === agentId);
+    const agentName = myAgent?.name || pubAgent?.name || "";
+
+    onChange("agent_id", agentId);
+    onChange("agent_name", agentName);
+  };
+
+  const isLoading = isLoadingMyAgents || isLoadingPublicAgents;
+
   return (
     <div className="space-y-4">
       <div>
         <label className="text-xs font-medium text-muted-foreground">
-          エージェントID
+          エージェント
         </label>
-        <input
-          type="text"
+        <select
           value={data.agent_id || ""}
-          onChange={(e) => onChange("agent_id", e.target.value)}
-          className="mt-1 flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm font-mono shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-          placeholder="エージェントを選択..."
-        />
+          onChange={handleAgentChange}
+          disabled={isLoading}
+          className="mt-1 flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          <option value="">
+            {isLoading ? "読み込み中..." : "エージェントを選択..."}
+          </option>
+          {myAgents.length > 0 && (
+            <optgroup label="マイエージェント">
+              {myAgents.map((agent) => (
+                <option key={agent.id} value={agent.id}>
+                  {agent.name}
+                </option>
+              ))}
+            </optgroup>
+          )}
+          {publicAgents.length > 0 && (
+            <optgroup label="公開エージェント">
+              {publicAgents.map((agent) => (
+                <option key={agent.id} value={agent.id}>
+                  {agent.name} ({agent.llm_provider})
+                </option>
+              ))}
+            </optgroup>
+          )}
+        </select>
+        {selectedAgent && (
+          <div className="mt-1 flex items-center gap-1 text-xs text-muted-foreground">
+            {selectedAgent.isPublic ? (
+              <Globe className="h-3 w-3" />
+            ) : (
+              <User className="h-3 w-3" />
+            )}
+            <span>{selectedAgent.name}</span>
+          </div>
+        )}
       </div>
       <div>
         <label className="text-xs font-medium text-muted-foreground">

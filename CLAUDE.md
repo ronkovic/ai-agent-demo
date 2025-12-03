@@ -175,6 +175,8 @@ The project has MCP servers configured in `.mcp.json`:
 - `GET /api/agents/{id}` - Get agent details
 - `PUT /api/agents/{id}` - Update agent
 - `DELETE /api/agents/{id}` - Delete agent
+- `GET /api/agents/public` - List public agents
+- `GET /api/agents/public/search?q={query}` - Search public agents
 
 ### Chat API
 - `POST /api/chat/stream` - Stream chat messages (SSE)

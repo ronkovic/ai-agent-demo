@@ -469,7 +469,10 @@ CREATE TABLE user_api_keys (
   - `components/settings/` コンポーネント
 - [x] Sidebar更新: パーソナルエージェントセクション、設定ボタン
 - [x] テスト: 28個のバックエンドテスト、E2Eテスト
-- [ ] Personal Agent チャット機能 (Phase 8で実装予定)
+- [x] Personal Agent チャット機能
+  - `/api/personal-agents/{id}/chat/stream` エンドポイント
+  - `usePersonalAgentChat` フック
+  - Personal Agent詳細ページにチャットUI実装
 
 ### Phase 8: ワークフローエンジン ✅ 完了
 
@@ -537,14 +540,17 @@ CREATE TABLE user_api_keys (
 
 ### Phase 10: 公開エージェント
 
-- [ ] エージェント公開機能
+- [x] エージェント公開機能
   - `agents` テーブルに `is_public` 追加
-  - 公開設定UI
-- [ ] 公開エージェント検索・一覧
-  - GET `/api/agents/public`
-  - 検索・フィルタリング
-- [ ] 公開エージェントをワークフローで使用
+  - 公開設定UI（AgentForm にチェックボックス追加）
+- [x] 公開エージェント検索・一覧
+  - GET `/api/agents/public` - 公開エージェント一覧
+  - GET `/api/agents/public/search?q={query}` - 検索
+  - `/agents/explore` ページ（公開エージェント探索UI）
+  - サイドバーに「公開エージェント」リンク追加
+- [x] 公開エージェントをワークフローで使用
   - AgentNode で公開エージェント選択
+  - NodeConfigPanelでマイエージェント/公開エージェントをグループ表示
 
 ---
 

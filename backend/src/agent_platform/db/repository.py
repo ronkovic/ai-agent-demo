@@ -399,6 +399,31 @@ class UserLLMConfigRepository:
         )
         return list(result.scalars().all())
 
+    async def get_default_by_user(self, db: AsyncSession, user_id: UUID) -> UserLLMConfig | None:
+        """Get the default LLM config for a user.
+
+        If no default is set, returns the first available config.
+        """
+        # Try to get explicit default
+        result = await db.execute(
+            select(UserLLMConfig).where(
+                UserLLMConfig.user_id == user_id,
+                UserLLMConfig.is_default == True,  # noqa: E712
+            )
+        )
+        config = result.scalar_one_or_none()
+        if config:
+            return config
+
+        # Fall back to first available
+        result = await db.execute(
+            select(UserLLMConfig)
+            .where(UserLLMConfig.user_id == user_id)
+            .order_by(UserLLMConfig.created_at.asc())
+            .limit(1)
+        )
+        return result.scalar_one_or_none()
+
     async def delete(self, db: AsyncSession, config: UserLLMConfig) -> None:
         """Delete a LLM config."""
         await db.delete(config)
