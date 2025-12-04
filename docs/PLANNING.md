@@ -1,6 +1,6 @@
 # AI Agent Demo Project - 実装プラン
 
-> Last reviewed: 2025-12-03
+> Last reviewed: 2025-12-04
 
 ## 概要
 
@@ -538,7 +538,7 @@ CREATE TABLE user_api_keys (
   - Backend: 18テスト (モデル、API、HMAC検証)
   - E2E: トリガー設定UIテスト
 
-### Phase 10: 公開エージェント
+### Phase 10: 公開エージェント ✅ 完了
 
 - [x] エージェント公開機能
   - `agents` テーブルに `is_public` 追加
@@ -551,6 +551,30 @@ CREATE TABLE user_api_keys (
 - [x] 公開エージェントをワークフローで使用
   - AgentNode で公開エージェント選択
   - NodeConfigPanelでマイエージェント/公開エージェントをグループ表示
+
+### Phase 11: UI/UXリファイン ✅ 完了
+
+- [x] デザインシステム更新 (`globals.css`)
+  - プライマリカラーをブルー系に統一 (`hsl(221.2 83.2% 53.3%)`)
+  - ボーダー角丸を `0.75rem` に拡大
+  - 背景グラデーション追加（ダーク/ライト両対応）
+- [x] CSSアニメーション追加
+  - `fade-in` - フェードインアニメーション
+  - `slide-up` - 下からスライドイン
+  - `slide-in-right` - 右からスライドイン
+- [x] Glassmorphism ユーティリティ追加
+- [x] 認証ページUI改善
+  - ログインページ (`auth/login/page.tsx`) - モダンなレイアウトに刷新
+  - サインアップページ (`auth/signup/page.tsx`) - 一貫したデザイン適用
+- [x] レイアウトコンポーネント改善
+  - `Sidebar.tsx` - ナビゲーションUI改善
+  - `Header.tsx` - ヘッダーデザイン更新
+  - `AppLayout.tsx` - 全体レイアウト調整
+- [x] ワークフローエディタUI改善
+  - `WorkflowEditor.tsx` - エディタUI改善
+  - `NodePalette.tsx` - ノードパレットデザイン更新
+  - `BaseNode.tsx` - ノードスタイル統一
+- [x] ボタンコンポーネント改善 (`Button.tsx`)
 
 ---
 

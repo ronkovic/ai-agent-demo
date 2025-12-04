@@ -266,15 +266,15 @@ export function WorkflowEditor({
           multiSelectionKeyCode={null}
           panOnScroll
           zoomOnScroll
-          className="bg-gray-50 dark:bg-gray-900"
+          className="bg-transparent"
         >
-          <Background variant={BackgroundVariant.Dots} gap={16} size={1} />
-          <Controls />
+          <Background variant={BackgroundVariant.Dots} gap={16} size={1} className="opacity-50" />
+          <Controls className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm border-white/20" />
           <MiniMap
             nodeStrokeWidth={3}
             zoomable
             pannable
-            className="!bg-background !border !border-border"
+            className="!bg-white/50 dark:!bg-gray-900/50 !border !border-white/20 backdrop-blur-md rounded-lg overflow-hidden"
           />
         </ReactFlow>
       </div>

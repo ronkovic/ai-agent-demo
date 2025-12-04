@@ -17,22 +17,22 @@ export interface BaseNodeProps {
 }
 
 const variantStyles: Record<NonNullable<BaseNodeProps["variant"]>, string> = {
-  trigger: "border-green-500 bg-green-50 dark:bg-green-950/30",
-  agent: "border-blue-500 bg-blue-50 dark:bg-blue-950/30",
-  condition: "border-amber-500 bg-amber-50 dark:bg-amber-950/30",
-  transform: "border-purple-500 bg-purple-50 dark:bg-purple-950/30",
-  tool: "border-cyan-500 bg-cyan-50 dark:bg-cyan-950/30",
-  output: "border-rose-500 bg-rose-50 dark:bg-rose-950/30",
+  trigger: "border-green-500/50 bg-green-50/80 dark:bg-green-950/30",
+  agent: "border-blue-500/50 bg-blue-50/80 dark:bg-blue-950/30",
+  condition: "border-amber-500/50 bg-amber-50/80 dark:bg-amber-950/30",
+  transform: "border-purple-500/50 bg-purple-50/80 dark:bg-purple-950/30",
+  tool: "border-cyan-500/50 bg-cyan-50/80 dark:bg-cyan-950/30",
+  output: "border-rose-500/50 bg-rose-50/80 dark:bg-rose-950/30",
 };
 
 const variantIconStyles: Record<NonNullable<BaseNodeProps["variant"]>, string> =
   {
-    trigger: "bg-green-500 text-white",
-    agent: "bg-blue-500 text-white",
-    condition: "bg-amber-500 text-white",
-    transform: "bg-purple-500 text-white",
-    tool: "bg-cyan-500 text-white",
-    output: "bg-rose-500 text-white",
+    trigger: "bg-green-500 text-white shadow-sm",
+    agent: "bg-blue-500 text-white shadow-sm",
+    condition: "bg-amber-500 text-white shadow-sm",
+    transform: "bg-purple-500 text-white shadow-sm",
+    tool: "bg-cyan-500 text-white shadow-sm",
+    output: "bg-rose-500 text-white shadow-sm",
   };
 
 export function BaseNode({
@@ -48,9 +48,9 @@ export function BaseNode({
   return (
     <div
       className={cn(
-        "min-w-[180px] rounded-lg border-2 bg-background shadow-md transition-shadow",
+        "min-w-[180px] rounded-xl border bg-white/50 shadow-lg backdrop-blur-md transition-all duration-200 hover:scale-[1.02] hover:shadow-xl dark:bg-gray-900/50",
         variantStyles[variant],
-        selected && "ring-2 ring-primary ring-offset-2"
+        selected && "ring-2 ring-primary ring-offset-2 ring-offset-transparent"
       )}
     >
       {hasInput && (

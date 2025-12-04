@@ -11,6 +11,7 @@ interface HeaderProps {
   className?: string;
   showThemeToggle?: boolean;
   showUserMenu?: boolean;
+  children?: React.ReactNode;
 }
 
 export function Header({
@@ -20,11 +21,12 @@ export function Header({
   className,
   showThemeToggle = true,
   showUserMenu = true,
+  children,
 }: HeaderProps) {
   return (
     <header
       className={cn(
-        "hidden md:flex h-14 items-center justify-between border-b bg-white px-4 dark:bg-gray-950",
+        "hidden md:flex h-14 items-center justify-between border-b border-white/20 bg-white/30 px-4 dark:bg-gray-900/30 backdrop-blur-md",
         className
       )}
     >
@@ -45,6 +47,7 @@ export function Header({
             {title}
           </h1>
         )}
+        {children}
       </div>
       <div className="flex items-center gap-2">
         {showThemeToggle && <ThemeToggle />}

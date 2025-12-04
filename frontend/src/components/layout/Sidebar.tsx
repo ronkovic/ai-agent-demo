@@ -29,14 +29,14 @@ export function Sidebar({
   return (
     <aside
       className={cn(
-        "flex h-full w-64 flex-col border-r bg-gray-50/50 dark:bg-gray-900/50",
+        "flex h-full w-64 flex-col border-r border-white/20 bg-white/30 dark:bg-gray-900/30 backdrop-blur-md",
         className
       )}
     >
       <div className="p-4">
         <Button
           onClick={onCreateNew}
-          className="w-full justify-start gap-2"
+          className="w-full justify-start gap-2 shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all duration-200"
           variant="primary"
         >
           <Plus className="h-4 w-4" />
@@ -44,98 +44,100 @@ export function Sidebar({
         </Button>
       </div>
 
-      <div className="flex-1 overflow-y-auto px-2">
+      <div className="flex-1 overflow-y-auto px-2 space-y-6">
         {/* Workflows Section */}
-        <div className="mb-4">
+        <div>
           <button
             onClick={() => router.push("/workflows")}
             className={cn(
-              "flex w-full items-center gap-2 rounded-md px-2 py-2 text-sm font-medium transition-colors hover:bg-gray-100 dark:hover:bg-gray-800",
+              "flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200 group",
               pathname.startsWith("/workflows")
-                ? "bg-green-50 text-green-600 dark:bg-green-900/20 dark:text-green-400"
-                : "text-gray-700 dark:text-gray-300"
+                ? "bg-white/40 dark:bg-white/10 text-primary shadow-sm"
+                : "text-gray-700 dark:text-gray-300 hover:bg-white/20 dark:hover:bg-white/5 hover:translate-x-1"
             )}
           >
-            <Workflow className="h-4 w-4" />
+            <Workflow className={cn("h-4 w-4 transition-transform duration-200 group-hover:scale-110", pathname.startsWith("/workflows") && "text-primary")} />
             <span>ワークフロー</span>
           </button>
         </div>
 
         {/* Personal Agents Section */}
         {personalAgents.length > 0 && (
-          <>
-            <div className="mb-2 px-2 text-xs font-semibold text-gray-500">
+          <div className="animate-fade-in">
+            <div className="mb-2 px-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
               パーソナルエージェント
             </div>
-            <div className="mb-4 space-y-1">
+            <div className="space-y-1">
               {personalAgents.map((agent) => (
                 <button
                   key={agent.id}
                   onClick={() => router.push(`/personal-agents/${agent.id}`)}
                   className={cn(
-                    "flex w-full items-center gap-2 rounded-md px-2 py-2 text-sm font-medium transition-colors hover:bg-gray-100 dark:hover:bg-gray-800",
+                    "flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-200 group",
                     pathname === `/personal-agents/${agent.id}`
-                      ? "bg-purple-50 text-purple-600 dark:bg-purple-900/20 dark:text-purple-400"
-                      : "text-gray-700 dark:text-gray-300"
+                      ? "bg-white/40 dark:bg-white/10 text-primary shadow-sm"
+                      : "text-gray-700 dark:text-gray-300 hover:bg-white/20 dark:hover:bg-white/5 hover:translate-x-1"
                   )}
                 >
-                  <User className="h-4 w-4" />
+                  <User className="h-4 w-4 transition-transform duration-200 group-hover:scale-110" />
                   <span className="truncate">{agent.name}</span>
                 </button>
               ))}
             </div>
-          </>
+          </div>
         )}
 
         {/* Agents Section */}
-        <div className="mb-2 px-2 text-xs font-semibold text-gray-500">
-          エージェント一覧
-        </div>
-        <div className="space-y-1">
-          {agents.length === 0 ? (
-            <div className="px-2 py-4 text-center text-sm text-gray-500">
-              エージェントがいません
-            </div>
-          ) : (
-            agents.map((agent) => (
-              <button
-                key={agent.id}
-                onClick={() => onSelectAgent(agent.id)}
-                className={cn(
-                  "flex w-full items-center gap-2 rounded-md px-2 py-2 text-sm font-medium transition-colors hover:bg-gray-100 dark:hover:bg-gray-800",
-                  selectedAgentId === agent.id
-                    ? "bg-blue-50 text-blue-600 dark:bg-blue-900/20 dark:text-blue-400"
-                    : "text-gray-700 dark:text-gray-300"
-                )}
-              >
-                <Bot className="h-4 w-4" />
-                <span className="truncate">{agent.name}</span>
-              </button>
-            ))
-          )}
+        <div className="animate-fade-in" style={{ animationDelay: "0.1s" }}>
+          <div className="mb-2 px-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+            エージェント一覧
+          </div>
+          <div className="space-y-1">
+            {agents.length === 0 ? (
+              <div className="px-3 py-4 text-center text-sm text-gray-500 dark:text-gray-400 bg-white/20 dark:bg-white/5 rounded-lg border border-dashed border-gray-300 dark:border-gray-700">
+                エージェントがいません
+              </div>
+            ) : (
+              agents.map((agent) => (
+                <button
+                  key={agent.id}
+                  onClick={() => onSelectAgent(agent.id)}
+                  className={cn(
+                    "flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-200 group",
+                    selectedAgentId === agent.id
+                      ? "bg-white/40 dark:bg-white/10 text-primary shadow-sm"
+                      : "text-gray-700 dark:text-gray-300 hover:bg-white/20 dark:hover:bg-white/5 hover:translate-x-1"
+                  )}
+                >
+                  <Bot className="h-4 w-4 transition-transform duration-200 group-hover:scale-110" />
+                  <span className="truncate">{agent.name}</span>
+                </button>
+              ))
+            )}
+          </div>
         </div>
 
         {/* Public Agents Section */}
-        <div className="mt-4">
+        <div className="animate-fade-in" style={{ animationDelay: "0.2s" }}>
           <button
             onClick={() => router.push("/agents/explore")}
             className={cn(
-              "flex w-full items-center gap-2 rounded-md px-2 py-2 text-sm font-medium transition-colors hover:bg-gray-100 dark:hover:bg-gray-800",
+              "flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200 group",
               pathname === "/agents/explore"
-                ? "bg-teal-50 text-teal-600 dark:bg-teal-900/20 dark:text-teal-400"
-                : "text-gray-700 dark:text-gray-300"
+                ? "bg-white/40 dark:bg-white/10 text-primary shadow-sm"
+                : "text-gray-700 dark:text-gray-300 hover:bg-white/20 dark:hover:bg-white/5 hover:translate-x-1"
             )}
           >
-            <Globe className="h-4 w-4" />
+            <Globe className="h-4 w-4 transition-transform duration-200 group-hover:scale-110" />
             <span>公開エージェント</span>
           </button>
         </div>
       </div>
 
-      <div className="border-t p-4">
+      <div className="border-t border-white/20 p-4 bg-white/10 dark:bg-black/10">
         <Button
-          variant="secondary"
-          className="w-full justify-start gap-2"
+          variant="ghost"
+          className="w-full justify-start gap-2 hover:bg-white/20 dark:hover:bg-white/5"
           onClick={() => router.push("/settings")}
         >
           <Settings className="h-4 w-4" />

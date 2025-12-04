@@ -16,7 +16,20 @@ import type { DragEvent } from "react";
 
 import { cn } from "@/lib/utils";
 
-const nodeCategories = [
+interface NodeItem {
+  type: string;
+  subType?: string;
+  label: string;
+  icon: React.ElementType;
+  color: string;
+}
+
+interface NodeCategory {
+  name: string;
+  nodes: NodeItem[];
+}
+
+const nodeCategories: NodeCategory[] = [
   {
     name: "トリガー",
     nodes: [
@@ -123,18 +136,18 @@ export function NodePalette({ className }: NodePaletteProps) {
   return (
     <div
       className={cn(
-        "flex w-64 flex-col border-r bg-background p-4",
+        "flex w-64 flex-col border-r border-white/20 bg-white/30 p-4 backdrop-blur-md dark:bg-gray-900/30",
         className
       )}
     >
-      <h2 className="mb-4 text-sm font-semibold text-muted-foreground">
+      <h2 className="mb-4 text-sm font-semibold text-gray-900 dark:text-gray-100">
         ノードパレット
       </h2>
 
       <div className="space-y-4 overflow-y-auto">
         {nodeCategories.map((category) => (
           <div key={category.name}>
-            <h3 className="mb-2 text-xs font-medium uppercase tracking-wider text-muted-foreground">
+            <h3 className="mb-2 text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
               {category.name}
             </h3>
             <div className="space-y-1">
@@ -145,17 +158,17 @@ export function NodePalette({ className }: NodePaletteProps) {
                     key={`${node.type}-${node.subType || ""}`}
                     draggable
                     onDragStart={(e) => onDragStart(e, node.type, node.subType)}
-                    className="flex cursor-grab items-center gap-2 rounded-md border bg-card p-2 transition-colors hover:bg-accent active:cursor-grabbing"
+                    className="flex cursor-grab items-center gap-2 rounded-lg border border-white/20 bg-white/50 p-2 transition-all hover:bg-white/80 hover:shadow-md active:cursor-grabbing dark:bg-gray-800/50 dark:border-white/10 dark:hover:bg-gray-800/80"
                   >
                     <div
                       className={cn(
-                        "flex h-6 w-6 items-center justify-center rounded text-white",
+                        "flex h-6 w-6 items-center justify-center rounded text-white shadow-sm",
                         node.color
                       )}
                     >
                       <Icon className="h-4 w-4" />
                     </div>
-                    <span className="text-sm">{node.label}</span>
+                    <span className="text-sm text-gray-700 dark:text-gray-200">{node.label}</span>
                   </div>
                 );
               })}
